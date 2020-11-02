@@ -1,0 +1,194 @@
+type DummyResponse {
+  error: Boolean!
+}
+
+
+type User {
+  id: ID!
+  reviews: [Review] @relation(name: "WROTE", direction: "OUT")
+  avgStars: Float
+    @cypher(
+      statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN toFloat(avg(r.stars))"
+    )
+  numReviews: Int
+    @cypher(statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN COUNT(r)")
+  recommendations(first: Int = 3): [Company]
+    @cypher(
+      statement: "MATCH (this)-[:WROTE]->(r:Review)-[:REVIEWS]->(:Company)<-[:REVIEWS]-(:Review)<-[:WROTE]-(:User)-[:WROTE]->(:Review)-[:REVIEWS]->(rec:Company) WHERE NOT EXISTS( (this)-[:WROTE]->(:Review)-[:REVIEWS]->(rec) ) WITH rec, COUNT(*) AS num ORDER BY num DESC LIMIT $first RETURN rec"
+    )
+  comments: [Comment] @relation(name: "WROTE", direction: "OUT")
+}
+
+type Recipe {
+  recipeId: ID!
+  name: String!
+  description: String!
+  published: String
+  lastEdited: String
+  creator: User @relation(name: "CREATED_BY", direction: "OUT")
+  parent: Recipe @relation(name: "ADAPTED_FROM", direction: "OUT")
+  ingredients: [Ingredient]
+  tags: [Tag] @relation(name: "HAS_TAG", direction: "OUT")
+  isArchived: Boolean
+  comments: [Comment] @relation(name: "COMMENT_ON", direction: "IN")
+  # numCommentsAndReplies: Int @cypher(statement: "MATCH (this)<-[comments:COMMENT_ON]-(c:Comment)-[rel:REPLIED_TO]-(reply:Reply)-[relrel:REPLIED_TO)]-() RETURN COUNT()")
+  numReplies: Int
+    @cypher(
+      statement: "MATCH (this)<-[:COMMENT_ON]-(c:Comment)<-[r:REPLY_TO]-() RETURN COUNT(r)"
+    )
+
+  # likes: [Like]
+}
+
+type Ingredient @relation(name: "USED_IN") {
+  from: Flavor
+  to: Recipe
+  amount: Int
+  measurement: String
+}
+
+type Flavor {
+  flavorId: ID!
+  name: String!
+  company: Company @relation(name: "MADE_BY", direction: "OUT")
+  description: String!
+  tags: [Tag] @relation(name: "HAS_TAG", direction: "OUT")
+  # likes: [Like]
+}
+
+# type Like @relation(name: "LIKED") {
+#   from: User!
+#   to: Likeable!
+#   likeId: ID!
+#   timestamp: String!
+# }
+
+type Tag {
+  tagId: ID!
+  name: String!
+}
+
+type Comment {
+  commentId: ID!
+  published: String!
+  text: String!
+  author: User @relation(name: "WROTE", direction: "IN")
+  recipe: Recipe @relation(name: "COMMENT_ON", direction: "OUT")
+  replies: Reply @relation(name: "REPLY_TO", direction: "IN")
+  # likes: [Like]
+}
+
+type Reply {
+  replyId: ID!
+  published: String!
+  text: String!
+  author: User @relation(name: "WROTE", direction: "IN")
+  # replies: Reply @relation(name: "REPLIED_TO", direction: "IN")
+  # likes: [Like]
+}
+
+type Company {
+  companyId: ID!
+  name: String!
+  address: String
+  city: String
+  state: String
+  # location: Point
+  website: String
+  facebook: String
+  phone: String
+  avgStars: Float
+    @cypher(
+      statement: "MATCH (this)<-[:REVIEWS]-(r:Review) RETURN coalesce(avg(r.stars),0.0)"
+    )
+  reviews: [Review] @relation(name: "REVIEWS", direction: "IN")
+  categories: [Category] @relation(name: "IN_CATEGORY", direction: "OUT")
+}
+
+type Review {
+  reviewId: ID!
+  stars: Float
+  text: String
+  date: String
+  company: Company @relation(name: "REVIEWS", direction: "OUT")
+  user: User @relation(name: "WROTE", direction: "IN")
+}
+
+type Category {
+  name: ID!
+  companies: [Company] @relation(name: "IN_CATEGORY", direction: "IN")
+}
+
+type RatingCount {
+  stars: Float!
+  count: Int!
+}
+
+input CustomIngredientsInput {
+  amount: Int
+  measurement: String
+  flavorId: String
+}
+
+type Mutation {
+  dummy: DummyResponse
+  
+  mergeCompanyCategory(categories: [String!]!, companyId: ID!): Company
+    @cypher(
+      statement: "MATCH (b:Company {companyId: $companyId}) UNWIND $categories AS cat MERGE (c:Category {name: cat}) MERGE (b)-[:IN_CATEGORY]->(c) RETURN b"
+    )
+
+  createRecipeWithIngredients(
+    recipeId: ID!
+    name: String!
+    description: String!
+    published: String!
+    userId: String!
+    ingredients: [CustomIngredientsInput]
+    isArchived: Boolean
+  ): Recipe
+    @cypher(
+      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[relationship:USED_IN {measurement: ingredient.measurement, amount: ingredient.amount}]-(f) RETURN r"
+    )
+
+  archiveRecipe(recipeId: ID!): Recipe
+    @cypher(
+      statement: "MATCH (r:Recipe) WHERE r.recipeId = $recipeId SET r.isArchived = true RETURN r"
+    )
+
+  createCommentForRecipe(
+    commentId: String!
+    recipeId: String!
+    userId: String!
+    text: String!
+    published: String!
+  ): Comment
+    @cypher(
+      statement: "MATCH (r:Recipe) WHERE r.recipeId = $recipeId MATCH (u:User) WHERE u.userId = $userId WITH u, r MERGE (r)<-[rel:COMMENT_ON]-(c:Comment{commentId: $commentId, text: $text, published: $published})<-[:WROTE]-(u) RETURN c"
+    )
+
+  createReplyToComment(
+    replyId: String!
+    commentId: String!
+    userId: String!
+    text: String!
+    published: String!
+  ): Comment
+    @cypher(
+      statement: "MATCH (c:Comment) WHERE c.commentId = $commentId MATCH (u:User) WHERE u.userId = $userId WITH u, c MERGE (c)<-[rel:REPLIED_TO]-(reply:Reply{replyId: $replyId, text: $text, published: $published})<-[:WROTE]-(u) RETURN c"
+    )
+}
+
+type Query {
+  currentUser: User
+  recipesNotArchived: [Recipe]
+    @cypher(
+      statement: "MATCH (r:Recipe) WHERE NOT r.isArchived = TRUE RETURN r"
+    )
+
+  userCount: Int! @cypher(statement: "MATCH (u:User) RETURN COUNT(u)")
+  ratingsCount: [RatingCount]
+    @cypher(
+      statement: "MATCH (r:Review) WITH r.stars AS stars, COUNT(*) AS count ORDER BY stars RETURN {stars: stars, count: count}"
+    )
+}

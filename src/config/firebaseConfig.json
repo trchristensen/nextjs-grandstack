@@ -1,0 +1,9 @@
+{
+  "apiKey": "AIzaSyCDNh88hYQQd4EnZtVxsZVP6hSchKti2qQ",
+  "authDomain": "juice-sauce.firebaseapp.com",
+  "databaseURL": "https://juice-sauce.firebaseio.com",
+  "projectId": "juice-sauce",
+  "storageBucket": "juice-sauce.appspot.com",
+  "messagingSenderId": "7638110266",
+  "appId": "1:7638110266:web:f3cb22ddd2da1ede05a503"
+}
