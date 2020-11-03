@@ -13,7 +13,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   };
 };
 
-export default () => {
+const Index = () => {
   const [user, loading] = useAuthState(getAuth());
   console.log('user:', user);
   return (
@@ -30,6 +30,7 @@ export default () => {
     </main>
   );
 };
+
 
 function GraphqlExample() {
   const currentUserQuery = useCurrentUserQuery();
@@ -49,3 +50,5 @@ function GraphqlExample() {
     </div>
   );
 }
+
+export default Index;

@@ -132,7 +132,7 @@ input CustomIngredientsInput {
 
 type Mutation {
   dummy: DummyResponse
-  
+
   mergeCompanyCategory(categories: [String!]!, companyId: ID!): Company
     @cypher(
       statement: "MATCH (b:Company {companyId: $companyId}) UNWIND $categories AS cat MERGE (c:Category {name: cat}) MERGE (b)-[:IN_CATEGORY]->(c) RETURN b"

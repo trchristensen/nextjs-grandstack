@@ -14,6 +14,10 @@ import { makeAugmentedSchema } from "neo4j-graphql-js";
 export const schema = makeAugmentedSchema({
   typeDefs,
   resolvers,
+  auth: {
+    isAuthenticated: true,
+    hasScope: true,
+  },
 });
 
 
