@@ -5,6 +5,8 @@ import {CreateRandomID} from '../../../helpers/CreateRandomId'
 import { getAuth } from "../../../client/firebaseHelpers";
 import { useAuthState } from "react-firebase-hooks/auth";
 
+import { Input, Button, Box } from "@chakra-ui/core";
+
 import {
   useCreateRecipeWithIngredientsMutation
 } from "../../gen/index";
@@ -68,34 +70,40 @@ export function CreateRecipe() {
     },
   });
 
-  const RecipePayload = {
-    variables: {
-      userId: `${user?.uid}`,
-      recipeId: CreateRandomID(32),
-      name: `${name}`,
-      description: `${description}`,
-      published: "2020-09-22T16:17:31.419Z",
-      isArchived: false,
-      ingredients: [
-        {
-          amount: 10,
-          measurement: "%",
-          flavorId: "4c09d545-9e25-42fa-8173-fa7f6529611d",
-        },
-      ],
-    },
-  };
+
 
   const handleCreateRecipe = (e: any) => {
     e.preventDefault();
+    const currentDateTime = new Date().toISOString();
+
+    const RecipePayload = {
+      variables: {
+        userId: `${user?.uid}`,
+        recipeId: CreateRandomID(32),
+        name: `${name}`,
+        description: `${description}`,
+        published: currentDateTime,
+        isArchived: false,
+        ingredients: [
+          {
+            amount: 10,
+            measurement: "%",
+            flavorId: "4c09d545-9e25-42fa-8173-fa7f6529611d",
+          },
+        ],
+      },
+    };
+
     console.log(user?.uid);
     CreateRecipeWithIngredients(RecipePayload);
   }
 
+    
+
   return (
-    <div>
+    <Box w="500px" maxW="100%" marginX="auto" marginY="1em">
       <form onSubmit={(e: React.FormEvent) => handleCreateRecipe(e)}>
-        <input
+        <Input
           name="name"
           placeholder="name"
           type="text"
@@ -104,7 +112,8 @@ export function CreateRecipe() {
             setName(e.target.value)
           }
         />
-        <input
+        <Input
+          marginTop="1em"
           name="description"
           placeholder="description"
           type="text"
@@ -113,8 +122,8 @@ export function CreateRecipe() {
             setDescription(e.target.value)
           }
         />
-        <button type="submit">Create Recipe</button>
+        <Button type="submit" variantColor="blue" marginTop="1em">Create Recipe</Button>
       </form>
-    </div>
+    </Box>
   );
 }

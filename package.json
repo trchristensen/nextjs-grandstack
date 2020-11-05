@@ -13,10 +13,17 @@
   "dependencies": {
     "@apollo/react-common": "^3.1.4",
     "@apollo/react-hooks": "^4.0.0",
+    "@chakra-ui/core": "^0.8.0",
+    "@chakra-ui/icons": "^1.0.0-rc.3",
+    "@emotion/core": "^10.1.1",
+    "@emotion/styled": "^10.0.27",
     "apollo-boost": "^0.4.9",
     "apollo-server-micro": "^2.16.0",
+    "date-fns": "^2.16.1",
+    "emotion-theming": "^10.0.27",
     "firebase": "^7.16.1",
     "firebase-admin": "^9.0.0",
+    "framer-motion": "^2.9.4",
     "graphql": "^14.1.0",
     "graphql-tag": "^2.10.4",
     "isomorphic-unfetch": "^3.0.0",
@@ -53,6 +60,6 @@
     "vercel": "^19.2.0"
   },
   "resolutions": {
-  "graphql": "^14.1.0"
-}
+    "graphql": "^14.1.0"
+  }
 }

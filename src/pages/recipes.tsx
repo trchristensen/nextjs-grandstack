@@ -9,6 +9,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { CreateRecipe } from '../client/components/CreateRecipe/CreateRecipe.component'
 import { useArchiveRecipeMutation, Recipe } from '../client/gen/index'
 
+import { Avatar, Box, Text, Button } from '@chakra-ui/core';
+import { formatDistanceToNow } from "date-fns";
+
 
 type Props = {};
 
@@ -95,12 +98,45 @@ const [archive] = useMutation(archiveRecipe, {
 
 
   return (
-    <div style={{ display: "block", marginBottom: "1em" }}>
+    <Box
+      className="recipeCard"
+      marginBottom={4}
+      p={4}
+      shadow="md"
+      rounded="lg"
+      display="block"
+      bg="white"
+      width="full"
+    >
+      <Box
+        className="recipeCard__header"
+        display="flex"
+        flexDirection="row"
+        alignItems="items-start"
+        justifyContent="space-between"
+      >
+        <Box>
+          <Avatar bg="gray.500" size="sm" name="author name" src=""></Avatar>
+        </Box>
+      </Box>
       <span>{recipe.name}</span>
       <br />
       <span>{recipe.description}</span>
-      <button style={{display:'block'}} onClick={() => archive()}>Delete</button>
-    </div>
+      <Button
+        variantColor="pink"
+        shadow="none"
+        variant="solid"
+        size="sm"
+        style={{ display: "block", cursor: "pointer" }}
+        onClick={() => archive()}
+      >
+        Delete
+      </Button>
+      {formatDistanceToNow(
+        //@ts-ignore
+        new Date(recipe.published)
+      )}
+    </Box>
   );
 }
 
@@ -119,7 +155,7 @@ const GetRecipes = () => {
 
   return (
     <main>
-      <div style={{ marginTop: "30px" }}>
+      <div style={{ marginTop: "30px", maxWidth: "700px", display: "block", width: '100%', marginLeft: 'auto', marginRight: 'auto'  }}>
         {loading && !error && <p>Loading...</p>}
         {error && !loading && <p>Error: {JSON.stringify(error)}</p>}
         {data &&
