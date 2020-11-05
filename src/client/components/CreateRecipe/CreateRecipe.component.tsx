@@ -51,9 +51,17 @@ export function CreateRecipe() {
   const [description, setDescription] = React.useState("");
 
   const [CreateRecipeWithIngredients] = useCreateRecipeWithIngredientsMutation({
-    refetchQueries: [{ query: RECIPES_NOT_ARCHIVED }],
+    refetchQueries: [
+    {
+      query: RECIPES_NOT_ARCHIVED,
+      variables: {
+        orderBy: "published_asc",
+      }}
+    ],
     onCompleted: (res) => {
       console.log(res);
+      setName('');
+      setDescription('')
     },
     onError: (err) => {
       console.error(err);

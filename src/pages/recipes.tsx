@@ -70,22 +70,27 @@ export const archiveRecipe = gql`
 
 
 
-function RecipeCard(recipe: Recipe, refetch:any) {
+function RecipeCard(recipe: Recipe) {
 
-const [archive,] = useMutation(archiveRecipe, {
-    // refetchQueries: [{ query: RECIPES_NOT_ARCHIVED }],
-    variables: {
-      orderBy: "published_asc",
-      userId: recipe.creator?.id,
-      recipeId: recipe.recipeId,
+const [archive] = useMutation(archiveRecipe, {
+  refetchQueries: [
+    {
+      query: RECIPES_NOT_ARCHIVED,
+      variables: {
+        orderBy: "published_asc",
+      },
     },
-    onCompleted: (res) => {
-      console.log(res);
-      () => refetch;
-    },
-    onError: (err) => {
-      console.error(err);
-    },
+  ],
+  variables: {
+    userId: recipe.creator?.id,
+    recipeId: recipe.recipeId,
+  },
+  onCompleted: (res) => {
+    console.log(res);
+  },
+  onError: (err) => {
+    console.error(err);
+  },
 });
 
 
@@ -101,7 +106,7 @@ const [archive,] = useMutation(archiveRecipe, {
 
 
 const GetRecipes = () => {
-  const { loading, data, error, refetch, networkStatus } = useQuery(
+  const { loading, data, error } = useQuery(
     RECIPES_NOT_ARCHIVED,
     {
       notifyOnNetworkStatusChange: true,
@@ -111,7 +116,6 @@ const GetRecipes = () => {
     }
   );
 
-  console.log(networkStatus)
 
   return (
     <main>
@@ -122,10 +126,9 @@ const GetRecipes = () => {
           !loading &&
           !error &&
           data.recipesNotArchived.map((recipe: any) => (
-            <RecipeCard key={recipe.recipeId} refetch={refetch} {...recipe} />
+            <RecipeCard key={recipe.recipeId} {...recipe} />
           ))}
       </div>
-      <button onClick={() => refetch()}>Refresh</button>
     </main>
   );
 }

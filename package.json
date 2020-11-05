@@ -7,7 +7,8 @@
     "vdev": "run-p watch:*",
     "codegen": "graphql-codegen --config codegen.yml",
     "watch:server": "vercel dev",
-    "watch:codegen": "graphql-codegen --config codegen.yml -w"
+    "watch:codegen": "graphql-codegen --config codegen.yml -w",
+    "build": "next build"
   },
   "dependencies": {
     "@apollo/react-common": "^3.1.4",
