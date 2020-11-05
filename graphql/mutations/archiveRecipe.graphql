@@ -1,0 +1,10 @@
+mutation archiveRecipe($recipeId: ID!, $userId: ID!) {
+  archiveRecipe(recipeId: $recipeId, userId: $userId) {
+    recipeId
+    name
+    isArchived
+    creator {
+      id
+    }
+  }
+}

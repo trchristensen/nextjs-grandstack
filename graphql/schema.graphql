@@ -151,7 +151,7 @@ type Mutation {
       statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[relationship:USED_IN {measurement: ingredient.measurement, amount: ingredient.amount}]-(f) RETURN r"
     )
 
-  archiveRecipe(recipeId: ID!): Recipe
+  archiveRecipe(recipeId: ID!, userId: ID!): Recipe
     @cypher(
       statement: "MATCH (r:Recipe) WHERE r.recipeId = $recipeId SET r.isArchived = true RETURN r"
     )

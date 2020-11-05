@@ -41,6 +41,17 @@ export async function loginWithGithub() {
   }
 }
 
+export async function loginWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    const user = await firebase.auth().signInWithPopup(provider);
+    console.log(user);
+  } catch (error) {
+    console.error("login failed", error);
+  }
+}
+
+
 export async function linkWithGithub() {
   const provider = new firebase.auth.GithubAuthProvider();
   try {
