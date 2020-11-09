@@ -5,6 +5,10 @@ type DummyResponse {
 
 type User {
   id: ID!
+  displayName: String
+  email: String
+  isAdmin: Boolean!
+  isPremium: Boolean!
   reviews: [Review] @relation(name: "WROTE", direction: "OUT")
   avgStars: Float
     @cypher(
@@ -18,6 +22,8 @@ type User {
     )
   comments: [Comment] @relation(name: "WROTE", direction: "OUT")
 }
+
+
 
 type Recipe {
   recipeId: ID!
@@ -130,7 +136,19 @@ input CustomIngredientsInput {
   flavorId: String
 }
 
+
 type Mutation {
+
+  # createUserWithRoles(
+  #   id: ID!
+  #   isadmin: Boolean!
+  #   isPremium: Boolean!
+  #   displayName: String
+  # ): User
+  # @cypher(
+  #   statement: ""
+  # )
+
   dummy: DummyResponse
 
   mergeCompanyCategory(categories: [String!]!, companyId: ID!): Company
@@ -181,6 +199,7 @@ type Mutation {
 
 type Query {
   currentUser: User
+
   recipesNotArchived: [Recipe]
     @cypher(
       statement: "MATCH (r:Recipe) WHERE NOT r.isArchived = TRUE RETURN r"

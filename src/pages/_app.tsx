@@ -3,6 +3,7 @@ import { AppProps } from "next/app";
 import { ApolloProvider } from "@apollo/client";
 import { createGraphqlClient } from "../client/createGraphqlClient";
 import theme from "../theme";
+import "../styles.css";
 import { ThemeProvider, CSSReset } from "@chakra-ui/core";
 
 const App = ({ Component, pageProps }: AppProps) => {

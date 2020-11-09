@@ -1,0 +1,21 @@
+
+.ingredientsBar > :nth-child(1) {
+  background: #8bcf69
+}
+
+.ingredientsBar > :nth-child(2) {
+  background: #e6d450
+}
+
+
+.ingredientsBar > :nth-child(3) {
+  background: #f28f68;
+}
+
+.ingredientsBar > :nth-child(4) {
+  background: #cf82bf;
+}
+
+.ingredientsBar > :nth-child(5) {
+  background: #719fd1;
+}

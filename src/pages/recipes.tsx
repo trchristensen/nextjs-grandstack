@@ -3,24 +3,22 @@ import { GetServerSideProps } from "next";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import { Header } from "../client/components/Header";
-import { loginWithGithub, getAuth, logout } from "../client/firebaseHelpers";
-import { useAuthState } from "react-firebase-hooks/auth";
 
 import { CreateRecipe } from '../client/components/CreateRecipe/CreateRecipe.component'
-import { useArchiveRecipeMutation, Recipe } from '../client/gen/index'
+import { useArchiveRecipeMutation, Recipe, Flavor} from '../client/gen/index'
 
-import { Avatar, Box, Text, Button } from '@chakra-ui/core';
+import { Avatar, Box, Text, Button, Stack, Tooltip } from '@chakra-ui/core';
 import { formatDistanceToNow } from "date-fns";
 
 
 type Props = {};
 
 export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
+  console.log('ctx', ctx)
   return {
     props: {},
   };
 };
-
 
 
 const RECIPES_NOT_ARCHIVED = gql`
@@ -37,6 +35,7 @@ const RECIPES_NOT_ARCHIVED = gql`
       lastEdited
       creator {
         id
+        displayName
       }
       parent {
         recipeId
@@ -66,6 +65,7 @@ export const archiveRecipe = gql`
       isArchived
       creator {
         id
+        displayName
       }
     }
   }
@@ -80,7 +80,7 @@ const [archive] = useMutation(archiveRecipe, {
     {
       query: RECIPES_NOT_ARCHIVED,
       variables: {
-        orderBy: "published_asc",
+        orderBy: "published_desc",
       },
     },
   ],
@@ -115,42 +115,110 @@ const [archive] = useMutation(archiveRecipe, {
         alignItems="items-start"
         justifyContent="space-between"
       >
-        <Box>
-          <Avatar bg="gray.500" size="sm" name="author name" src=""></Avatar>
+        <Box width="full" display="flex" flexDirection="row">
+          <Avatar bg="gray.500" size="sm" name="author name" mt={1} src=""></Avatar>
+          <Box
+            className="recipeCard__header-info"
+            display="flex"
+            flexDirection="column"
+            width="100%"
+            px={2}
+          >
+            <Text as="span" fontSize="lg" lineHeight="shorter" fontWeight="bold" px={0}>
+              {recipe.name}
+            </Text>
+            <Box
+              className="recipeCard__header-info-details"
+              display="flex"
+              flexWrap="wrap"
+              flexDirection="row"
+              alignItems="flex-end"
+              fontSize="sm"
+            >
+              <Text color="text-gray-60" as="span" lineHeight="shorter" display="flex">
+                {recipe.creator?.displayName}
+                <Text mx={1}>{" • "} </Text>
+                {formatDistanceToNow(
+                  //@ts-ignore
+                  new Date(recipe.published)
+                )}{" "}
+                {recipe.isArchived && ` - Archived`}
+              </Text>
+            </Box>
+          </Box>
+          <Button
+            variantColor="gray"
+            variant="ghost"
+            rounded="full"
+            shadow="none"
+            size="sm"
+            style={{ display: "block", cursor: "pointer" }}
+            onClick={() => archive()}
+          >
+            X
+          </Button>
         </Box>
       </Box>
-      <span>{recipe.name}</span>
-      <br />
-      <span>{recipe.description}</span>
-      <Button
-        variantColor="pink"
-        shadow="none"
-        variant="solid"
-        size="sm"
-        style={{ display: "block", cursor: "pointer" }}
-        onClick={() => archive()}
-      >
-        Delete
-      </Button>
-      {formatDistanceToNow(
-        //@ts-ignore
-        new Date(recipe.published)
-      )}
+      <Box className="recipeCard__content">
+        <Box mt={2} mb={3}>
+          <Text>{recipe.description}</Text>
+          {/* <Box>[Flavor details here]</Box> */}
+        </Box>
+        <Box>
+          <Stack
+            className="w-full border rounded-lg overflow-hidden ingredientsBar"
+            bg={"gray.200"}
+            overflow="hidden"
+            borderRadius="lg"
+            border={1}
+            w="full"
+            spacing={0}
+            isInline
+          >
+            {recipe.ingredients &&
+              recipe.ingredients?.map((ingredient: any) => {
+                {
+                  JSON.stringify(ingredient);
+                }
+                return (
+                  <Box
+                    style={{ width: `${ingredient.amount}%` }}
+                    className="ingredientsBar__ingredient text-gray-700 font-semibold text-xs flex justify-center items-center flex-row border-r border-gray-200"
+                  >
+                    <Tooltip
+                      aria-label="tooltip"
+                      label={`${ingredient.Flavor.name} - ${ingredient.amount}
+                      ${ingredient.measurement}`}
+                      placement="bottom"
+                    >
+                      <div
+                        className="w-full text-center relative block"
+                        style={{ height: "10px" }}
+                      ></div>
+                    </Tooltip>
+                  </Box>
+                );
+              })}
+          </Stack>
+        </Box>
+        <Box className="recipe__tags">
+          {recipe.tags?.map((tag) => {
+            return <li>{tag?.name}</li>;
+          })}
+        </Box>
+      </Box>
     </Box>
   );
 }
 
 
 const GetRecipes = () => {
-  const { loading, data, error } = useQuery(
-    RECIPES_NOT_ARCHIVED,
-    {
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        orderBy: "published_asc",
-      },
-    }
-  );
+  const { loading, data, error } = useQuery(RECIPES_NOT_ARCHIVED, {
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      orderBy: "published_desc",
+    },
+  });
 
 
   return (

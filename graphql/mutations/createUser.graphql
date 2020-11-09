@@ -1,0 +1,15 @@
+# mutation createUser(
+#   $id: ID!
+#   $isAdmin: Boolean!
+#   $isPremium: Boolean!
+# ) {
+#   createUser(
+#     id: $id
+#     isAdmin: $isAdmin
+#     isPremium: $isPremium
+#   ) {
+#     id
+#     isAdmin
+#     isPremium
+#   }
+# }

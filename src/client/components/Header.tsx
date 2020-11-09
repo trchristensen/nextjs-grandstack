@@ -7,11 +7,11 @@ import {
   logout,
 } from "../../client/firebaseHelpers";
 
-import { Box, Heading, Flex, Text, Button } from "@chakra-ui/core";
+import { Box, Heading, Flex, Text, Button, Avatar } from "@chakra-ui/core";
 
 export function Header(props:any) {
   const [user, loading] = useAuthState(getAuth());
-  // console.log('user:', user);
+  console.log('user:', user);
 
   const [show, setShow] = React.useState(false);
   const handleToggle = () => setShow(!show);
@@ -58,11 +58,15 @@ export function Header(props:any) {
           mt={{ base: 4, md: 0 }}
         >
           {!loading && user ? (
-            <>
+            <Box display="flex">
+            <Box marginRight={4} display="flex" alignItems="center">
+              <Avatar marginRight={1} size="sm" name={user.displayName} src={user.photoURL} />
+              <Text>{user.displayName}</Text>
+              </Box>
               <Button variantColor="pink" onClick={() => logout()}>
                 Logout
               </Button>
-            </>
+            </Box>
           ) : (
             <div>
               <Button variantColor="pink" onClick={() => loginWithGithub()}>
