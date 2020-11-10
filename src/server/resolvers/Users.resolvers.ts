@@ -5,6 +5,7 @@ import { MutationResolvers, QueryResolvers, Resolvers } from "../gen";
 type Context = { idToken: { uid: string } | null };
 
 export const UserMutations: MutationResolvers<Context> = {
+
   //@ts-ignore
   async CreateUser(object, params, _context, resolveInfo) {
     console.log(params);

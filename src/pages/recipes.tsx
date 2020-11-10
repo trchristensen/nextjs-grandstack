@@ -177,12 +177,11 @@ const [archive] = useMutation(archiveRecipe, {
           >
             {recipe.ingredients &&
               recipe.ingredients?.map((ingredient: any) => {
-                {
-                  JSON.stringify(ingredient);
-                }
+               
                 return (
                   <Box
                     style={{ width: `${ingredient.amount}%` }}
+                    // key={ingredient.Flavor.flavorId}
                     className="ingredientsBar__ingredient text-gray-700 font-semibold text-xs flex justify-center items-center flex-row border-r border-gray-200"
                   >
                     <Tooltip

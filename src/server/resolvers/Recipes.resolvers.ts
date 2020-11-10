@@ -6,11 +6,6 @@ type Context = { idToken: { uid: string } | null };
 
 
 export const RecipeQueries: QueryResolvers<Context> = {
-  async currentUser(_parent, _args, context, _info) {
-    return {
-      id: context.idToken?.uid!
-    };
-  },
 
   //@ts-ignore
   recipesNotArchived(object, params, _context, resolveInfo) {

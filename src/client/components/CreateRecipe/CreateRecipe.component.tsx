@@ -89,6 +89,8 @@ export function CreateRecipe() {
   const [flavorList, setFlavorList] = React.useState<Flavor[]>();
   const [selectedOption, setSelectedOption] = React.useState<any>();
   const [measurement, setMeasurement] = React.useState<string>("g");
+  const [submittable, setSubmittable] = React.useState(false);
+
 
   const handleChange = (selectedOption: any) => {
     setSelectedOption({ selectedOption });
@@ -106,6 +108,29 @@ export function CreateRecipe() {
     console.log(result);
   }, [Flavors.data]);
 
+
+  // form validation
+  React.useEffect(() => {
+    if (
+      name.length &&
+      description.length
+      
+    ) {
+      if (submittable === false) {
+        setSubmittable(true);
+      }
+    } else if (submittable === true) {
+      setSubmittable(false);
+    }
+
+    console.log(selectedOption)
+    
+  }, [
+    name,
+    description,
+    selectedOption
+  ])
+
   const [CreateRecipeWithIngredients] = useCreateRecipeWithIngredientsMutation({
     refetchQueries: [
       {
@@ -119,6 +144,10 @@ export function CreateRecipe() {
       console.log(res);
       setName("");
       setDescription("");
+      setSelectedOption(null);
+      
+      
+ 
     },
     onError: (err) => {
       console.error(err);
@@ -130,6 +159,7 @@ export function CreateRecipe() {
     const currentDateTime = new Date().toISOString();
 
     const recipeInfo = [...selectedOption.selectedOption];
+    if (recipeInfo === null) return;
 
     const newFlavorInfo: any = recipeInfo.map((flavor) => {
       const qty = (document.getElementById(
@@ -168,6 +198,7 @@ export function CreateRecipe() {
       <form onSubmit={(e: React.FormEvent) => handleCreateRecipe(e)}>
         <FormControl mb={3}>
           <Input
+            isRequired
             name="name"
             placeholder="name"
             type="text"
@@ -179,6 +210,7 @@ export function CreateRecipe() {
         </FormControl>
         <FormControl mb={3}>
           <Input
+            isRequired
             marginTop="1em"
             name="description"
             placeholder="description"
@@ -191,6 +223,7 @@ export function CreateRecipe() {
         </FormControl>
         <FormControl mb={3}>
           <Select
+            required
             isMulti
             name="flavors"
             options={flavorList}
@@ -198,6 +231,7 @@ export function CreateRecipe() {
             className="basic-multi-select"
             classNamePrefix="select"
             onChange={handleChange}
+            isClearable={true}
           />
           {selectedOption?.selectedOption &&
             selectedOption?.selectedOption.map((row: any) => (
@@ -214,7 +248,14 @@ export function CreateRecipe() {
                 justifyContent="space-between"
                 key={row.value}
               >
-                <Box mb={2} display="flex" alignItems="center" mr={2} marginBottom={0} fontWeight="medium">
+                <Box
+                  mb={2}
+                  display="flex"
+                  alignItems="center"
+                  mr={2}
+                  marginBottom={0}
+                  fontWeight="medium"
+                >
                   {row.label}
                 </Box>
                 <Box display="flex" alignItems="center">
@@ -233,7 +274,12 @@ export function CreateRecipe() {
               </Box>
             ))}
         </FormControl>
-        <Button type="submit" variantColor="green" marginTop="1em">
+        <Button
+          isDisabled={submittable ? false : true}
+          type="submit"
+          variantColor="green"
+          marginTop="1em"
+        >
           Create Recipe
         </Button>
       </form>

@@ -22,9 +22,6 @@ export const schema = makeAugmentedSchema({
 
 
 const apolloServer = new ApolloServer({
-  // typeDefs,
-  // @ts-ignore
-  // resolvers,
   schema,
   async context(args) {
     const { req } = args;
