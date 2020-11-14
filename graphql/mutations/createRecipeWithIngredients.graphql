@@ -6,6 +6,8 @@ mutation createRecipeWithIngredients(
   $published: String!
   $isArchived: Boolean!
   $ingredients: [CustomIngredientsInput]
+  $notes: String
+  $mixingPercentage: Int
 ) {
   createRecipeWithIngredients(
     userId: $userId
@@ -15,6 +17,9 @@ mutation createRecipeWithIngredients(
     published: $published
     isArchived: $isArchived
     ingredients: $ingredients
+    notes: $notes
+    mixingPercentage: $mixingPercentage
+
   ) {
     name
     recipeId

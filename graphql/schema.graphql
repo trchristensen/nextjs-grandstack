@@ -29,6 +29,8 @@ type Recipe {
   recipeId: ID!
   name: String!
   description: String!
+  notes: String
+  mixingPercentage: Int
   published: String
   lastEdited: String
   creator: User @relation(name: "CREATED_BY", direction: "OUT")
@@ -164,9 +166,11 @@ type Mutation {
     userId: String!
     ingredients: [CustomIngredientsInput]
     isArchived: Boolean
+    notes: String
+    mixingPercentage: Int
   ): Recipe
     @cypher(
-      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[relationship:USED_IN {measurement: ingredient.measurement, amount: ingredient.amount}]-(f) RETURN r"
+      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[relationship:USED_IN {measurement: ingredient.measurement, amount: ingredient.amount}]-(f) RETURN r"
     )
 
   archiveRecipe(recipeId: ID!, userId: ID!): Recipe

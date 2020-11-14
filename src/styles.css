@@ -1,4 +1,8 @@
 
+.select__menu {
+  z-index: 99 !important;
+}
+
 .ingredientsBar > :nth-child(1) {
   background: #8bcf69
 }

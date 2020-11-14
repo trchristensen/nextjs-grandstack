@@ -23,6 +23,18 @@ export const RecipeMutations: MutationResolvers<Context> = {
     if (params.name.length < 3) {
       throw new Error("please make the name at least 3 characters long");
     }
+    if (params.description.length < 3) {
+      throw new Error("please make the description at least 3 characters long");
+    }
+
+    params.ingredients?.map(ingredient => {
+      if(ingredient?.measurement != 'g' && ingredient?.measurement != '%' && ingredient?.measurement != 'drops') {
+        throw new Error('invalid input for ingredient')
+      }
+      if(ingredient?.amount == null || isNaN(ingredient?.amount)) {
+        throw new Error('invalid ingredient amount');
+      }
+    })
 
     if (_context.idToken?.uid == null) {
       throw new Error("401");
