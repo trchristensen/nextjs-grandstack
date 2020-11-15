@@ -35,7 +35,8 @@ const RECIPES_NOT_ARCHIVED = gql`
       lastEdited
       creator {
         id
-        displayName
+        name
+        avatar
       }
       parent {
         recipeId
@@ -65,7 +66,7 @@ export const archiveRecipe = gql`
       isArchived
       creator {
         id
-        displayName
+        name
       }
     }
   }
@@ -116,7 +117,13 @@ const [archive] = useMutation(archiveRecipe, {
         justifyContent="space-between"
       >
         <Box width="full" display="flex" flexDirection="row">
-          <Avatar bg="gray.500" size="sm" name="author name" mt={1} src=""></Avatar>
+          <Avatar
+            bg="gray.500"
+            size="sm"
+            name="author name"
+            mt={1}
+            src={recipe.creator?.avatar}
+          ></Avatar>
           <Box
             className="recipeCard__header-info"
             display="flex"
@@ -124,7 +131,13 @@ const [archive] = useMutation(archiveRecipe, {
             width="100%"
             px={2}
           >
-            <Text as="span" fontSize="lg" lineHeight="shorter" fontWeight="bold" px={0}>
+            <Text
+              as="span"
+              fontSize="lg"
+              lineHeight="shorter"
+              fontWeight="bold"
+              px={0}
+            >
               {recipe.name}
             </Text>
             <Box
@@ -135,8 +148,13 @@ const [archive] = useMutation(archiveRecipe, {
               alignItems="flex-end"
               fontSize="sm"
             >
-              <Text color="text-gray-60" as="span" lineHeight="shorter" display="flex">
-                {recipe.creator?.displayName}
+              <Text
+                color="text-gray-60"
+                as="span"
+                lineHeight="shorter"
+                display="flex"
+              >
+                {recipe.creator?.name}
                 <Text mx={1}>{" • "} </Text>
                 {formatDistanceToNow(
                   //@ts-ignore
@@ -148,6 +166,7 @@ const [archive] = useMutation(archiveRecipe, {
           </Box>
           <Button
             variantColor="gray"
+            color="gray.500"
             variant="ghost"
             rounded="full"
             shadow="none"
@@ -177,7 +196,6 @@ const [archive] = useMutation(archiveRecipe, {
           >
             {recipe.ingredients &&
               recipe.ingredients?.map((ingredient: any) => {
-               
                 return (
                   <Box
                     style={{ width: `${ingredient.amount}%` }}

@@ -1,5 +1,9 @@
 import React from 'react';
+import Link from 'next/link';
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
+import gql from "graphql-tag";
+
 import {
   loginWithGithub,
   loginWithGoogle,
@@ -9,12 +13,16 @@ import {
 
 import { Box, Heading, Flex, Text, Button, Avatar } from "@chakra-ui/core";
 
+
+
+
 export function Header(props:any) {
   const [user, loading] = useAuthState(getAuth());
   console.log('user:', user);
 
   const [show, setShow] = React.useState(false);
   const handleToggle = () => setShow(!show);
+
 
   return (
     <header>
@@ -59,23 +67,25 @@ export function Header(props:any) {
         >
           {!loading && user ? (
             <Box display="flex">
-            <Box marginRight={4} display="flex" alignItems="center">
-              <Avatar marginRight={1} size="sm" name={user.displayName} src={user.photoURL} />
-              <Text>{user.displayName}</Text>
+              <Box marginRight={4} display="flex" alignItems="center">
+                <Avatar
+                  marginRight={1}
+                  size="sm"
+                  name={user.displayName}
+                  src={user.photoURL}
+                />
+                <Text>{user.displayName}</Text>
               </Box>
               <Button variantColor="pink" onClick={() => logout()}>
                 Logout
               </Button>
             </Box>
           ) : (
-            <div>
-              <Button variantColor="pink" onClick={() => loginWithGithub()}>
-                Login with Github
-              </Button>
-              <Button variantColor="pink" onClick={() => loginWithGoogle()}>
-                Login with Google
-              </Button>
-            </div>
+            <Box>
+              <Link href="/login">
+                <a>Login</a>
+              </Link>
+            </Box>
           )}
         </Box>
       </Flex>

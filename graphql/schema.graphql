@@ -5,10 +5,12 @@ type DummyResponse {
 
 type User {
   id: ID!
-  displayName: String
+  userId: ID!
+  name: String
   email: String
   isAdmin: Boolean!
   isPremium: Boolean!
+  avatar: String
   reviews: [Review] @relation(name: "WROTE", direction: "OUT")
   avgStars: Float
     @cypher(

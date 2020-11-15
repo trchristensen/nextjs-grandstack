@@ -21,6 +21,7 @@ import {
   SliderFilledTrack,
   SliderThumb,
   Flex,
+  Text
 } from "@chakra-ui/core";
 // import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
@@ -94,6 +95,8 @@ export function CreateRecipe() {
 
   const [flavorTotal, setFlavorTotal] = React.useState<number>(0);
 
+  const [createForm, setCreateForm] = React.useState(false);
+
   const handleChange = (selectedOption: any) => {
     setSelectedOption([...selectedOption]);
   };
@@ -156,6 +159,7 @@ export function CreateRecipe() {
       setNotes("");
       setSelectedOption(null);
       setSubmittable(true);
+      setCreateForm(false)
       toast({
         title: "Success",
         description: "Recipe has been created!",
@@ -213,6 +217,7 @@ export function CreateRecipe() {
         isArchived: false,
         ingredients: newFlavorInfo,
         notes: `${notes}`,
+        mixingPercentage: mixingPercentage,
       },
     };
 
@@ -220,8 +225,21 @@ export function CreateRecipe() {
     CreateRecipeWithIngredients(RecipePayload);
   };
 
-  return (
-    <Box w="500px" maxW="100%" marginX="auto" marginY="1em" bg="white" p={6} rounded="lg" shadow="md">
+  return createForm ? (
+    <Box
+      w="500px"
+      maxW="100%"
+      marginX="auto"
+      marginY="1em"
+      bg="white"
+      p={6}
+      rounded="lg"
+      shadow="md"
+    >
+      <Box className="createRecipe__header" display="flex" justifyContent="space-between" alignItems="center" mb={5} w="100%">
+      <Box><Text as="h3" fontSize="lg" fontWeight="bold" mb={0}>Create Recipe</Text></Box>
+      <Box><Button color="gray.500" rounded="full" p={0} onClick={() => setCreateForm(!createForm)}>X</Button></Box>
+      </Box>
       <form onSubmit={(e: React.FormEvent) => handleCreateRecipe(e)}>
         <FormControl mb={3}>
           <Input
@@ -312,7 +330,7 @@ export function CreateRecipe() {
           </RadioGroup>
         </FormControl>
         <FormControl mb={3}>
-          <FormLabel>Select your Flavors</FormLabel>
+          <FormLabel>Select Flavors</FormLabel>
           <Select
             value={selectedOption}
             required
@@ -385,5 +403,23 @@ export function CreateRecipe() {
         </Button>
       </form>
     </Box>
+  ) : (
+    <Flex justifyContent="center" alignItems="center">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        p={4}
+        bg="white"
+        rounded="lg"
+        shadow="md"
+        w="700px"
+        maxW="100%"
+      >
+        <Button w="100%" onClick={() => setCreateForm(!createForm)}>
+          Create Recipe
+        </Button>
+      </Box>
+    </Flex>
   );
 }

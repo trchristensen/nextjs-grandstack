@@ -2,6 +2,7 @@ import "firebase/analytics";
 import "firebase/auth";
 import firebase from "firebase/app";
 import firebaseConfig from "../config/firebaseConfig.json";
+import {neo4jVerifyUser} from "./neo4jHelpers"
 
 let _app: firebase.app.App | null = null;
 
@@ -23,7 +24,7 @@ export function getAuth() {
 export async function loginAnonymously(): Promise<firebase.auth.UserCredential | null> {
   try {
     const user = await firebase.auth().signInAnonymously();
-    console.log(user);
+    // console.log(user);
     return user;
   } catch (error) {
     console.error("login failed", error);
@@ -31,11 +32,14 @@ export async function loginAnonymously(): Promise<firebase.auth.UserCredential |
   }
 }
 
+
+
 export async function loginWithGithub() {
   const provider = new firebase.auth.GithubAuthProvider();
   try {
     const user = await firebase.auth().signInWithPopup(provider);
-    console.log(user);
+    // console.log(user);
+    neo4jVerifyUser(user);
   } catch (error) {
     console.error("login failed", error);
   }
@@ -43,9 +47,11 @@ export async function loginWithGithub() {
 
 export async function loginWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
+
   try {
     const user = await firebase.auth().signInWithPopup(provider);
-    console.log(user);
+    // console.log(user);
+    neo4jVerifyUser(user);
   } catch (error) {
     console.error("login failed", error);
   }
@@ -56,6 +62,7 @@ export async function linkWithGithub() {
   const provider = new firebase.auth.GithubAuthProvider();
   try {
     const user = await firebase.auth().currentUser?.linkWithPopup(provider);
+
     console.log(user);
   } catch (error) {
     console.error("login failed", error);
