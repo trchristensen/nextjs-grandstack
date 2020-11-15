@@ -7,7 +7,22 @@ import { Header } from "../client/components/Header";
 import { CreateRecipe } from '../client/components/CreateRecipe/CreateRecipe.component'
 import { useArchiveRecipeMutation, Recipe, Flavor} from '../client/gen/index'
 
-import { Avatar, Box, Text, Button, Stack, Tooltip } from '@chakra-ui/core';
+import {
+  Avatar,
+  Box,
+  Text,
+  Button,
+  Stack,
+  Tooltip,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  MenuDivider,
+  Icon,
+} from "@chakra-ui/core";
+import { BiChevronDown } from "react-icons/bi"
+
 import { formatDistanceToNow } from "date-fns";
 
 
@@ -164,18 +179,29 @@ const [archive] = useMutation(archiveRecipe, {
               </Text>
             </Box>
           </Box>
-          <Button
-            variantColor="gray"
-            color="gray.500"
-            variant="ghost"
-            rounded="full"
-            shadow="none"
-            size="sm"
-            style={{ display: "block", cursor: "pointer" }}
-            onClick={() => archive()}
-          >
-            X
-          </Button>
+          <Menu>
+            <MenuButton
+              py={2}
+              px={3}
+              transition="all 0.2s"
+              // borderWidth="1px"
+              color="gray.500"
+              rounded="full"
+              _hover={{ bg: "gray.100" }}
+              _expanded={{ bg: "red.200" }}
+              _focus={{ outline: 0, boxShadow: "outline" }}
+            >
+              <Icon as={BiChevronDown} />
+            </MenuButton>
+            <MenuList>
+              //if this is the users..
+              <MenuItem>Edit</MenuItem>
+              <MenuItem onClick={() => archive()}>Delete</MenuItem>
+              <MenuDivider />
+              <MenuItem>Fork It</MenuItem>
+              <MenuItem>Bookmark it</MenuItem>
+            </MenuList>
+          </Menu>
         </Box>
       </Box>
       <Box className="recipeCard__content">

@@ -11,7 +11,24 @@ import {
   logout,
 } from "../../client/firebaseHelpers";
 
-import { Box, Heading, Flex, Text, Button, Avatar } from "@chakra-ui/core";
+import {
+  Box,
+  Heading,
+  Flex,
+  Text,
+  Button,
+  Avatar,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuIcon,
+  MenuCommand,
+  MenuDivider,
+} from "@chakra-ui/core";
 
 
 
@@ -32,7 +49,7 @@ export function Header(props:any) {
         justify="space-between"
         wrap="wrap"
         padding="1.5rem"
-        bg="gray.500"
+        bg="blue.500"
         color="white"
         {...props}
       >
@@ -68,13 +85,37 @@ export function Header(props:any) {
           {!loading && user ? (
             <Box display="flex">
               <Box marginRight={4} display="flex" alignItems="center">
-                <Avatar
-                  marginRight={1}
-                  size="sm"
-                  name={user.displayName}
-                  src={user.photoURL}
-                />
-                <Text>{user.displayName}</Text>
+                <Menu>
+                  <MenuButton
+                    px={4}
+                    py={2}
+                    transition="all 0.2s"
+                    borderRadius="md"
+                    // _hover={{ bg: "gray.100" }}
+                    _focus={{ outline: 0, boxShadow: "outline" }}
+                    bg="transparent"
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <Avatar
+                      marginRight={2}
+                      size="sm"
+                      name={user.displayName}
+                      src={user.photoURL}
+                    />
+                    <Text>{user.displayName}</Text>
+                  </MenuButton>
+                  <MenuList color="gray.500">
+                    <MenuItem>
+                      <Link href="/dashboard">
+                        <a>Dashboard</a>
+                      </Link>
+                    </MenuItem>
+                    <MenuDivider />
+                    <MenuItem>Logout</MenuItem>
+                  </MenuList>
+                </Menu>
               </Box>
               <Button variantColor="pink" onClick={() => logout()}>
                 Logout
