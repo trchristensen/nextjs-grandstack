@@ -57,6 +57,46 @@ export async function loginWithGoogle() {
   }
 }
 
+export async function signInWithEmailandPassword(email:string, password:string) {
+
+  const user = firebase
+    .auth()
+    .signInWithEmailAndPassword(email, password)
+    .catch(function (error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // ...
+      console.log('error: ', errorCode, errorMessage)
+    });
+  
+    return user;
+
+}
+
+
+export async function createNewUserWithEmailandPassword(
+  email: string,
+  password: string
+) {
+  const user = firebase
+    .auth()
+    .createUserWithEmailAndPassword(email, password)
+    // .then(function (event) {
+    //   var ref = firebase.database().ref("users").child(user.uid).set({
+    //     email: user.email,
+    //     uid: user.uid,
+    //   });
+    // })
+    .catch(function (error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+    });
+
+  return user;
+}
+
+
 
 export async function linkWithGithub() {
   const provider = new firebase.auth.GithubAuthProvider();
