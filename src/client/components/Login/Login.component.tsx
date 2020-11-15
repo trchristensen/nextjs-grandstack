@@ -19,8 +19,11 @@ export function Login(props: any) {
   const [user, loading] = useAuthState(getAuth());
   const [email, setEmail] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
+  const [name, setName] = React.useState<string>('');
+
+
   const handleCreateUser = () => {
-    createNewUserWithEmailandPassword(email, password);
+    createNewUserWithEmailandPassword(email, password, name);
   }
 
    return !loading && user ? (
@@ -54,12 +57,21 @@ export function Login(props: any) {
          <Box>
            <Input
              value={email}
+             placeholder="email@email.com"
              onChange={(e: React.FormEvent<HTMLInputElement>) =>
                setEmail(e.currentTarget.value)
              }
            />
            <Input
-            type="password"
+             value={name}
+             placeholder="display name"
+             onChange={(e: React.FormEvent<HTMLInputElement>) =>
+               setName(e.currentTarget.value)
+             }
+           />
+           <Input
+             type="password"
+             placeholder="password"
              value={password}
              onChange={(e: React.FormEvent<HTMLInputElement>) =>
                setPassword(e.currentTarget.value)
@@ -90,7 +102,7 @@ export function Login(props: any) {
            <Button
              variantColor="pink"
              onClick={() =>
-               signInWithEmailandPassword("testemail@gmail.com", "password!1")
+               signInWithEmailandPassword("whynot@gmail.com", "password")
              }
              display="flex"
              w="100%"

@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Avatar,
   Box,
   Button,
   FormControl,
@@ -236,9 +237,29 @@ export function CreateRecipe() {
       rounded="lg"
       shadow="md"
     >
-      <Box className="createRecipe__header" display="flex" justifyContent="space-between" alignItems="center" mb={5} w="100%">
-      <Box><Text as="h3" fontSize="lg" fontWeight="bold" mb={0}>Create Recipe</Text></Box>
-      <Box><Button color="gray.500" rounded="full" p={0} onClick={() => setCreateForm(!createForm)}>X</Button></Box>
+      <Box
+        className="createRecipe__header"
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={5}
+        w="100%"
+      >
+        <Box>
+          <Text as="h3" fontSize="lg" fontWeight="bold" mb={0}>
+            Create Recipe
+          </Text>
+        </Box>
+        <Box>
+          <Button
+            color="gray.500"
+            rounded="full"
+            p={0}
+            onClick={() => setCreateForm(!createForm)}
+          >
+            X
+          </Button>
+        </Box>
       </Box>
       <form onSubmit={(e: React.FormEvent) => handleCreateRecipe(e)}>
         <FormControl mb={3}>
@@ -405,6 +426,7 @@ export function CreateRecipe() {
     </Box>
   ) : (
     <Flex justifyContent="center" alignItems="center">
+    
       <Box
         display="flex"
         justifyContent="center"
@@ -416,7 +438,8 @@ export function CreateRecipe() {
         w="700px"
         maxW="100%"
       >
-        <Button w="100%" onClick={() => setCreateForm(!createForm)}>
+        <Avatar mr={4} size="sm" name={user?.displayName} src={user?.photoURL} />
+        <Button rounded="full" w="100%" onClick={() => setCreateForm(!createForm)}>
           Create Recipe
         </Button>
       </Box>

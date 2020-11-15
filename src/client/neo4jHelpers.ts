@@ -1,12 +1,13 @@
 import { driver } from "../server/neo4j/db";
 
 export async function neo4jVerifyUser(user: any) {
-  const userID = user.user.uid;
+  console.log('user inside neo4j helper', user)
+
   const session = driver().session();
 
   session
     .run("MATCH (u:User) WHERE u.id = $id RETURN u as USER", {
-      id: userID,
+      id: user.userId,
     })
     //@ts-ignore
     .then((result: any) => {
@@ -14,12 +15,14 @@ export async function neo4jVerifyUser(user: any) {
         return session.run(
           "CREATE (u:User {id: $id, userId: $userId, name: $name, isAdmin: false, isPremium: false, avatar: $avatar})",
           {
-            id: userID,
-            userId: userID,
-            name: user.user.displayName,
-            avatar: user.user.photoURL,
+            id: user.userId,
+            userId: user.userId,
+            name: user.name,
+            avatar: user.avatar || null
           }
-        );
+        ).then((result) => {
+          console.log('records', result.records)
+        });
       } else {
         return console.log(result.records[0]);
       }

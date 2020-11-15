@@ -261,7 +261,7 @@ const RecipesPage = () => {
   return (
     <>
       <Header />
-      <div style={{marginTop: '40px'}}><hr /><CreateRecipe /><hr /></div>
+      <div style={{marginTop: '40px'}}><CreateRecipe /></div>
       <GetRecipes />
     </>
   );

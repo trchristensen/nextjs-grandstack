@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next";
 import { Header } from "../client/components/Header";
 import { Box } from "@chakra-ui/core";
 
-import {Login} from "../client/components/Login/Login.component";
+import Login from "../client/components/Login/Login.component";
 
 type Props = {};
 

@@ -6,6 +6,13 @@ import {neo4jVerifyUser} from "./neo4jHelpers"
 
 let _app: firebase.app.App | null = null;
 
+interface IUserObject {
+  userId: string | undefined | null,
+  email: string | undefined | null,
+  avatar?: string | undefined | null,
+  name?: string | undefined | null
+}
+
 export function getApp() {
   if (_app) return _app;
   if (firebase.apps.length > 0) {
@@ -21,16 +28,16 @@ export function getAuth() {
   return getApp().auth();
 }
 
-export async function loginAnonymously(): Promise<firebase.auth.UserCredential | null> {
-  try {
-    const user = await firebase.auth().signInAnonymously();
-    // console.log(user);
-    return user;
-  } catch (error) {
-    console.error("login failed", error);
-    return null;
-  }
-}
+// export async function loginAnonymously(): Promise<firebase.auth.UserCredential | null> {
+//   try {
+//     const user = await firebase.auth().signInAnonymously();
+//     // console.log(user);
+//     return user;
+//   } catch (error) {
+//     console.error("login failed", error);
+//     return null;
+//   }
+// }
 
 
 
@@ -38,8 +45,15 @@ export async function loginWithGithub() {
   const provider = new firebase.auth.GithubAuthProvider();
   try {
     const user = await firebase.auth().signInWithPopup(provider);
-    // console.log(user);
-    neo4jVerifyUser(user);
+    
+    const userObject:IUserObject = {
+      userId: user.user?.uid,
+      email: user.user?.email,
+      avatar: user.user?.photoURL,
+      name: user.user?.displayName,
+    }
+
+    neo4jVerifyUser(userObject);
   } catch (error) {
     console.error("login failed", error);
   }
@@ -50,8 +64,14 @@ export async function loginWithGoogle() {
 
   try {
     const user = await firebase.auth().signInWithPopup(provider);
-    // console.log(user);
-    neo4jVerifyUser(user);
+    const userObject: IUserObject = {
+      userId: user.user?.uid,
+      email: user.user?.email,
+      avatar: user.user?.photoURL,
+      name: user.user?.displayName,
+    };
+
+    neo4jVerifyUser(userObject);
   } catch (error) {
     console.error("login failed", error);
   }
@@ -77,17 +97,28 @@ export async function signInWithEmailandPassword(email:string, password:string) 
 
 export async function createNewUserWithEmailandPassword(
   email: string,
-  password: string
+  password: string,
+  name: string,
+  // avatar?: string,
 ) {
   const user = firebase
     .auth()
     .createUserWithEmailAndPassword(email, password)
-    // .then(function (event) {
-    //   var ref = firebase.database().ref("users").child(user.uid).set({
-    //     email: user.email,
-    //     uid: user.uid,
-    //   });
-    // })
+    .then(function (user) {
+      console.log("user creation:", user);
+
+      const userObject: IUserObject = {
+        userId: user.user?.uid,
+        email: user.user?.email,
+        // avatar: avatar,
+        name: name,
+      };
+
+      console.log('userObject', userObject)
+
+      neo4jVerifyUser(userObject);
+      
+    })
     .catch(function (error) {
       var errorCode = error.code;
       var errorMessage = error.message;
