@@ -48,7 +48,8 @@ export function Header(props:any) {
         align="center"
         justify="space-between"
         wrap="wrap"
-        padding="1.5rem"
+        px="1.5rem"
+        py=".6rem"
         bg="blue.500"
         color="white"
         {...props}
@@ -113,13 +114,10 @@ export function Header(props:any) {
                       </Link>
                     </MenuItem>
                     <MenuDivider />
-                    <MenuItem>Logout</MenuItem>
+                    <MenuItem onClick={() => logout()}>Logout</MenuItem>
                   </MenuList>
                 </Menu>
               </Box>
-              <Button variantColor="pink" onClick={() => logout()}>
-                Logout
-              </Button>
             </Box>
           ) : (
             <Box>
