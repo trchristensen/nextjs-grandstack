@@ -435,7 +435,7 @@ export function CreateRecipe() {
         bg="white"
         rounded="lg"
         shadow="md"
-        w="700px"
+        w="500px"
         maxW="100%"
       >
         <Avatar mr={4} size="sm" name={user?.displayName} src={user?.photoURL} />

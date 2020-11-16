@@ -1,11 +1,12 @@
-import React from 'react'
+import React from "react";
 import { GetServerSideProps } from "next";
+import Link from "next/link";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import { Header } from "../client/components/Header";
 
-import { CreateRecipe } from '../client/components/CreateRecipe/CreateRecipe.component'
-import { useArchiveRecipeMutation, Recipe, Flavor} from '../client/gen/index'
+import { CreateRecipe } from "../client/components/CreateRecipe/CreateRecipe.component";
+import { useArchiveRecipeMutation, Recipe, Flavor } from "../client/gen/index";
 
 import {
   Avatar,
@@ -21,20 +22,25 @@ import {
   MenuDivider,
   Icon,
 } from "@chakra-ui/core";
-import { BiChevronDown } from "react-icons/bi"
+import {
+  BiChevronDown,
+  BiHome,
+  BiSearch,
+  BiNotification,
+  BiBookmark,
+  BiHash,
+} from "react-icons/bi";
 
 import { formatDistanceToNow } from "date-fns";
-
 
 type Props = {};
 
 export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
-  console.log('ctx', ctx)
+  console.log("ctx", ctx);
   return {
     props: {},
   };
 };
-
 
 const RECIPES_NOT_ARCHIVED = gql`
   query recipesNotArchived(
@@ -87,31 +93,27 @@ export const archiveRecipe = gql`
   }
 `;
 
-
-
 function RecipeCard(recipe: Recipe) {
-
-const [archive] = useMutation(archiveRecipe, {
-  refetchQueries: [
-    {
-      query: RECIPES_NOT_ARCHIVED,
-      variables: {
-        orderBy: "published_desc",
+  const [archive] = useMutation(archiveRecipe, {
+    refetchQueries: [
+      {
+        query: RECIPES_NOT_ARCHIVED,
+        variables: {
+          orderBy: "published_desc",
+        },
       },
+    ],
+    variables: {
+      userId: recipe.creator?.id,
+      recipeId: recipe.recipeId,
     },
-  ],
-  variables: {
-    userId: recipe.creator?.id,
-    recipeId: recipe.recipeId,
-  },
-  onCompleted: (res) => {
-    console.log(res);
-  },
-  onError: (err) => {
-    console.error(err);
-  },
-});
-
+    onCompleted: (res) => {
+      console.log(res);
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
 
   return (
     <Box
@@ -254,7 +256,6 @@ const [archive] = useMutation(archiveRecipe, {
   );
 }
 
-
 const GetRecipes = () => {
   const { loading, data, error } = useQuery(RECIPES_NOT_ARCHIVED, {
     notifyOnNetworkStatusChange: true,
@@ -263,10 +264,18 @@ const GetRecipes = () => {
     },
   });
 
-
   return (
     <main>
-      <div style={{ marginTop: "30px", maxWidth: "700px", display: "block", width: '100%', marginLeft: 'auto', marginRight: 'auto'  }}>
+      <div
+        style={{
+          marginTop: "30px",
+          maxWidth: "500px",
+          display: "block",
+          width: "100%",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
+      >
         {loading && !error && <p>Loading...</p>}
         {error && !loading && <p>Error: {JSON.stringify(error)}</p>}
         {data &&
@@ -278,20 +287,101 @@ const GetRecipes = () => {
       </div>
     </main>
   );
-}
-
-
-
+};
 
 const RecipesPage = () => {
   return (
-    <>
+    <Box>
       <Header />
-      <div style={{marginTop: '40px'}}><CreateRecipe /></div>
-      <GetRecipes />
-    </>
-  );
-}
+      <Box display="flex" justifyContent="center" pt={8}>
+        <Box id="sidebar-left" display="flex" flexGrow="1" alignItems="flex-end" flexDir="column">
+          <Box position="fixed" top="100px">
+            <Stack direction={"column"} spacing={5} align="stretch">
+              <Box>
+                <Link href="/">
+                  <a>
+                    <Box
+                      display="flex"
+                      flexDir="row"
+                      alignItems="center"
+                      justifyContent="flex-start"
+                    >
+                      <Icon w={10} h={10} color="gray.600" as={BiHome} />
+                      <Text ml={2} fontWeight="bold">
+                        Home
+                      </Text>
+                    </Box>
+                  </a>
+                </Link>
+              </Box>
+              <Box>
+                <Link href="/">
+                  <a>
+                    <Box
+                      display="flex"
+                      flexDir="row"
+                      alignItems="center"
+                      justifyContent="flex-start"
+                    >
+                      <Icon w={10} h={10} color="gray.600" as={BiHash} />
+                      <Text ml={2} fontWeight="bold">
+                        Explore
+                      </Text>
+                    </Box>
+                  </a>
+                </Link>
+              </Box>
+              <Box>
+                <Link href="/">
+                  <a>
+                    <Box
+                      display="flex"
+                      flexDir="row"
+                      alignItems="center"
+                      justifyContent="flex-start"
+                    >
+                      <Icon
+                        w={10}
+                        h={10}
+                        color="gray.600"
+                        as={BiNotification}
+                      />
+                      <Text ml={2} fontWeight="bold">
+                        Notifications
+                      </Text>
+                    </Box>
+                  </a>
+                </Link>
+              </Box>
+              <Box>
+                <Link href="/">
+                  <a>
+                    <Box
+                      display="flex"
+                      flexDir="row"
+                      alignItems="center"
+                      justifyContent="flex-start"
+                    >
+                      <Icon w={10} h={10} color="gray.600" as={BiBookmark} />
+                      <Text ml={2} fontWeight="bold">
+                        Bookmarks
+                      </Text>
+                    </Box>
+                  </a>
+                </Link>
+              </Box>
+            </Stack>
+          </Box>
+        </Box>
+        <Box id="feed" px={6}>
+          <CreateRecipe />
 
+          <GetRecipes />
+        </Box>
+        <Box id="sidebar-right" display="flex" flexGrow="1" alignItems="flex-end" flexDir="column"></Box>
+      </Box>
+    </Box>
+  );
+};
 
 export default RecipesPage;
