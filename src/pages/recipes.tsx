@@ -2,43 +2,18 @@ import React from "react";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useMutation, useQuery } from "@apollo/react-hooks";
-import { useAuthState } from "react-firebase-hooks/auth";
-import {
-  getAuth,
-  logout,
-} from "../client/firebaseHelpers";
 import gql from "graphql-tag";
-import { Header } from "../client/components/Header";
+// import { useAuthState } from "react-firebase-hooks/auth";
+// import { getAuth, logout } from "../client/firebaseHelpers";
+// import { useArchiveRecipeMutation, Recipe, Flavor } from "../client/gen/index";
+
+import {
+  Box
+} from "@chakra-ui/core";
 
 import { CreateRecipe } from "../client/components/CreateRecipe/CreateRecipe.component";
-import { useArchiveRecipeMutation, Recipe, Flavor } from "../client/gen/index";
+import { RecipeCard } from '../client/components/RecipeCard/RecipeCard.component'
 
-import {
-  Avatar,
-  Box,
-  Text,
-  Button,
-  Stack,
-  Tooltip,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  MenuDivider,
-  Icon,
-  Heading
-} from "@chakra-ui/core";
-import {
-  BiChevronDown,
-  BiHome,
-  BiSearch,
-  BiNotification,
-  BiBookmark,
-  BiHash,
-  BiUser
-} from "react-icons/bi";
-
-import { formatDistanceToNow } from "date-fns";
 
 type Props = {};
 
@@ -86,182 +61,7 @@ const RECIPES_NOT_ARCHIVED = gql`
   }
 `;
 
-export const archiveRecipe = gql`
-  mutation archiveRecipe($recipeId: ID!, $userId: ID!) {
-    archiveRecipe(recipeId: $recipeId, userId: $userId) {
-      recipeId
-      name
-      isArchived
-      creator {
-        id
-        name
-      }
-    }
-  }
-`;
 
-function RecipeCard(recipe: Recipe) {
-  const [archive] = useMutation(archiveRecipe, {
-    refetchQueries: [
-      {
-        query: RECIPES_NOT_ARCHIVED,
-        variables: {
-          orderBy: "published_desc",
-        },
-      },
-    ],
-    variables: {
-      userId: recipe.creator?.id,
-      recipeId: recipe.recipeId,
-    },
-    onCompleted: (res) => {
-      console.log(res);
-    },
-    onError: (err) => {
-      console.error(err);
-    },
-  });
-
-  return (
-    <Box
-      className="recipeCard"
-      marginBottom={4}
-      p={4}
-      shadow="md"
-      rounded="lg"
-      display="block"
-      bg="white"
-      width="full"
-    >
-      <Box
-        className="recipeCard__header"
-        display="flex"
-        flexDirection="row"
-        alignItems="items-start"
-        justifyContent="space-between"
-      >
-        <Box width="full" display="flex" flexDirection="row">
-          <Avatar
-            bg="gray.500"
-            size="sm"
-            name="author name"
-            mt={1}
-            src={recipe.creator?.avatar}
-          ></Avatar>
-          <Box
-            className="recipeCard__header-info"
-            display="flex"
-            flexDirection="column"
-            width="100%"
-            px={2}
-          >
-            <Text
-              as="span"
-              fontSize="lg"
-              lineHeight="shorter"
-              fontWeight="bold"
-              px={0}
-            >
-              {recipe.name}
-            </Text>
-            <Box
-              className="recipeCard__header-info-details"
-              display="flex"
-              flexWrap="wrap"
-              flexDirection="row"
-              alignItems="flex-end"
-              fontSize="sm"
-            >
-              <Text
-                color="text-gray-60"
-                as="span"
-                lineHeight="shorter"
-                display="flex"
-              >
-                {recipe.creator?.name}
-                <Text mx={1}>{" • "} </Text>
-                {formatDistanceToNow(
-                  //@ts-ignore
-                  new Date(recipe.published)
-                )}{" "}
-                {recipe.isArchived && ` - Archived`}
-              </Text>
-            </Box>
-          </Box>
-          <Menu>
-            <MenuButton
-              py={2}
-              px={3}
-              transition="all 0.2s"
-              // borderWidth="1px"
-              color="gray.500"
-              rounded="full"
-              _hover={{ bg: "gray.100" }}
-              _expanded={{ bg: "red.200" }}
-              _focus={{ outline: 0, boxShadow: "outline" }}
-            >
-              <Icon as={BiChevronDown} />
-            </MenuButton>
-            <MenuList>
-              //if this is the users..
-              <MenuItem>Edit</MenuItem>
-              <MenuItem onClick={() => archive()}>Delete</MenuItem>
-              <MenuDivider />
-              <MenuItem>Fork It</MenuItem>
-              <MenuItem>Bookmark it</MenuItem>
-            </MenuList>
-          </Menu>
-        </Box>
-      </Box>
-      <Box className="recipeCard__content">
-        <Box mt={2} mb={3}>
-          <Text>{recipe.description}</Text>
-          {/* <Box>[Flavor details here]</Box> */}
-        </Box>
-        <Box>
-          <Stack
-            className="w-full border rounded-lg overflow-hidden ingredientsBar"
-            bg={"gray.200"}
-            overflow="hidden"
-            borderRadius="lg"
-            border={1}
-            w="full"
-            spacing={0}
-            isInline
-          >
-            {recipe.ingredients &&
-              recipe.ingredients?.map((ingredient: any) => {
-                return (
-                  <Box
-                    style={{ width: `${ingredient.amount}%` }}
-                    // key={ingredient.Flavor.flavorId}
-                    className="ingredientsBar__ingredient text-gray-700 font-semibold text-xs flex justify-center items-center flex-row border-r border-gray-200"
-                  >
-                    <Tooltip
-                      aria-label="tooltip"
-                      label={`${ingredient.Flavor.name} - ${ingredient.amount}
-                      ${ingredient.measurement}`}
-                      placement="bottom"
-                    >
-                      <div
-                        className="w-full text-center relative block"
-                        style={{ height: "10px" }}
-                      ></div>
-                    </Tooltip>
-                  </Box>
-                );
-              })}
-          </Stack>
-        </Box>
-        <Box className="recipe__tags">
-          {recipe.tags?.map((tag) => {
-            return <li>{tag?.name}</li>;
-          })}
-        </Box>
-      </Box>
-    </Box>
-  );
-}
 
 const GetRecipes = () => {
   const recipes = useQuery(RECIPES_NOT_ARCHIVED, {
@@ -272,205 +72,30 @@ const GetRecipes = () => {
   });
 
   return (
-    <main>
-      <div
-        style={{
-          marginTop: "30px",
-          maxWidth: "500px",
-          display: "block",
-          width: "100%",
-          marginLeft: "auto",
-          marginRight: "auto",
-        }}
-      >
-        {recipes.loading && !recipes.error && <p>Loading...</p>}
-        {recipes.error && !recipes.loading && <p>Error: {JSON.stringify(recipes.error)}</p>}
-        {recipes.data &&
-          !recipes.loading &&
-          !recipes.error &&
-          recipes.data.recipesNotArchived.map((recipe: any) => (
-            <RecipeCard key={recipe.recipeId} {...recipe} />
-          ))}
-      </div>
-    </main>
+    <Box>
+      {recipes.loading && !recipes.error && <p>Loading...</p>}
+      {recipes.error && !recipes.loading && (
+        <p>Error: {JSON.stringify(recipes.error)}</p>
+      )}
+      {recipes.data &&
+        !recipes.loading &&
+        !recipes.error &&
+        recipes.data.recipesNotArchived.map((recipe: any) => (
+          <RecipeCard key={recipe.recipeId} {...recipe} />
+        ))}
+    </Box>
   );
 };
 
 const RecipesPage = () => {
-  const [user, loading] = useAuthState(getAuth());
+  
   return (
     <Box>
-      {/* <Header /> */}
-      <Box display="flex" justifyContent="center" pt={8}>
-        <Box
-          id="sidebar-left"
-          display="flex"
-          flexGrow="1"
-          alignItems="flex-end"
-          flexDir="column"
-        >
-          <Box w="175px" maxW="100%">
-            <Box id="sidebar-left__top" position="fixed" top="40px">
-              <Heading as="h1" size="lg" letterSpacing={"-.1rem"}>
-                JuiceSauce
-              </Heading>
-            </Box>
-            <Box id="sidebar-left__main" position="fixed" top="100px">
-              <Stack direction={"column"} spacing={6} align="stretch">
-                <Box>
-                  <Link href="/">
-                    <a>
-                      <Box
-                        display="flex"
-                        flexDir="row"
-                        alignItems="center"
-                        justifyContent="flex-start"
-                      >
-                        <Icon w={10} h={10} color="gray.600" as={BiHome} />
-                        <Text ml={2} fontWeight="bold">
-                          Home
-                        </Text>
-                      </Box>
-                    </a>
-                  </Link>
-                </Box>
-                <Box>
-                  <Link href="/explore">
-                    <a>
-                      <Box
-                        display="flex"
-                        flexDir="row"
-                        alignItems="center"
-                        justifyContent="flex-start"
-                      >
-                        <Icon w={10} h={10} color="gray.600" as={BiHash} />
-                        <Text ml={2} fontWeight="bold">
-                          Explore
-                        </Text>
-                      </Box>
-                    </a>
-                  </Link>
-                </Box>
-                <Box>
-                  <Link href="/notifications">
-                    <a>
-                      <Box
-                        display="flex"
-                        flexDir="row"
-                        alignItems="center"
-                        justifyContent="flex-start"
-                      >
-                        <Icon
-                          w={10}
-                          h={10}
-                          color="gray.600"
-                          as={BiNotification}
-                        />
-                        <Text ml={2} fontWeight="bold">
-                          Notifications
-                        </Text>
-                      </Box>
-                    </a>
-                  </Link>
-                </Box>
-                <Box>
-                  <Link href="/bookmarks">
-                    <a>
-                      <Box
-                        display="flex"
-                        flexDir="row"
-                        alignItems="center"
-                        justifyContent="flex-start"
-                      >
-                        <Icon w={10} h={10} color="gray.600" as={BiBookmark} />
-                        <Text ml={2} fontWeight="bold">
-                          Bookmarks
-                        </Text>
-                      </Box>
-                    </a>
-                  </Link>
-                </Box>
-                {!loading && user && (
-                  <Box>
-                    <Link href={`/u/${user.uid}`}>
-                      <a>
-                        <Box
-                          display="flex"
-                          flexDir="row"
-                          alignItems="center"
-                          justifyContent="flex-start"
-                        >
-                          <Icon w={10} h={10} color="gray.600" as={BiUser} />
-                          <Text ml={2} fontWeight="bold">
-                            Profile
-                          </Text>
-                        </Box>
-                      </a>
-                    </Link>
-                  </Box>
-                )}
-              </Stack>
-            </Box>
-            <Box id="sidebar-left__bottom" position="fixed" bottom="40px">
-              {!loading && user ? (
-                <Box display="flex">
-                  <Box display="flex" alignItems="center">
-                    <Menu>
-                      <MenuButton
-                        // px={4}
-                        py={2}
-                        transition="all 0.2s"
-                        borderRadius="md"
-                        // _hover={{ bg: "gray.100" }}
-                        _focus={{ outline: 0, boxShadow: "outline" }}
-                        bg="transparent"
-                        display="flex"
-                        justifyContent="center"
-                        alignItems="center"
-                      >
-                        <Avatar
-                          marginRight={2}
-                          size="sm"
-                          name={user.displayName}
-                          src={user.photoURL}
-                        />
-                        <Text>{user.displayName}</Text>
-                        <Icon as={BiChevronDown} />
-                      </MenuButton>
-                      <MenuList color="gray.500">
-                        <MenuItem>
-                          <Link href="/dashboard">
-                            <a>Dashboard</a>
-                          </Link>
-                        </MenuItem>
-                        <MenuDivider />
-                        <MenuItem onClick={() => logout()}>Logout</MenuItem>
-                      </MenuList>
-                    </Menu>
-                  </Box>
-                </Box>
-              ) : (
-                <Box>
-                  <Link href="/login">
-                    <a>Login</a>
-                  </Link>
-                </Box>
-              )}
-            </Box>
-          </Box>
-        </Box>
-        <Box id="feed" px={6}>
+      <Box maxW="500px">
+        <Box mb={4}>
           <CreateRecipe />
-
-          <GetRecipes />
         </Box>
-        <Box
-          id="sidebar-right"
-          display="flex"
-          flexGrow="1"
-          alignItems="flex-end"
-          flexDir="column"
-        ></Box>
+        <GetRecipes />
       </Box>
     </Box>
   );

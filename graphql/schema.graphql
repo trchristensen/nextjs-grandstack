@@ -210,6 +210,12 @@ type Query {
     @cypher(
       statement: "MATCH (r:Recipe) WHERE NOT r.isArchived = TRUE RETURN r"
     )
+  userRecipes(
+    userId: ID!
+  ): [Recipe]
+  @cypher(
+    statement: "MATCH (r:Recipe)-[c:CREATED_BY]->(u:User) WHERE NOT r.isArchived = TRUE WITH r, u WHERE u.userId = $userId RETURN r"
+  )
 
   userCount: Int! @cypher(statement: "MATCH (u:User) RETURN COUNT(u)")
   ratingsCount: [RatingCount]

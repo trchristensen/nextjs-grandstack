@@ -228,14 +228,13 @@ export function CreateRecipe() {
 
   return createForm ? (
     <Box
-      w="500px"
-      maxW="100%"
-      marginX="auto"
       marginY="1em"
       bg="white"
       p={6}
       rounded="lg"
       shadow="md"
+      w="500px"
+      maxW="100%"
     >
       <Box
         className="createRecipe__header"
@@ -426,7 +425,6 @@ export function CreateRecipe() {
     </Box>
   ) : (
     <Flex justifyContent="center" alignItems="center">
-    
       <Box
         display="flex"
         justifyContent="center"
@@ -438,8 +436,17 @@ export function CreateRecipe() {
         w="500px"
         maxW="100%"
       >
-        <Avatar mr={4} size="sm" name={user?.displayName} src={user?.photoURL} />
-        <Button rounded="full" w="100%" onClick={() => setCreateForm(!createForm)}>
+        <Avatar
+          mr={4}
+          size="sm"
+          name={user?.displayName}
+          src={user?.photoURL}
+        />
+        <Button
+          rounded="full"
+          w="100%"
+          onClick={() => setCreateForm(!createForm)}
+        >
           Create Recipe
         </Button>
       </Box>

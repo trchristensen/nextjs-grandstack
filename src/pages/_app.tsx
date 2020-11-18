@@ -5,6 +5,7 @@ import { createGraphqlClient } from "../client/createGraphqlClient";
 import theme from "../theme";
 import "../styles.css";
 import { ThemeProvider, CSSReset } from "@chakra-ui/core";
+import MainLayout from "../client/layouts/main";
 
 const App = ({ Component, pageProps }: AppProps) => {
   const client = createGraphqlClient();
@@ -12,7 +13,9 @@ const App = ({ Component, pageProps }: AppProps) => {
     <ApolloProvider client={client as any}>
       <ThemeProvider theme={theme}>
         <CSSReset />
-        <Component {...pageProps} />
+        <MainLayout>
+          <Component {...pageProps} />
+        </MainLayout>
       </ThemeProvider>
     </ApolloProvider>
   );

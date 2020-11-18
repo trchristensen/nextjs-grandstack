@@ -21,8 +21,6 @@ const Index = () => {
 
   return (
     <main>
-      <Header />
-     
     </main>
   );
 };
