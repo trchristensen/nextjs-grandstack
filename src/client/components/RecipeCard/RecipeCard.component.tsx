@@ -23,6 +23,7 @@ import {
   MenuDivider,
   Icon,
   Heading,
+  Tag
 } from "@chakra-ui/core";
 import {
   BiChevronDown,
@@ -272,10 +273,12 @@ export function RecipeCard(recipe: Recipe) {
               })}
           </Stack>
         </Box>
-        <Box className="recipe__tags">
-          {recipe.tags?.map((tag) => {
-            return <li>{tag?.name}</li>;
-          })}
+        <Box className="recipe__tags" mt={1}>
+          <Stack spacing={1} direction="row" flexWrap="wrap">
+            {recipe.tags?.map((tag) => {
+              return <Tag mt={1} size="sm">{tag?.name}</Tag>;
+            })}
+          </Stack>
         </Box>
       </Box>
     </Box>
