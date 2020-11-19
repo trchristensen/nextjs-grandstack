@@ -31,12 +31,14 @@ import { getAuth } from "../../../client/firebaseHelpers";
 import { CheckTotalFlavorAmount } from "../../../helpers/CheckTotalFlavorAmount";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 import {
   useCreateRecipeWithIngredientsMutation,
   Flavor,
 } from "../../gen/index";
-import { useQuery } from "@apollo/react-hooks";
+import { useMutation, useQuery } from "@apollo/react-hooks";
+import { setTimeout } from "timers";
 
 const FLAVORS = gql`
   query Flavors {
@@ -82,6 +84,37 @@ const RECIPES_NOT_ARCHIVED = gql`
   }
 `;
 
+const CREATE_RECIPE_MUTATION = gql`
+  mutation createRecipeWithIngredientsAndTags(
+    $userId: String!
+    $recipeId: ID!
+    $name: String!
+    $description: String!
+    $published: String!
+    $isArchived: Boolean!
+    $ingredients: [CustomIngredientsInput]
+    $notes: String
+    $mixingPercentage: Int
+    $tags: [CustomTagsInput]
+  ) {
+    createRecipeWithIngredientsAndTags(
+      userId: $userId
+      recipeId: $recipeId
+      name: $name
+      description: $description
+      published: $published
+      isArchived: $isArchived
+      ingredients: $ingredients
+      notes: $notes
+      mixingPercentage: $mixingPercentage
+      tags: $tags
+    ) {
+      name
+      recipeId
+    }
+  }
+`;
+
 export function CreateRecipe() {
   const toast = useToast();
   const [user] = useAuthState(getAuth());
@@ -93,10 +126,32 @@ export function CreateRecipe() {
   const [submittable, setSubmittable] = React.useState(false);
   const [mixingPercentage, setMixingPercentage] = React.useState<number>(12);
   const [notes, setNotes] = React.useState<string>("");
+  const [tags, setTags] = React.useState<any[]>()
 
   const [flavorTotal, setFlavorTotal] = React.useState<number>(0);
 
   const [createForm, setCreateForm] = React.useState(false);
+
+  const TagOptions = [
+    { value: "chocolate", label: "Chocolate" },
+    { value: "strawberry", label: "Strawberry" },
+    { value: "vanilla", label: "Vanilla" },
+  ];
+
+  const handleTags = (newValue: any, actionMeta: any) => {
+    setTags(newValue)
+  };
+
+  React.useEffect(() => {
+    console.log('woo',tags)
+  }, [tags])
+
+  const handleTagsInputChange = (inputValue: any, actionMeta: any) => {
+    // console.group("Input Changed");
+    // console.log(inputValue);
+    // console.log(`action: ${actionMeta.action}`);
+    // console.groupEnd();
+  };
 
   const handleChange = (selectedOption: any) => {
     setSelectedOption([...selectedOption]);
@@ -144,7 +199,7 @@ export function CreateRecipe() {
     }
   }, [name, description, selectedOption]);
 
-  const [CreateRecipeWithIngredients] = useCreateRecipeWithIngredientsMutation({
+  const [CreateRecipeWithIngredients] = useMutation(CREATE_RECIPE_MUTATION,{
     refetchQueries: [
       {
         query: RECIPES_NOT_ARCHIVED,
@@ -160,7 +215,7 @@ export function CreateRecipe() {
       setNotes("");
       setSelectedOption(null);
       setSubmittable(true);
-      setCreateForm(false)
+      setCreateForm(false);
       toast({
         title: "Success",
         description: "Recipe has been created!",
@@ -207,6 +262,10 @@ export function CreateRecipe() {
       rObj["flavorId"] = flavor.value;
       return rObj;
     });
+    //@ts-ignore
+    const tagsFormatted = tags?.map((t:any) => {
+      return ({tagId: t.value, name: t.label})
+    })
 
     const RecipePayload = {
       variables: {
@@ -219,6 +278,7 @@ export function CreateRecipe() {
         ingredients: newFlavorInfo,
         notes: `${notes}`,
         mixingPercentage: mixingPercentage,
+        tags: tagsFormatted,
       },
     };
 
@@ -350,7 +410,7 @@ export function CreateRecipe() {
           </RadioGroup>
         </FormControl>
         <FormControl mb={3}>
-          <FormLabel>Select Flavors</FormLabel>
+          <FormLabel>Choose Flavors</FormLabel>
           <Select
             value={selectedOption}
             required
@@ -412,6 +472,17 @@ export function CreateRecipe() {
                 </Box>
               </Box>
             ))}
+        </FormControl>
+        <FormControl mb={3}>
+          <FormLabel>Add Tags</FormLabel>
+          <CreatableSelect
+            isMulti
+            isClearable
+            placeholder="Choose popular Tags or Create your own..."
+            onChange={handleTags}
+            onInputChange={handleTagsInputChange}
+            options={TagOptions}
+          />
         </FormControl>
         <Button
           isDisabled={submittable ? false : true}

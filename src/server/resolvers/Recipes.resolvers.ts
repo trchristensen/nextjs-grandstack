@@ -44,6 +44,35 @@ export const RecipeMutations: MutationResolvers<Context> = {
     }
     return neo4jgraphql(object, params, _context, resolveInfo);
   },
+   //@ts-ignore
+  async createRecipeWithIngredientsAndTags(object, params, _context, resolveInfo) {
+    console.log(params);
+
+    // validation
+    if (params.name.length < 3) {
+      throw new Error("please make the name at least 3 characters long");
+    }
+    if (params.description.length < 3) {
+      throw new Error("please make the description at least 3 characters long");
+    }
+
+    params.ingredients?.map((ingredient:any) => {
+      if(ingredient?.measurement != 'g' && ingredient?.measurement != '%' && ingredient?.measurement != 'drops') {
+        throw new Error('invalid input for ingredient')
+      }
+      if(ingredient?.amount == null || isNaN(ingredient?.amount)) {
+        throw new Error('invalid ingredient amount');
+      }
+    })
+
+    if (_context.idToken?.uid == null) {
+      throw new Error("401");
+    }
+    if (_context.idToken?.uid != params.userId) {
+      throw new Error("wrong user!");
+    }
+    return neo4jgraphql(object, params, _context, resolveInfo);
+  },
 
   async archiveRecipe(object, params, _context, resolveInfo) {
     console.log(object, params, _context, resolveInfo);

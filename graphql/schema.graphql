@@ -140,6 +140,10 @@ input CustomIngredientsInput {
   flavorId: String
 }
 
+input CustomTagsInput {
+  tagId: ID!
+  name: String!
+}
 
 type Mutation {
 
@@ -175,6 +179,22 @@ type Mutation {
       statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[relationship:USED_IN {measurement: ingredient.measurement, amount: ingredient.amount}]-(f) RETURN r"
     )
 
+    createRecipeWithIngredientsAndTags(
+    recipeId: ID!
+    name: String!
+    description: String!
+    published: String!
+    userId: String!
+    ingredients: [CustomIngredientsInput]
+    isArchived: Boolean
+    notes: String
+    mixingPercentage: Int
+    tags: [CustomTagsInput]
+  ): Recipe
+    @cypher(
+      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {measurement: ingredient.measurement, amount: ingredient.amount}]-(f) WITH r, u UNWIND $tags as tag MATCH (t:Tag) WHERE t.tagId = tag.tagId MERGE (r)-[:HAS_TAG]->(t) SET t.tagId = tag.tagId, t.name = tag.name RETURN r"
+    )
+
   archiveRecipe(recipeId: ID!, userId: ID!): Recipe
     @cypher(
       statement: "MATCH (r:Recipe) WHERE r.recipeId = $recipeId SET r.isArchived = true RETURN r"
@@ -188,7 +208,7 @@ type Mutation {
     published: String!
   ): Comment
     @cypher(
-      statement: "MATCH (r:Recipe) WHERE r.recipeId = $recipeId MATCH (u:User) WHERE u.userId = $userId WITH u, r MERGE (r)<-[rel:COMMENT_ON]-(c:Comment{commentId: $commentId, text: $text, published: $published})<-[:WROTE]-(u) RETURN c"
+      statement: "MATCH (r:Recipe) WHERE r.recipeId = $recipeId MATCH (u:User) WHERE u.userId = $userId WITH u, r MERGE (r)<-[rel:COMMENT_ON]-(c:Comment {commentId: $commentId, text: $text, published: $published})<-[:WROTE]-(u) RETURN c"
     )
 
   createReplyToComment(

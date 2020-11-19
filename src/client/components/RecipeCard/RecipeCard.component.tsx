@@ -33,6 +33,9 @@ import {
   BiHash,
   BiUser,
   BiGitRepoForked,
+  BiBookBookmark,
+  BiTrash,
+  BiEdit,
 } from "react-icons/bi";
 
 import { formatDistanceToNow } from "date-fns";
@@ -176,9 +179,8 @@ export function RecipeCard(recipe: Recipe) {
                 display="flex"
               >
                 <Link href={`/u/${recipe.creator?.id}`}>
-            <a>
-                {recipe.creator?.name}the fuck
-                </a></Link>
+                  <a>{recipe.creator?.name}</a>
+                </Link>
                 <Text mx={1}>{" • "} </Text>
                 {formatDistanceToNow(
                   //@ts-ignore
@@ -205,14 +207,26 @@ export function RecipeCard(recipe: Recipe) {
             <MenuList>
               {!userAuthLoading && userAuth?.uid === recipe.creator.id && (
                 <>
-                  <MenuItem>Edit</MenuItem>
-                  <MenuItem onClick={() => archive()}>Delete</MenuItem>
+                  <MenuItem>
+                    <Icon as={BiEdit} mr={1} />
+                    Edit
+                  </MenuItem>
+                  <MenuItem onClick={() => archive()}>
+                    <Icon as={BiTrash} mr={1} />
+                    Delete
+                  </MenuItem>
                   <MenuDivider />
                 </>
               )}
 
-              <MenuItem>Fork It</MenuItem>
-              <MenuItem>Bookmark it</MenuItem>
+              <MenuItem>
+                <Icon mr={1} as={BiGitRepoForked} />
+                Remix
+              </MenuItem>
+              <MenuItem>
+                <Icon mr={1} as={BiBookmark} />
+                Bookmark
+              </MenuItem>
             </MenuList>
           </Menu>
         </Box>
@@ -238,6 +252,7 @@ export function RecipeCard(recipe: Recipe) {
                 return (
                   <Box
                     style={{ width: `${ingredient.amount}%` }}
+                    backgroundColor="gray.500"
                     // key={ingredient.Flavor.flavorId}
                     className="ingredientsBar__ingredient text-gray-700 font-semibold text-xs flex justify-center items-center flex-row border-r border-gray-200"
                   >

@@ -16,12 +16,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
 
 const RecipesPage = () => {
   return (
-    <>
-      <Header />
-      <Box style={{ marginTop: "40px" }}>
+    <Box w="500px" maxW="100%">
         <Login />
-      </Box>
-    </>
+    </Box>
   );
 };
 

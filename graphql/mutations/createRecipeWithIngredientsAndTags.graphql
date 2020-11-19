@@ -1,0 +1,28 @@
+mutation createRecipeWithIngredientsAndTags(
+  $userId: String!
+  $recipeId: ID!
+  $name: String!
+  $description: String!
+  $published: String!
+  $isArchived: Boolean!
+  $ingredients: [CustomIngredientsInput]
+  $notes: String
+  $mixingPercentage: Int
+  $tags: [CustomTagsInput]
+) {
+  createRecipeWithIngredientsAndTags(
+    userId: $userId
+    recipeId: $recipeId
+    name: $name
+    description: $description
+    published: $published
+    isArchived: $isArchived
+    ingredients: $ingredients
+    notes: $notes
+    mixingPercentage: $mixingPercentage
+    tags: $tags
+  ) {
+    name
+    recipeId
+  }
+}

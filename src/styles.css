@@ -3,8 +3,14 @@
   z-index: 99 !important;
 }
 
-.ingredientsBar > :nth-child(1) {
-  background: #8bcf69
+.ingredientsBar__ingredient {
+  border-right: 1px solid #efefef;
+}
+
+
+/* .ingredientsBar > :nth-child(1) {
+  background: #8bcf69;
+  border-left: none;
 }
 
 .ingredientsBar > :nth-child(2) {
@@ -22,4 +28,4 @@
 
 .ingredientsBar > :nth-child(5) {
   background: #719fd1;
-}
+} */

@@ -3,41 +3,14 @@ import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { getAuth, logout } from "../client/firebaseHelpers";
+// import { useAuthState } from "react-firebase-hooks/auth";
+// import { getAuth, logout } from "../client/firebaseHelpers";
+// import { useArchiveRecipeMutation, Recipe, Flavor } from "../client/gen/index";
 
-import { Header } from "../client/components/Header";
+import { Box } from "@chakra-ui/core";
 
 import { CreateRecipe } from "../client/components/CreateRecipe/CreateRecipe.component";
-import { useArchiveRecipeMutation, Recipe, Flavor } from "../client/gen/index";
-
-import {
-  Avatar,
-  Box,
-  Text,
-  Button,
-  Stack,
-  Tooltip,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  MenuDivider,
-  Icon,
-  Heading,
-} from "@chakra-ui/core";
-import {
-  BiChevronDown,
-  BiHome,
-  BiSearch,
-  BiNotification,
-  BiBookmark,
-  BiHash,
-  BiUser,
-  BiGitRepoForked,
-} from "react-icons/bi";
-
-import { formatDistanceToNow } from "date-fns";
+import { RecipeCard } from "../client/components/RecipeCard/RecipeCard.component";
 
 type Props = {};
 
@@ -85,184 +58,6 @@ const RECIPES_NOT_ARCHIVED = gql`
   }
 `;
 
-export const archiveRecipe = gql`
-  mutation archiveRecipe($recipeId: ID!, $userId: ID!) {
-    archiveRecipe(recipeId: $recipeId, userId: $userId) {
-      recipeId
-      name
-      isArchived
-      creator {
-        id
-        name
-      }
-    }
-  }
-`;
-
-function RecipeCard(recipe: Recipe) {
-  const [archive] = useMutation(archiveRecipe, {
-    refetchQueries: [
-      {
-        query: RECIPES_NOT_ARCHIVED,
-        variables: {
-          orderBy: "published_desc",
-        },
-      },
-    ],
-    variables: {
-      userId: recipe.creator?.id,
-      recipeId: recipe.recipeId,
-    },
-    onCompleted: (res) => {
-      console.log(res);
-    },
-    onError: (err) => {
-      console.error(err);
-    },
-  });
-
-  return (
-    <Box
-      className="recipeCard"
-      marginBottom={4}
-      p={4}
-      shadow="md"
-      rounded="lg"
-      display="block"
-      bg="white"
-      width="full"
-    >
-      <Box
-        className="recipeCard__header"
-        display="flex"
-        flexDirection="row"
-        alignItems="items-start"
-        justifyContent="space-between"
-      >
-        <Box width="full" display="flex" flexDirection="row">
-          <Avatar
-            bg="gray.500"
-            size="sm"
-            name="author name"
-            mt={1}
-            src={recipe.creator?.avatar}
-          ></Avatar>
-          <Box
-            className="recipeCard__header-info"
-            display="flex"
-            flexDirection="column"
-            width="100%"
-            px={2}
-          >
-            <Text
-              as="span"
-              fontSize="lg"
-              lineHeight="shorter"
-              fontWeight="bold"
-              px={0}
-            >
-              {recipe.name}
-            </Text>
-            {recipe.parent && <Icon as={BiGitRepoForked} />}
-            <Box
-              className="recipeCard__header-info-details"
-              display="flex"
-              flexWrap="wrap"
-              flexDirection="row"
-              alignItems="flex-end"
-              fontSize="sm"
-            >
-              <Text
-                color="text-gray-60"
-                as="span"
-                lineHeight="shorter"
-                display="flex"
-              >
-                {recipe.creator?.name}
-                <Text mx={1}>{" • "} </Text>
-                {formatDistanceToNow(
-                  //@ts-ignore
-                  new Date(recipe.published)
-                )}{" "}
-                {recipe.isArchived && ` - Archived`}
-              </Text>
-            </Box>
-          </Box>
-          <Menu>
-            <MenuButton
-              py={2}
-              px={3}
-              transition="all 0.2s"
-              // borderWidth="1px"
-              color="gray.500"
-              rounded="full"
-              _hover={{ bg: "gray.100" }}
-              _expanded={{ bg: "red.200" }}
-              _focus={{ outline: 0, boxShadow: "outline" }}
-            >
-              <Icon as={BiChevronDown} />
-            </MenuButton>
-            <MenuList>
-              //if this is the users..
-              <MenuItem>Edit</MenuItem>
-              <MenuItem onClick={() => archive()}>Delete</MenuItem>
-              <MenuDivider />
-              <MenuItem>Fork It</MenuItem>
-              <MenuItem>Bookmark it</MenuItem>
-            </MenuList>
-          </Menu>
-        </Box>
-      </Box>
-      <Box className="recipeCard__content">
-        <Box mt={2} mb={3}>
-          <Text>{recipe.description}</Text>
-          {/* <Box>[Flavor details here]</Box> */}
-        </Box>
-        <Box>
-          <Stack
-            className="w-full border rounded-lg overflow-hidden ingredientsBar"
-            bg={"gray.200"}
-            overflow="hidden"
-            borderRadius="lg"
-            border={1}
-            w="full"
-            spacing={0}
-            isInline
-          >
-            {recipe.ingredients &&
-              recipe.ingredients?.map((ingredient: any) => {
-                return (
-                  <Box
-                    style={{ width: `${ingredient.amount}%` }}
-                    // key={ingredient.Flavor.flavorId}
-                    className="ingredientsBar__ingredient text-gray-700 font-semibold text-xs flex justify-center items-center flex-row border-r border-gray-200"
-                  >
-                    <Tooltip
-                      aria-label="tooltip"
-                      label={`${ingredient.Flavor.name} - ${ingredient.amount}
-                      ${ingredient.measurement}`}
-                      placement="bottom"
-                    >
-                      <div
-                        className="w-full text-center relative block"
-                        style={{ height: "10px" }}
-                      ></div>
-                    </Tooltip>
-                  </Box>
-                );
-              })}
-          </Stack>
-        </Box>
-        <Box className="recipe__tags">
-          {recipe.tags?.map((tag) => {
-            return <li>{tag?.name}</li>;
-          })}
-        </Box>
-      </Box>
-    </Box>
-  );
-}
-
 const GetRecipes = () => {
   const recipes = useQuery(RECIPES_NOT_ARCHIVED, {
     notifyOnNetworkStatusChange: true,
@@ -272,34 +67,31 @@ const GetRecipes = () => {
   });
 
   return (
-      <div
-        style={{
-          marginTop: "30px",
-          maxWidth: "500px",
-          display: "block",
-          width: "100%",
-        }}
-      >
-        {recipes.loading && !recipes.error && <p>Loading...</p>}
-        {recipes.error && !recipes.loading && (
-          <p>Error: {JSON.stringify(recipes.error)}</p>
-        )}
-        {recipes.data &&
-          !recipes.loading &&
-          !recipes.error &&
-          recipes.data.recipesNotArchived.map((recipe: any) => (
-            <RecipeCard key={recipe.recipeId} {...recipe} />
-          ))}
-      </div>
+    <Box>
+      {recipes.loading && !recipes.error && <p>Loading...</p>}
+      {recipes.error && !recipes.loading && (
+        <p>Error: {JSON.stringify(recipes.error)}</p>
+      )}
+      {recipes.data &&
+        !recipes.loading &&
+        !recipes.error &&
+        recipes.data.recipesNotArchived.map((recipe: any) => (
+          <RecipeCard key={recipe.recipeId} {...recipe} />
+        ))}
+    </Box>
   );
 };
 
 const RecipesPage = () => {
   return (
-    <>
-      <CreateRecipe />
-      <GetRecipes />
-    </>
+    <Box>
+      <Box maxW="500px">
+        <Box mb={4}>
+          <CreateRecipe />
+        </Box>
+        <GetRecipes />
+      </Box>
+    </Box>
   );
 };
 
