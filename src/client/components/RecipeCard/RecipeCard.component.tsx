@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth, logout } from "../../../client/firebaseHelpers";
+import { LikesAndComments } from "../LikesAndComments/LikesAndComments.component"
 
 
 import { useArchiveRecipeMutation, Recipe, Flavor } from "../client/gen/index";
@@ -37,12 +38,16 @@ import {
   BiBookBookmark,
   BiTrash,
   BiEdit,
+  BiLike,
+  BiDislike,
+  BiComment
 } from "react-icons/bi";
 
 import { formatDistanceToNow } from "date-fns";
+import { CreateRandomID } from "../../../helpers/CreateRandomId";
 
 
-export const archiveRecipe = gql`
+export const ARCHIVE_RECIPE = gql`
   mutation archiveRecipe($recipeId: ID!, $userId: ID!) {
     archiveRecipe(recipeId: $recipeId, userId: $userId) {
       recipeId
@@ -89,6 +94,25 @@ const RECIPES_NOT_ARCHIVED = gql`
         name
         tagId
       }
+      numComments
+    }
+  }
+`;
+
+const ADD_RECIPE_LIKE = gql`
+  mutation addRecipeLike(
+    $userId: String!
+    $recipeId: String!
+    $likeId: ID!
+    $timestamp: String!
+  ) {
+    addRecipeLike(
+      userId: $userId
+      recipeId: $recipeId
+      likeId: $likeId
+      timestamp: $timestamp
+    ) {
+      userId
     }
   }
 `;
@@ -97,7 +121,7 @@ export function RecipeCard(recipe: Recipe) {
   const [userAuth, userAuthLoading] = useAuthState(getAuth());
 
 
-  const [archive] = useMutation(archiveRecipe, {
+  const [archive] = useMutation(ARCHIVE_RECIPE, {
     refetchQueries: [
       {
         query: RECIPES_NOT_ARCHIVED,
@@ -117,6 +141,31 @@ export function RecipeCard(recipe: Recipe) {
       console.error(err);
     },
   });
+
+
+    const [addLike] = useMutation(ADD_RECIPE_LIKE, {
+      refetchQueries: [
+        {
+          query: RECIPES_NOT_ARCHIVED,
+          variables: {
+            orderBy: "published_desc",
+          },
+        },
+      ],
+      variables: {
+        userId: recipe.creator?.id,
+        recipeId: recipe.recipeId,
+        likeId: CreateRandomID(16),
+        timestamp: new Date().toISOString(),
+      },
+      onCompleted: (res) => {
+        console.log(res);
+      },
+      onError: (err) => {
+        console.error(err);
+      },
+    });
+
 
   return (
     <Box
@@ -276,9 +325,43 @@ export function RecipeCard(recipe: Recipe) {
         <Box className="recipe__tags" mt={1}>
           <Stack spacing={1} direction="row" flexWrap="wrap">
             {recipe.tags?.map((tag) => {
-              return <Tag mt={1} size="sm">{tag?.name}</Tag>;
+              return (
+                <Tag mt={1} size="sm">
+                  {tag?.name}
+                </Tag>
+              );
             })}
           </Stack>
+        </Box>
+        <Box mt={3}>
+          <Box className="likesAndComments">
+            <Box
+              className="lac__statusBar"
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Box d="flex" alignItems="center" color="gray.600">
+                {recipe.numComments > 0 && recipe.numComments}{" "}
+                <Icon size={5} ml={1} as={BiComment} />
+              </Box>
+              <Box className="likesAndDislikes" d="flex" flexDir="row">
+                <Box d="flex" alignItems="center" color="gray.600">
+                  {recipe.numLikes}
+                  <Icon as={BiLike} ml={2} size={5} onClick={() => addLike()} />
+                </Box>
+                <Box d="flex" alignItems="center" color="gray.600">
+                  {/* {recipe.numDisLikes} */}
+                  <Icon
+                    as={BiDislike}
+                    ml={2}
+                    size={5}
+                    onClick={() => null}
+                  />
+                </Box>
+              </Box>
+            </Box>
+          </Box>
         </Box>
       </Box>
     </Box>

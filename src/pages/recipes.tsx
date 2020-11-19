@@ -57,6 +57,7 @@ const RECIPES_NOT_ARCHIVED = gql`
         name
         tagId
       }
+      numComments
     }
   }
 `;
