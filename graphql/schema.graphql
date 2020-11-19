@@ -192,7 +192,7 @@ type Mutation {
     tags: [CustomTagsInput]
   ): Recipe
     @cypher(
-      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {measurement: ingredient.measurement, amount: ingredient.amount}]-(f) WITH r, u UNWIND $tags as tag MATCH (t:Tag) WHERE t.tagId = tag.tagId MERGE (r)-[:HAS_TAG]->(t) SET t.tagId = tag.tagId, t.name = tag.name RETURN r"
+      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {measurement: ingredient.measurement, amount: ingredient.amount}]-(f) WITH r, u UNWIND $tags as tag MERGE (t:Tag {tagId: tag.tagId, name: tag.name}) MERGE (r)-[:HAS_TAG]->(t) RETURN r"
     )
 
   archiveRecipe(recipeId: ID!, userId: ID!): Recipe
