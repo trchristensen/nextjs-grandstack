@@ -47,41 +47,33 @@ export const RECIPES_NOT_ARCHIVED = gql`
         name
         tagId
       }
-      numComments
+      likes {
+        userId
+      }
+      dislikes {
+        userId
+      }
+      numLikes
+      numDislikes
+      # numComments
     }
   }
 `;
 
-export const ADD_RECIPE_LIKE = gql`
-  mutation addRecipeLike(
+export const UPDATE_RECIPE_RATING = gql`
+  mutation updateRecipeRating(
     $userId: String!
     $recipeId: String!
-    $likeId: ID!
+    $ratingId: ID!
+    $like: Boolean!
     $timestamp: String!
   ) {
-    addRecipeLike(
+    updateRecipeRating(
       userId: $userId
       recipeId: $recipeId
-      likeId: $likeId
+      ratingId: $ratingId
       timestamp: $timestamp
-    ) {
-      userId
-    }
-  }
-`;
-
-export const REMOVE_RECIPE_LIKE = gql`
-  mutation removeRecipeLike(
-    $userId: String!
-    $recipeId: String!
-    $likeId: ID!
-    $timestamp: String!
-  ) {
-    removeRecipeLike(
-      userId: $userId
-      recipeId: $recipeId
-      likeId: $likeId
-      timestamp: $timestamp
+      like: $like
     ) {
       userId
     }

@@ -1,0 +1,17 @@
+mutation updateRecipeRating(
+  $userId: String!
+  $recipeId: String!
+  $ratingId: ID!
+  $like: Boolean!
+  $timestamp: String!
+) {
+  updateRecipeRating(
+    userId: $userId
+    recipeId: $recipeId
+    ratingId: $ratingId
+    like: $like
+    timestamp: $timestamp
+  ) {
+    userId
+  }
+}

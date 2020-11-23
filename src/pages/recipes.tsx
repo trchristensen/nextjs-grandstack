@@ -7,13 +7,11 @@ import gql from "graphql-tag";
 // import { getAuth, logout } from "../client/firebaseHelpers";
 // import { useArchiveRecipeMutation, Recipe, Flavor } from "../client/gen/index";
 
-import {
-  Box
-} from "@chakra-ui/core";
+import { Box } from "@chakra-ui/core";
 
 import { CreateRecipe } from "../client/components/CreateRecipe/CreateRecipe.component";
-import { RecipeCard } from '../client/components/RecipeCard/RecipeCard.component'
-
+import { RecipeCard } from "../client/components/RecipeCard/RecipeCard.component";
+import { RECIPES_NOT_ARCHIVED } from "../client/gql/recipes";
 
 type Props = {};
 
@@ -24,49 +22,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   };
 };
 
-const RECIPES_NOT_ARCHIVED = gql`
-  query recipesNotArchived(
-    $first: Int
-    $offset: Int
-    $orderBy: [_RecipeOrdering]
-  ) {
-    recipesNotArchived(first: $first, offset: $offset, orderBy: $orderBy) {
-      recipeId
-      name
-      description
-      published
-      lastEdited
-      creator {
-        id
-        name
-        avatar
-      }
-      parent {
-        recipeId
-        name
-      }
-      ingredients {
-        amount
-        measurement
-        Flavor {
-          flavorId
-          name
-        }
-      }
-      tags {
-        name
-        tagId
-      }
-      numComments
-    }
-  }
-`;
-
-
-
 const GetRecipes = () => {
   const recipes = useQuery(RECIPES_NOT_ARCHIVED, {
-    notifyOnNetworkStatusChange: true,
     variables: {
       orderBy: "published_desc",
     },
@@ -89,7 +46,6 @@ const GetRecipes = () => {
 };
 
 const RecipesPage = () => {
-  
   return (
     <Box>
       <Box maxW="500px">

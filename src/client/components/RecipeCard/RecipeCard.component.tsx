@@ -162,7 +162,7 @@ export function RecipeCard(recipe: Recipe) {
               <Icon as={BiChevronDown} />
             </MenuButton>
             <MenuList>
-              {!userAuthLoading && userAuth?.uid === recipe.creator.id && (
+              {!userAuthLoading && userAuth?.uid === recipe.creator?.id && (
                 <>
                   <MenuItem>
                     <Icon as={BiEdit} mr={1} />
