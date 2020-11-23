@@ -2,12 +2,10 @@ import React from "react";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useMutation, useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { getAuth, logout } from "../../../client/firebaseHelpers";
-import { LikesAndComments } from "../LikesAndComments/LikesAndComments.component";
+import { getAuth } from "../../../client/firebaseHelpers";
 
-import { useArchiveRecipeMutation, Recipe, Flavor } from "../../gen/index";
+import { Recipe, Flavor } from "../../gen/index";
 import { RECIPES_NOT_ARCHIVED, ARCHIVE_RECIPE } from "../../gql/recipes";
 
 import {
@@ -47,7 +45,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
 
-import { LikeBox } from '../LikesAndComments/LikeBox.component';
+import { LikesAndComments }  from '../LikesAndComments/LikesAndComments.component'
 
 
 export function RecipeCard(recipe: Recipe) {
@@ -241,22 +239,7 @@ export function RecipeCard(recipe: Recipe) {
           </Stack>
         </Box>
         <Box mt={3}>
-          <Box className="likesAndComments">
-            <Box
-              className="lac__statusBar"
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Box d="flex" alignItems="center" color="gray.600">
-                {recipe.numComments > 0 && recipe.numComments}{" "}
-                <Icon size={5} ml={1} as={BiComment} />
-              </Box>
-              <Box className="likesAndDislikes" d="flex" flexDir="row">
-               <LikeBox {...recipe} {...userAuth} />
-              </Box>
-            </Box>
-          </Box>
+          <LikesAndComments {...recipe} />
         </Box>
       </Box>
     </Box>
