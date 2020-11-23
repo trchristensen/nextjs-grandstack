@@ -17,14 +17,14 @@ import { CreateRandomID } from "../../../helpers/CreateRandomId";
 export const LikeBox = (recipe: Recipe) => {
   const toast = useToast();
   const [updateRating] = useMutation(UPDATE_RECIPE_RATING, {
-    // refetchQueries: [
-    //   {
-    //     query: RECIPES_NOT_ARCHIVED,
-    //     variables: {
-    //       orderBy: "published_desc",
-    //     },
-    //   },
-    // ],
+    refetchQueries: [
+      {
+        query: RECIPES_NOT_ARCHIVED,
+        variables: {
+          orderBy: "published_desc",
+        },
+      },
+    ],
     onCompleted: (res) => {
       console.log(res);
       // setLiked(liked);
@@ -82,15 +82,6 @@ export const LikeBox = (recipe: Recipe) => {
       variables: { ...ratingPayload, ...userRating },
     });
     setLiked(!liked);
-
-    let ratingNum = (userRating: any) => {
-      if (userRating.like === true) {
-        return userRating + 1;
-      } else {
-        return userRating - 1;
-      }
-    };
-    setRating(ratingNum);
   };
 
   return (
