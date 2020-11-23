@@ -10,7 +10,6 @@ export const LikesQueries: QueryResolvers<Context> = {
 
 export const LikesMutations: MutationResolvers<Context> = {
   //@ts-ignore
-
   async addRecipeLike(object, params, _context, resolveInfo) {
     console.log(object, params, _context, resolveInfo);
     // if (_context.idToken?.uid == null) {

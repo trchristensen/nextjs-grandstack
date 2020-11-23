@@ -5,8 +5,7 @@ import { useMutation, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth, logout } from "../../../client/firebaseHelpers";
-import { LikesAndComments } from "../LikesAndComments/LikesAndComments.component"
-
+import { LikesAndComments } from "../LikesAndComments/LikesAndComments.component";
 
 import { useArchiveRecipeMutation, Recipe, Flavor } from "../client/gen/index";
 
@@ -24,7 +23,8 @@ import {
   MenuDivider,
   Icon,
   Heading,
-  Tag
+  Tag,
+  useToast
 } from "@chakra-ui/core";
 import {
   BiChevronDown,
@@ -40,12 +40,11 @@ import {
   BiEdit,
   BiLike,
   BiDislike,
-  BiComment
+  BiComment,
 } from "react-icons/bi";
 
 import { formatDistanceToNow } from "date-fns";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
-
 
 export const ARCHIVE_RECIPE = gql`
   mutation archiveRecipe($recipeId: ID!, $userId: ID!) {
@@ -117,9 +116,171 @@ const ADD_RECIPE_LIKE = gql`
   }
 `;
 
-export function RecipeCard(recipe: Recipe) {
+const REMOVE_RECIPE_LIKE = gql`
+  mutation removeRecipeLike(
+    $userId: String!
+    $recipeId: String!
+    $likeId: ID!
+    $timestamp: String!
+  ) {
+    removeRecipeLike(
+      userId: $userId
+      recipeId: $recipeId
+      likeId: $likeId
+      timestamp: $timestamp
+    ) {
+      userId
+    }
+  }
+`;
+
+export const LikeBox = (recipe:Recipe) => {
+  const toast = useToast();
+  const [addLike] = useMutation(ADD_RECIPE_LIKE, {
+    refetchQueries: [
+      {
+        query: RECIPES_NOT_ARCHIVED,
+        variables: {
+          orderBy: "published_desc",
+        },
+      },
+    ],
+    variables: {
+      userId: recipe.creator?.id,
+      recipeId: recipe.recipeId,
+      likeId: CreateRandomID(16),
+      timestamp: new Date().toISOString(),
+    },
+    onCompleted: (res) => {
+      console.log(res);
+      setLiked(liked);
+      toast({
+        title: "Success",
+        description: `Recipe has been liked!`,
+        status: "success",
+        position: "bottom-right",
+        duration: 8000,
+        isClosable: true,
+      });
+    },
+    onError: (err) => {
+      console.error(err);
+      toast({
+        title: "Error",
+        description: `${err}`,
+        status: "error",
+        position: "bottom-right",
+        duration: 8000,
+        isClosable: true,
+      });
+    },
+  });
+
+  const [removeLike] = useMutation(REMOVE_RECIPE_LIKE, {
+    refetchQueries: [
+      {
+        query: RECIPES_NOT_ARCHIVED,
+        variables: {
+          orderBy: "published_desc",
+        },
+      },
+    ],
+    variables: {
+      userId: recipe.creator?.id,
+      recipeId: recipe.recipeId,
+      likeId: CreateRandomID(16),
+      timestamp: new Date().toISOString(),
+    },
+    onCompleted: (res) => {
+      console.log(res);
+      setLiked(false);
+      toast({
+        title: "Success",
+        description: `Recipe has been unliked!`,
+        status: "success",
+        position: "bottom-right",
+        duration: 8000,
+        isClosable: true,
+      });
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
+
+  const [liked, setLiked] = React.useState<Boolean>(false);
   const [userAuth, userAuthLoading] = useAuthState(getAuth());
 
+  React.useEffect(() => {
+    recipe.likes?.map((like: any) => {
+      if (like.userId == userAuth?.uid) {
+        setLiked(true);
+      } else {
+        setLiked(false);
+      }
+    });
+  }, [recipe]);
+
+  const handleLike = () => {
+    console.log("clicked the fucking like button");
+
+    recipe.likes?.map((like: any) => {
+      console.log("userauth id is contained in the recipe likes");
+      addLike();
+      setLiked(true);
+      if (!liked) {
+        addLike();
+        setLiked(true)
+      } else {
+        removeLike();
+        setLiked(false)
+      }
+      return;
+    });
+
+      addLike();
+      setLiked(true)
+      return;
+      
+  };
+
+  return (
+    <Box d="flex" justifyContent="center" alignItems="center">
+      <Box>{recipe.likes?.length}</Box>
+      <Button
+        onClick={() => handleLike()}
+        ml={2}
+        transition="all 0.2s"
+        // borderWidth="1px"
+        color="gray.500"
+        bg={liked ? `gray.100` : null}
+        rounded="full"
+        _hover={{ bg: "gray.100" }}
+        _expanded={{ bg: "red.200" }}
+        _focus={{ outline: 0, boxShadow: "outline" }}
+        alignItems="center"
+        w="40px"
+        h="40px"
+        d="flex"
+        justifyContent="center"
+        alignItems="center"
+        minW="none"
+        p={0}
+      >
+        <Icon
+          color={liked && `gray.500`}
+          as={BiLike}
+          ml={2}
+          size={5}
+          ml="-.05em"
+        />
+      </Button>
+    </Box>
+  );
+}
+
+export function RecipeCard(recipe: Recipe) {
+  const [userAuth, userAuthLoading] = useAuthState(getAuth());
 
   const [archive] = useMutation(ARCHIVE_RECIPE, {
     refetchQueries: [
@@ -141,31 +302,6 @@ export function RecipeCard(recipe: Recipe) {
       console.error(err);
     },
   });
-
-
-    const [addLike] = useMutation(ADD_RECIPE_LIKE, {
-      refetchQueries: [
-        {
-          query: RECIPES_NOT_ARCHIVED,
-          variables: {
-            orderBy: "published_desc",
-          },
-        },
-      ],
-      variables: {
-        userId: recipe.creator?.id,
-        recipeId: recipe.recipeId,
-        likeId: CreateRandomID(16),
-        timestamp: new Date().toISOString(),
-      },
-      onCompleted: (res) => {
-        console.log(res);
-      },
-      onError: (err) => {
-        console.error(err);
-      },
-    });
-
 
   return (
     <Box
@@ -303,7 +439,7 @@ export function RecipeCard(recipe: Recipe) {
                   <Box
                     style={{ width: `${ingredient.amount}%` }}
                     backgroundColor="gray.500"
-                    // key={ingredient.Flavor.flavorId}
+                    key={ingredient.Flavor.flavorId}
                     className="ingredientsBar__ingredient text-gray-700 font-semibold text-xs flex justify-center items-center flex-row border-r border-gray-200"
                   >
                     <Tooltip
@@ -324,9 +460,9 @@ export function RecipeCard(recipe: Recipe) {
         </Box>
         <Box className="recipe__tags" mt={1}>
           <Stack spacing={1} direction="row" flexWrap="wrap">
-            {recipe.tags?.map((tag) => {
+            {recipe.tags?.map((tag: any) => {
               return (
-                <Tag mt={1} size="sm">
+                <Tag key={tag.tagId + CreateRandomID(6)} mt={1} size="sm">
                   {tag?.name}
                 </Tag>
               );
@@ -346,19 +482,7 @@ export function RecipeCard(recipe: Recipe) {
                 <Icon size={5} ml={1} as={BiComment} />
               </Box>
               <Box className="likesAndDislikes" d="flex" flexDir="row">
-                <Box d="flex" alignItems="center" color="gray.600">
-                  {recipe.numLikes}
-                  <Icon as={BiLike} ml={2} size={5} onClick={() => addLike()} />
-                </Box>
-                <Box d="flex" alignItems="center" color="gray.600">
-                  {/* {recipe.numDisLikes} */}
-                  <Icon
-                    as={BiDislike}
-                    ml={2}
-                    size={5}
-                    onClick={() => null}
-                  />
-                </Box>
+               <LikeBox {...recipe} {...userAuth} />
               </Box>
             </Box>
           </Box>

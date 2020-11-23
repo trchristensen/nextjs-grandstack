@@ -2,7 +2,6 @@ type DummyResponse {
   error: Boolean!
 }
 
-
 type User {
   id: ID!
   userId: ID!
@@ -25,8 +24,6 @@ type User {
   comments: [Comment] @relation(name: "WROTE", direction: "OUT")
 }
 
-
-
 type Recipe {
   recipeId: ID!
   name: String!
@@ -41,7 +38,10 @@ type Recipe {
   tags: [Tag] @relation(name: "HAS_TAG", direction: "OUT")
   isArchived: Boolean
   comments: [Comment] @relation(name: "COMMENT_ON", direction: "IN")
-  numComments: Int @cypher(statement: "MATCH (this)<-[:COMMENT_ON]-(c:Comment) RETURN COUNT(c)")
+  numComments: Int
+    @cypher(
+      statement: "MATCH (this)<-[:COMMENT_ON]-(c:Comment) RETURN COUNT(c)"
+    )
   likes: [User] @relation(name: "LIKED_BY", direction: "OUT")
 }
 
@@ -66,7 +66,6 @@ type Like {
   timestamp: String!
   userId: ID!
 }
-
 
 type Tag {
   tagId: ID!
@@ -141,7 +140,6 @@ input CustomTagsInput {
 }
 
 type Mutation {
-
   # createUserWithRoles(
   #   id: ID!
   #   isadmin: Boolean!
@@ -160,6 +158,16 @@ type Mutation {
   ) : User
     @cypher(
       statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MATCH (r:Recipe) WHERE r.recipeId = $recipeId WITH r, u MERGE (u)<-[l:LIKED_BY]-(r) SET l.likeId = $likeId, l.timestamp = $timestamp"
+    )
+
+  removeRecipeLike(
+    userId: String!
+    recipeId: String!
+    likeId: ID!
+    timestamp: String!
+  ): User
+    @cypher(
+      statement: "MATCH (:User {userId: $userId})<-[rel:LIKED_BY]-(r:Recipe {recipeId: $recipeId}) DELETE rel"
     )
 
   dummy: DummyResponse
@@ -184,7 +192,7 @@ type Mutation {
       statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[relationship:USED_IN {measurement: ingredient.measurement, amount: ingredient.amount}]-(f) RETURN r"
     )
 
-    createRecipeWithIngredientsAndTags(
+  createRecipeWithIngredientsAndTags(
     recipeId: ID!
     name: String!
     description: String!
@@ -235,12 +243,10 @@ type Query {
     @cypher(
       statement: "MATCH (r:Recipe) WHERE NOT r.isArchived = TRUE RETURN r"
     )
-  userRecipes(
-    userId: ID!
-  ): [Recipe]
-  @cypher(
-    statement: "MATCH (r:Recipe)-[c:CREATED_BY]->(u:User) WHERE NOT r.isArchived = TRUE WITH r, u WHERE u.userId = $userId RETURN r"
-  )
+  userRecipes(userId: ID!): [Recipe]
+    @cypher(
+      statement: "MATCH (r:Recipe)-[c:CREATED_BY]->(u:User) WHERE NOT r.isArchived = TRUE WITH r, u WHERE u.userId = $userId RETURN r"
+    )
 
   userCount: Int! @cypher(statement: "MATCH (u:User) RETURN COUNT(u)")
   ratingsCount: [RatingCount]

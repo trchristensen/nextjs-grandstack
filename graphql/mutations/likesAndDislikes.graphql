@@ -1,5 +1,31 @@
-mutation addRecipeLike($userId: String!, $recipeId: String!, $likeId: ID!, $timestamp: String!) {
-  addRecipeLike(userId: $userId, recipeId: $recipeId, likeId: $likeId, timestamp: $timestamp) {
+mutation addRecipeLike(
+  $userId: String!
+  $recipeId: String!
+  $likeId: ID!
+  $timestamp: String!
+) {
+  addRecipeLike(
+    userId: $userId
+    recipeId: $recipeId
+    likeId: $likeId
+    timestamp: $timestamp
+  ) {
+    userId
+  }
+}
+
+mutation removeRecipeLike(
+  $userId: String!
+  $recipeId: String!
+  $likeId: ID!
+  $timestamp: String!
+) {
+  removeRecipeLike(
+    userId: $userId
+    recipeId: $recipeId
+    likeId: $likeId
+    timestamp: $timestamp
+  ) {
     userId
   }
 }

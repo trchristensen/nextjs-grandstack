@@ -55,6 +55,10 @@ const RECIPES_NOT_ARCHIVED = gql`
         tagId
       }
       numComments
+      likes {
+        userId
+        name
+      }
     }
   }
 `;
