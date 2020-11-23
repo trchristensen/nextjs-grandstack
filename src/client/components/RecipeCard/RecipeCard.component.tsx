@@ -165,6 +165,7 @@ export const LikeBox = (recipe:Recipe) => {
     },
     onError: (err) => {
       console.error(err);
+      setNumLikes(numLikes - 1);
       toast({
         title: "Error",
         description: `${err}`,
@@ -205,14 +206,17 @@ export const LikeBox = (recipe:Recipe) => {
     },
     onError: (err) => {
       console.error(err);
+      setNumLikes(numLikes + 1);
     },
   });
 
   const [liked, setLiked] = React.useState<Boolean>(false);
+  const [numLikes, setNumLikes] = React.useState(0);
   const [userAuth, userAuthLoading] = useAuthState(getAuth());
 
   React.useEffect(() => {
     recipe.likes?.map((like: any) => {
+      setNumLikes(recipe.likes.length)
       if (like.userId == userAuth?.uid) {
         setLiked(true);
       } else {
@@ -224,29 +228,32 @@ export const LikeBox = (recipe:Recipe) => {
   const handleLike = () => {
     console.log("clicked the fucking like button");
 
-    recipe.likes?.map((like: any) => {
-      console.log("userauth id is contained in the recipe likes");
-      addLike();
-      setLiked(true);
-      if (!liked) {
-        addLike();
-        setLiked(true)
-      } else {
-        removeLike();
-        setLiked(false)
-      }
-      return;
-    });
-
+    if (recipe.likes.length == undefined || recipe.likes.length == null || recipe.likes.length == 0) {
       addLike();
       setLiked(true)
-      return;
+      setNumLikes(numLikes + 1)
+    } else {
+      recipe.likes?.map((like: any) => {
+        console.log("userauth id is contained in the recipe likes");
+  
+        if (!liked) {
+          addLike();
+          setLiked(true)
+          setNumLikes(numLikes + 1);
+        } else {
+          removeLike();
+          setLiked(false)
+          setNumLikes(numLikes - 1);
+        }
+      });
+    }
+
       
   };
 
   return (
     <Box d="flex" justifyContent="center" alignItems="center">
-      <Box>{recipe.likes?.length}</Box>
+      <Box>{numLikes}</Box>
       <Button
         onClick={() => handleLike()}
         ml={2}
