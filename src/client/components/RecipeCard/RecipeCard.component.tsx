@@ -253,7 +253,6 @@ export const LikeBox = (recipe:Recipe) => {
 
   return (
     <Box d="flex" justifyContent="center" alignItems="center">
-      <Box>{numLikes}</Box>
       <Button
         onClick={() => handleLike()}
         ml={2}
@@ -266,21 +265,18 @@ export const LikeBox = (recipe:Recipe) => {
         _expanded={{ bg: "red.200" }}
         _focus={{ outline: 0, boxShadow: "outline" }}
         alignItems="center"
-        w="40px"
-        h="40px"
+        minWidth="60px"
+        w="auto"
+        h="35px"
         d="flex"
         justifyContent="center"
-        alignItems="center"
-        minW="none"
-        p={0}
+        px={0}
+        py={0}
       >
-        <Icon
-          color={liked && `gray.500`}
-          as={BiLike}
-          ml={2}
-          size={5}
-          ml="-.05em"
-        />
+        <Box d="flex" justifyContent="center" alignItems="flex-end">
+          <Box mr={1}>{numLikes}</Box>
+          <Icon color={liked && `gray.500`} as={BiLike} size={5} />
+        </Box>
       </Button>
     </Box>
   );
