@@ -67,6 +67,7 @@ export const RECIPES_QUERY = gql`
       }
       numLikes
       numDislikes
+      numComments
     }
   }
 `;

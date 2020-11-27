@@ -3,6 +3,7 @@ import {
   Box,
   Text,
   Icon,
+  Button
 } from "@chakra-ui/core";
 import {
   BiComment,
@@ -21,8 +22,20 @@ export const LikesAndComments = (recipe: Recipe) => {
         alignItems="center"
       >
         <Box d="flex" alignItems="center" color="gray.600">
-          {/* {recipe?.numComments > 0 && recipe?.numComments}{" "} */}
-          <Icon width={5} height={5} ml={1} as={BiComment} />
+          {recipe?.numComments > 0 && recipe?.numComments}{" "}
+          <Button
+            ml={recipe?.numComments > 0 && 1}
+            p={0}
+            rounded="full"
+            transition="all 0.2s"
+            bg="none"
+            color="gray.500"
+            _hover={{ bg: "gray.100" }}
+            _expanded={{ bg: "red.200" }}
+            _focus={{ outline: 0, boxShadow: "none" }}
+          >
+            <Icon width={5} height={5} as={BiComment} />
+          </Button>
         </Box>
         <Box className="likesAndDislikes" d="flex" flexDir="row">
           <LikeBox {...recipe} />

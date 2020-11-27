@@ -23,13 +23,22 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
 const GetRecipes = () => {
 
     const router = useRouter();
-    const query = router.query.q;
+    const tag = router.query.tag;
+    const q = router.query.q;
 
-    let filter;
-    if (query) {
+    let filter = {}
+
+    if (tag) {
       filter = {
-        tags_single: {name_contains: query}
+        ...filter,
+        tags_single: {name_contains: tag}
       }
+    }
+    if (q) {
+      filter = {
+        ...filter,
+        name_contains: q,
+      };
     }
     
     const recipes = useQuery(RECIPES_QUERY, {

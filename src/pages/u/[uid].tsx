@@ -11,7 +11,7 @@ import {
   Button
 } from "@chakra-ui/core";
 import { RecipeCard } from "../../client/components/RecipeCard/RecipeCard.component"
-import { USER_RECIPES } from '../../client/gql/recipes'
+import { RECIPES_QUERY } from "../../client/gql/recipes";
 
 const USER_QUERY = gql`
   query User($userId: ID!) {
@@ -32,9 +32,14 @@ const UserRecipes = () => {
   const router = useRouter();
   const uid = router.query.uid;
 
-  const recipes = useQuery(USER_RECIPES, {
+  let filter = {
+    creator: { id: uid },
+  };
+
+  const recipes = useQuery(RECIPES_QUERY, {
     variables: {
-      userId: uid,
+      // userId: uid,
+      filter: filter
     },
     onCompleted: (res) => {
       console.log(res);
@@ -51,7 +56,7 @@ const UserRecipes = () => {
           {recipes.data &&
             !recipes.loading &&
             !recipes.error &&
-            recipes.data.userRecipes.map((recipe: any) => (
+            recipes.data.Recipe.map((recipe: any) => (
               <RecipeCard key={recipe.recipeId} {...recipe} />
             ))}
         </Box>
