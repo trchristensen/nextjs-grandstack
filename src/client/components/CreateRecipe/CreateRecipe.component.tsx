@@ -28,7 +28,6 @@ import {
 import gql from "graphql-tag";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
 import { getAuth } from "../../../client/firebaseHelpers";
-import { CheckTotalFlavorAmount } from "../../../helpers/CheckTotalFlavorAmount";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
@@ -511,8 +510,8 @@ export function CreateRecipe() {
         <Avatar
           mr={4}
           size="sm"
-          name={user?.displayName}
-          src={user?.photoURL}
+          name={`${user?.displayName}`}
+          src={`${user?.photoURL}`}
         />
         <Button
           rounded="full"

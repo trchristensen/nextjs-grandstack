@@ -21,8 +21,8 @@ export const LikesAndComments = (recipe: Recipe) => {
         alignItems="center"
       >
         <Box d="flex" alignItems="center" color="gray.600">
-          {recipe.numComments > 0 && recipe.numComments}{" "}
-          <Icon size={5} ml={1} as={BiComment} />
+          {/* {recipe?.numComments > 0 && recipe?.numComments}{" "} */}
+          <Icon width={5} height={5} ml={1} as={BiComment} />
         </Box>
         <Box className="likesAndDislikes" d="flex" flexDir="row">
           <LikeBox {...recipe} />

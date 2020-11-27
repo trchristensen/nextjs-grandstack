@@ -1,5 +1,6 @@
-import ApolloClient, { InMemoryCache}  from "apollo-boost";
+import ApolloClient, { InMemoryCache,}  from "apollo-boost";
 import { getAuth } from "./firebaseHelpers";
+
 
 export function createGraphqlClient() {
   const client = new ApolloClient({

@@ -40,10 +40,11 @@ const MainLayout = ({ children }: any) => {
         <Box
           id="sidebar-left"
           display="flex"
-          flexGrow="1"
-          flexShrink="1"
+          flexGrow={1}
+          flexShrink={1}
           alignItems="flex-end"
           flexDir="column"
+          minW="200px"
         >
           <Box
             w="200px"
@@ -191,8 +192,8 @@ const MainLayout = ({ children }: any) => {
                           <Avatar
                             marginRight={2}
                             size="sm"
-                            name={user.displayName}
-                            src={user.photoURL}
+                            name={`${user.displayName}`}
+                            src={`${user.photoURL}`}
                           />
                           <Text as="span" textAlign="left">{user.displayName}</Text>
                           <Icon as={BiChevronDown} />
@@ -201,7 +202,7 @@ const MainLayout = ({ children }: any) => {
                           <MenuItem onClick={() => logout()}>
                             <Icon as={BiLogOut} mr={1} />
                             Logout
-                          </MenuItem>
+                          </MenuItem> 
                         </MenuList>
                       </Menu>
                     </Box>
@@ -225,8 +226,8 @@ const MainLayout = ({ children }: any) => {
         <Box
           id="feed"
           display="flex"
-          flexGrow="1"
-          flexShrink="1"
+          flexGrow={1}
+          flexShrink={1}
           alignItems="flex-start"
           flexDir="column"
           px={6}

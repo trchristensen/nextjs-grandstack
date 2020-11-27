@@ -6,7 +6,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "../../../client/firebaseHelpers";
 
 import { Recipe, Flavor } from "../../gen/index";
-import { RECIPES_NOT_ARCHIVED, ARCHIVE_RECIPE } from "../../gql/recipes";
+import { RECIPES_QUERY, ARCHIVE_RECIPE } from "../../gql/recipes";
 
 import {
   Avatar,
@@ -44,7 +44,6 @@ import {
 
 import { formatDistanceToNow } from "date-fns";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
-
 import { LikesAndComments }  from '../LikesAndComments/LikesAndComments.component'
 
 
@@ -54,9 +53,10 @@ export function RecipeCard(recipe: Recipe) {
   const [archive] = useMutation(ARCHIVE_RECIPE, {
     refetchQueries: [
       {
-        query: RECIPES_NOT_ARCHIVED,
+        query: RECIPES_QUERY,
         variables: {
           orderBy: "published_desc",
+          isArchived: false
         },
       },
     ],
@@ -98,7 +98,7 @@ export function RecipeCard(recipe: Recipe) {
                 size="sm"
                 name="author name"
                 mt={1}
-                src={recipe.creator?.avatar}
+                src={`${recipe.creator?.avatar}`}
               ></Avatar>
             </a>
           </Link>
@@ -153,9 +153,9 @@ export function RecipeCard(recipe: Recipe) {
               // borderWidth="1px"
               color="gray.500"
               rounded="full"
-              _hover={{ bg: "gray.100" }}
-              _expanded={{ bg: "red.200" }}
-              _focus={{ outline: 0, boxShadow: "outline" }}
+              _hover={{ bg: "gray.100", shadow: "sm" }}
+              _expanded={{ bg: "gray.200" }}
+              _focus={{ outline: 0, boxShadow: "none" }}
             >
               <Icon as={BiChevronDown} />
             </MenuButton>
@@ -190,6 +190,31 @@ export function RecipeCard(recipe: Recipe) {
         <Box mt={2} mb={3}>
           <Text>{recipe.description}</Text>
           {/* <Box>[Flavor details here]</Box> */}
+        </Box>
+        <Box w="full">
+          <Stack spacing={1} direction="row" flexWrap="wrap" mb=".15rem">
+            {recipe.ingredients &&
+              recipe.ingredients?.map((ingredient: any) => {
+                return (
+                  <Box
+                    key={ingredient.Flavor.flavorId}
+                    className="ingredientsList__ingredient"
+                  >
+                    <Link href={`/flavors/${ingredient.Flavor.flavorId}`}>
+                      <a>
+                        <Text fontSize="sm">
+                          {ingredient.Flavor.name} - {ingredient.amount}
+                          <Text as="span" fontSize="xs" fontStyle="italic">
+                            ({ingredient.measurement})
+                          </Text>
+                          ,
+                        </Text>
+                      </a>
+                    </Link>
+                  </Box>
+                );
+              })}
+          </Stack>
         </Box>
         <Box>
           <Stack
@@ -227,12 +252,20 @@ export function RecipeCard(recipe: Recipe) {
               })}
           </Stack>
         </Box>
+
         <Box className="recipe__tags" mt={1}>
           <Stack spacing={1} direction="row" flexWrap="wrap">
             {recipe.tags?.map((tag: any) => {
               return (
-                <Tag key={tag.tagId + CreateRandomID(6)} mt={1} size="sm">
-                  {tag?.name}
+                <Tag
+                  _hover={{ shadow: "sm" }}
+                  key={tag.tagId + CreateRandomID(6)}
+                  mt={1}
+                  size="sm"
+                >
+                  <Link href={`/explore?q=${tag?.name}`}>
+                    <a>{tag?.name}</a>
+                  </Link>
                 </Tag>
               );
             })}

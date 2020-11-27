@@ -11,7 +11,7 @@ import {
   Button
 } from "@chakra-ui/core";
 import { RecipeCard } from "../../client/components/RecipeCard/RecipeCard.component"
-
+import { USER_RECIPES } from '../../client/gql/recipes'
 
 const USER_QUERY = gql`
   query User($userId: ID!) {
@@ -27,38 +27,6 @@ const USER_QUERY = gql`
 `;
 
 
-const USER_RECIPES = gql`
-  query userRecipes($userId: ID!) {
-    userRecipes(userId: $userId) {
-      recipeId
-      name
-      description
-      published
-      lastEdited
-      creator {
-        id
-        name
-        avatar
-      }
-      parent {
-        recipeId
-        name
-      }
-      ingredients {
-        amount
-        measurement
-        Flavor {
-          flavorId
-          name
-        }
-      }
-      tags {
-        name
-        tagId
-      }
-    }
-  }
-`;
 
 const UserRecipes = () => {
   const router = useRouter();

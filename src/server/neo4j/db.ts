@@ -1,12 +1,21 @@
 import neo4j from "neo4j-driver";
 
 // Neo4j Desktop settings
+// export const DEFAULT_NEO4J_DESKTOP = {
+//   URI: "bolt://localhost:7687",
+//   USER: "neo4j",
+//   PASSWORD: "letmein",
+//   isEncrypted: false, // v3.5 does not use encrypted connections, but 4.0 does
+// };
+
 export const DEFAULT_NEO4J_DESKTOP = {
-  URI: "bolt://localhost:7687",
+  URI: "bolt://52.23.177.159:43232",
   USER: "neo4j",
-  PASSWORD: "letmein",
-  isEncrypted: false, // v3.5 does not use encrypted connections, but 4.0 does
+  PASSWORD: "wiggle-ditches-parts",
+  isEncrypted: false
 };
+
+
 
 // Create a configured neo4j driver instance (this doesn't start a session)
 export const driver = (

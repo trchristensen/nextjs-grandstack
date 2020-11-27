@@ -50,15 +50,16 @@ type Recipe {
     @cypher(
       statement: "MATCH (this)-[r:RATED_BY]-(u:User) RETURN count(CASE WHEN r.like = false THEN 1 END)"
     )
-  likes: [User]
+  likes: [Rating]
     @cypher(
-      statement: "MATCH (this)-[r:RATED_BY]-(u:User) WHERE r.like = true RETURN u"
+      statement: "MATCH (this)-[rating:RATED_BY]->(u:User) WITH rating, u WHERE rating.like = true RETURN rating"
     )
-  dislikes: [User]
+  dislikes: [Rating]
     @cypher(
-      statement: "MATCH (this)-[r:RATED_BY]-(u:User) WHERE r.like = false RETURN u"
+      statement: "MATCH (this)-[rating:RATED_BY]->(u:User) WITH rating, u WHERE rating.like = false RETURN rating"
     )
 }
+
 
 type Ingredient @relation(name: "USED_IN") {
   from: Flavor
@@ -76,11 +77,12 @@ type Flavor {
   # likes: [Like]
 }
 
-type rating {
-  ratingId: ID!
-  timestamp: String!
-  userId: ID!
-  like: Boolean!
+type Rating {
+    userId: String!
+    recipeId: String!
+    ratingId: ID!
+    timestamp: String!
+    like: Boolean!
 }
 
 type Tag {
@@ -172,9 +174,9 @@ type Mutation {
     ratingId: ID!
     timestamp: String!
     like: Boolean!
-  ): User
+  ): Rating
     @cypher(
-      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MATCH (r:Recipe) WHERE r.recipeId = $recipeId WITH r, u MERGE (u)<-[l:RATED_BY]-(r) SET l.ratingId = $ratingId, l.timestamp = $timestamp, l.like = $like return u"
+      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MATCH (r:Recipe) WHERE r.recipeId = $recipeId WITH r, u MERGE (u)<-[l:RATED_BY]-(r) SET l.ratingId = $ratingId, l.timestamp = $timestamp, l.like = $like, l.userId = $userId return l"
     )
 
   dummy: DummyResponse
@@ -210,6 +212,7 @@ type Mutation {
     notes: String
     mixingPercentage: Int
     tags: [CustomTagsInput]
+    # tags: [_TagInput]
   ): Recipe
     @cypher(
       statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {measurement: ingredient.measurement, amount: ingredient.amount}]-(f) WITH r, u UNWIND $tags as tag MERGE (t:Tag {tagId: tag.tagId, name: tag.name}) MERGE (r)-[:HAS_TAG]->(t) RETURN r"
@@ -249,6 +252,12 @@ type Query {
   recipesNotArchived: [Recipe]
     @cypher(
       statement: "MATCH (r:Recipe) WHERE NOT r.isArchived = TRUE RETURN r"
+    )
+  recipesNotArchivedFiltered(
+    filter: String
+  ): [Recipe]
+    @cypher(
+      statement: "MATCH (r:Recipe) WHERE NOT r.isArchived = TRUE WHERE r.  RETURN r"
     )
   userRecipes(userId: ID!): [Recipe]
     @cypher(

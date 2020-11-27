@@ -14,13 +14,88 @@ export const ARCHIVE_RECIPE = gql`
   }
 `;
 
-export const RECIPES_NOT_ARCHIVED = gql`
-  query recipesNotArchived(
+export const RECIPES_QUERY = gql`
+  query recipes(
     $first: Int
     $offset: Int
     $orderBy: [_RecipeOrdering]
+    $isArchived: Boolean
+    $filter: _RecipeFilter
   ) {
-    recipesNotArchived(first: $first, offset: $offset, orderBy: $orderBy) {
+    Recipe(
+      first: $first
+      offset: $offset
+      orderBy: $orderBy
+      isArchived: $isArchived
+      filter: $filter
+    ) {
+      recipeId
+      name
+      description
+      published
+      lastEdited
+      creator {
+        id
+        name
+        avatar
+      }
+      parent {
+        recipeId
+        name
+      }
+      ingredients {
+        amount
+        measurement
+        Flavor {
+          flavorId
+          name
+        }
+      }
+      tags {
+        name
+        tagId
+      }
+      likes {
+        ratingId
+        userId
+        like
+      }
+      dislikes {
+        ratingId
+        userId
+        like
+      }
+      numLikes
+      numDislikes
+    }
+  }
+`;
+
+export const UPDATE_RECIPE_RATING = gql`
+  mutation updateRecipeRating(
+    $userId: String!
+    $recipeId: String!
+    $ratingId: ID!
+    $like: Boolean!
+    $timestamp: String!
+  ) {
+    updateRecipeRating(
+      userId: $userId
+      recipeId: $recipeId
+      ratingId: $ratingId
+      timestamp: $timestamp
+      like: $like
+    ) {
+      ratingId
+      userId
+      like
+    }
+  }
+`;
+
+export const USER_RECIPES = gql`
+  query userRecipes($userId: ID!) {
+    userRecipes(userId: $userId) {
       recipeId
       name
       description
@@ -55,27 +130,6 @@ export const RECIPES_NOT_ARCHIVED = gql`
       }
       numLikes
       numDislikes
-      # numComments
-    }
-  }
-`;
-
-export const UPDATE_RECIPE_RATING = gql`
-  mutation updateRecipeRating(
-    $userId: String!
-    $recipeId: String!
-    $ratingId: ID!
-    $like: Boolean!
-    $timestamp: String!
-  ) {
-    updateRecipeRating(
-      userId: $userId
-      recipeId: $recipeId
-      ratingId: $ratingId
-      timestamp: $timestamp
-      like: $like
-    ) {
-      userId
     }
   }
 `;

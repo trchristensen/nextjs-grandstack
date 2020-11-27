@@ -7,24 +7,22 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "../../../client/firebaseHelpers";
 
 import { Recipe } from "../../gen/index";
-import { RECIPES_NOT_ARCHIVED, UPDATE_RECIPE_RATING } from "../../gql/recipes";
+import { IRefetchQuery } from "../../gql/types";
+import { RECIPES_QUERY, UPDATE_RECIPE_RATING } from "../../gql/recipes";
 
 import { Box, useToast, Button, Icon } from "@chakra-ui/core";
 import { BiLike, BiDislike } from "react-icons/bi";
 
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
+import { User } from "../../../server/gen";
 
 export const LikeBox = (recipe: Recipe) => {
   const toast = useToast();
   const [updateRating] = useMutation(UPDATE_RECIPE_RATING, {
     refetchQueries: [
-      {
-        query: RECIPES_NOT_ARCHIVED,
-        variables: {
-          orderBy: "published_desc",
-        },
-      },
+      { query: RECIPES_QUERY, variables: { orderBy: "published_desc", isArchived: false } },
     ],
+
     onCompleted: (res) => {
       console.log(res);
       // setLiked(liked);
@@ -60,6 +58,19 @@ export const LikeBox = (recipe: Recipe) => {
     setRating(recipe.numLikes - recipe.numDislikes);
 
     // set user rating to liked variable.
+    
+    recipe?.likes && recipe?.likes.map((user: any) => {
+      if (user.userId === userAuth?.uid) {setLiked(true)}
+    })
+
+    recipe?.dislikes &&
+      recipe?.dislikes.map((user: any) => {
+        if (user.userId === userAuth?.uid) {
+          setLiked(false);
+        }
+      });
+
+
 
   }, [recipe]);
 
@@ -86,15 +97,14 @@ export const LikeBox = (recipe: Recipe) => {
 
   return (
     <Box
-      d="flex"
-      justifyContent="center"
+    d="flex"
+    justifyContent="center"
       alignItems="center"
       minWidth="70px"
       w="auto"
-      // h="35px"
-      borderWidth={1}
       rounded="full"
-    >
+      shadow="sm"
+      >
       <Button
         onClick={() => handleRating({ like: false })}
         transition="all 0.2s"
@@ -104,20 +114,29 @@ export const LikeBox = (recipe: Recipe) => {
         rounded="full"
         _hover={{ bg: "gray.100" }}
         _expanded={{ bg: "red.200" }}
-        _focus={{ outline: 0, boxShadow: "outline" }}
+        _focus={{ outline: 0, boxShadow: "none" }}
         alignItems="center"
         d="flex"
         justifyContent="center"
         px={2}
         py={0}
-      >
-        <Icon color={liked && `gray.500`} as={BiDislike} size={5} />
+        borderTopRightRadius={0}
+        borderBottomRightRadius={0}
+        >
+        <Icon
+          color={`${liked && `gray.500`}`}
+          as={BiDislike}
+          width={5}
+          height={5}
+          />
       </Button>
       <Box mr={2} ml={2}>
         {rating}
       </Box>
       <Button
         onClick={() => handleRating({ like: true })}
+        borderTopLeftRadius={0}
+        borderBottomLeftRadius={0}
         transition="all 0.2s"
         // borderWidth="1px"
         color="gray.500"
@@ -125,15 +144,21 @@ export const LikeBox = (recipe: Recipe) => {
         rounded="full"
         _hover={{ bg: "gray.100" }}
         _expanded={{ bg: "red.200" }}
-        _focus={{ outline: 0, boxShadow: "outline" }}
+        _focus={{ outline: 0, boxShadow: "none" }}
         alignItems="center"
         d="flex"
         justifyContent="center"
         px={2}
         py={0}
       >
-        <Icon color={liked && `gray.500`} as={BiLike} size={5} />
+        <Icon
+          color={`${liked && `gray.500`}`}
+          as={BiLike}
+          width={5}
+          height={5}
+        />
       </Button>
+      {liked}
     </Box>
   );
 };

@@ -70,8 +70,8 @@ export function Header(props:any) {
                     <Avatar
                       marginRight={2}
                       size="sm"
-                      name={user.displayName}
-                      src={user.photoURL}
+                      name={`${user.displayName}`}
+                      src={`${user.photoURL}`}
                     />
                     <Text>{user.displayName}</Text>
                     <Icon as={BiChevronDown} />

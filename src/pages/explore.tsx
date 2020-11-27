@@ -1,17 +1,15 @@
 import React from "react";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
-import { useMutation, useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
+import { useRouter } from "next/router";
+import { useQuery } from "@apollo/react-hooks";
+import { Box } from "@chakra-ui/core";
+import { CreateRecipe } from "../client/components/CreateRecipe/CreateRecipe.component";
+import { RecipeCard } from "../client/components/RecipeCard/RecipeCard.component";
+import { RECIPES_QUERY } from '../client/gql/recipes'
 // import { useAuthState } from "react-firebase-hooks/auth";
 // import { getAuth, logout } from "../client/firebaseHelpers";
 // import { useArchiveRecipeMutation, Recipe, Flavor } from "../client/gen/index";
-
-import { Box } from "@chakra-ui/core";
-
-import { CreateRecipe } from "../client/components/CreateRecipe/CreateRecipe.component";
-import { RecipeCard } from "../client/components/RecipeCard/RecipeCard.component";
-import { RECIPES_NOT_ARCHIVED } from '../client/gql/recipes'
 
 type Props = {};
 
@@ -23,11 +21,27 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
 };
 
 const GetRecipes = () => {
-  const recipes = useQuery(RECIPES_NOT_ARCHIVED, {
-    variables: {
-      orderBy: "published_desc",
-    },
-  });
+
+    const router = useRouter();
+    const query = router.query.q;
+
+    let filter;
+    if (query) {
+      filter = {
+        tags_single: {name_contains: query}
+      }
+    }
+    
+    const recipes = useQuery(RECIPES_QUERY, {
+      variables: {
+        isArchived: false,
+        orderBy: "published_desc",
+        filter: filter
+      },
+    });
+  
+
+  
 
   return (
     <Box>
@@ -38,7 +52,7 @@ const GetRecipes = () => {
       {recipes.data &&
         !recipes.loading &&
         !recipes.error &&
-        recipes.data.recipesNotArchived.map((recipe: any) => (
+        recipes.data.Recipe.map((recipe: any) => (
           <RecipeCard key={recipe.recipeId} {...recipe} />
         ))}
     </Box>
