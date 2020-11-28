@@ -5,14 +5,14 @@ import { useMutation, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "../../../client/firebaseHelpers";
-import { Recipe } from "../../gen/index";
+// import { Recipe } from "../../gen/index";
 import { RECIPES_QUERY, UPDATE_RECIPE_RATING } from "../../gql/recipes";
 import { Box, useToast, Button, Icon } from "@chakra-ui/core";
 import { BiLike, BiDislike } from "react-icons/bi";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
 // import { User } from "../../../server/gen";
 
-export const LikeBox = (recipe: Recipe) => {
+export const LikeBox = (recipe: any) => {
   const toast = useToast();
   const [updateRating] = useMutation(UPDATE_RECIPE_RATING, {
     refetchQueries: [
