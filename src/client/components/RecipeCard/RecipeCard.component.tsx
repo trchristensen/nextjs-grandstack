@@ -263,7 +263,7 @@ export function RecipeCard(recipe: Recipe) {
                   mt={1}
                   size="sm"
                 >
-                  <Link href={`?tag=${tag?.name}`}>
+                  <Link href={`/explore?tag=${tag?.name}`}>
                     <a>{tag?.name}</a>
                   </Link>
                 </Tag>

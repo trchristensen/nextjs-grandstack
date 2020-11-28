@@ -30,7 +30,7 @@ export const LikesAndComments = (recipe: Recipe) => {
             transition="all 0.2s"
             bg="none"
             color="gray.500"
-            _hover={{ bg: "gray.100" }}
+            _hover={{ bg: "gray.100", shadow: "sm" }}
             _expanded={{ bg: "red.200" }}
             _focus={{ outline: 0, boxShadow: "none" }}
           >

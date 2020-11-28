@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/core";
 import { RecipeCard } from "../../client/components/RecipeCard/RecipeCard.component"
 import { RECIPES_QUERY } from "../../client/gql/recipes";
+import { GetRecipes } from "../../client/components/GetRecipes/GetRecipes.component";
 
 const USER_QUERY = gql`
   query User($userId: ID!) {
@@ -26,45 +27,6 @@ const USER_QUERY = gql`
   }
 `;
 
-
-
-const UserRecipes = () => {
-  const router = useRouter();
-  const uid = router.query.uid;
-
-  let filter = {
-    creator: { id: uid },
-  };
-
-  const recipes = useQuery(RECIPES_QUERY, {
-    variables: {
-      // userId: uid,
-      filter: filter
-    },
-    onCompleted: (res) => {
-      console.log(res);
-    },
-    onError: (err) => {
-      console.error(err);
-    },
-  });
-
-  return (
-    <Box>
-      {recipes.data && !recipes.loading && !recipes.error && (
-        <Box>
-          {recipes.data &&
-            !recipes.loading &&
-            !recipes.error &&
-            recipes.data.Recipe.map((recipe: any) => (
-              <RecipeCard key={recipe.recipeId} {...recipe} />
-            ))}
-        </Box>
-      )}
-    </Box>
-  );  
-  
-}
 
 const Profile = () => {
   const router = useRouter();
@@ -83,7 +45,9 @@ const Profile = () => {
   });
 
   const [userAuth, userAuthLoading] = useAuthState(getAuth());
-
+  let filter = {
+    creator: { id: uid },
+  };
 
 return (
   <Box w="500px" maxW="100%">
@@ -116,7 +80,10 @@ return (
         </Box>
 
       </Box>
-      <Box w="500px" maxW="100%" mt={4}><UserRecipes /></Box>
+      <Box w="500px" maxW="100%" mt={4}>
+        {/* <UserRecipes /> */}
+        <GetRecipes {...filter} />
+      </Box>
       </>
     )}
   </Box>
