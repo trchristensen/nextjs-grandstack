@@ -86,7 +86,7 @@ export function CreateRecipe() {
   const [user] = useAuthState(getAuth());
   const [name, setName] = React.useState<string>("");
   const [description, setDescription] = React.useState<string>("");
-  const [flavorList, setFlavorList] = React.useState<Flavor[]>();
+  const [flavorList, setFlavorList] = React.useState<any[]>();
   const [selectedOption, setSelectedOption] = React.useState<any>();
   const [measurement, setMeasurement] = React.useState<string>("g");
   const [submittable, setSubmittable] = React.useState(false);
