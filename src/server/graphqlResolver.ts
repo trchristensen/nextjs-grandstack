@@ -1,4 +1,4 @@
-import { MutationResolvers, QueryResolvers, Resolvers } from "./gen";
+// import { MutationResolvers, QueryResolvers, Resolvers } from "./gen/index";
 
 import { RecipeMutations, RecipeQueries } from './resolvers/Recipes.resolvers';
 import { UserMutations } from './resolvers/Users.resolvers';
@@ -6,7 +6,7 @@ import { LikesQueries, LikesMutations } from "./resolvers/Likes.resolvers";
 type Context = { idToken: { uid: string } | null };
 
 
-const CurrentUser: QueryResolvers<Context> = {
+const CurrentUser: any = {
   //@ts-ignore
   async currentUser(_parent, _args, context, _info) {
     return {
@@ -29,7 +29,7 @@ const Mutation = {
 }
 
 
-export const resolvers: Resolvers<Context> = {
+export const resolvers: any = {
   Query,
   Mutation,
   
