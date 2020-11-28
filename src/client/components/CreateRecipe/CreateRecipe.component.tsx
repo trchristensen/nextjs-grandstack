@@ -33,7 +33,6 @@ import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
 import {
-  useCreateRecipeWithIngredientsMutation,
   Flavor,
 } from "../../gen/index";
 import { useMutation, useQuery } from "@apollo/react-hooks";
