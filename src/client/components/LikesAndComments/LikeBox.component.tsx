@@ -6,12 +6,11 @@ import gql from "graphql-tag";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "../../../client/firebaseHelpers";
 import { Recipe } from "../../gen/index";
-import { IRefetchQuery } from "../../gql/types";
 import { RECIPES_QUERY, UPDATE_RECIPE_RATING } from "../../gql/recipes";
 import { Box, useToast, Button, Icon } from "@chakra-ui/core";
 import { BiLike, BiDislike } from "react-icons/bi";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
-import { User } from "../../../server/gen";
+// import { User } from "../../../server/gen";
 
 export const LikeBox = (recipe: Recipe) => {
   const toast = useToast();
@@ -107,11 +106,11 @@ export const LikeBox = (recipe: Recipe) => {
     >
       <Button
         onClick={() => handleRating({ like: false })}
+        bg={liked == false ? `gray.100` : null}
+        rounded="full"
         transition="all 0.2s"
         // borderWidth="1px"
         color="gray.500"
-        bg={liked == false ? `gray.100` : null}
-        rounded="full"
         _hover={{ bg: "gray.100" }}
         _expanded={{ bg: "red.200" }}
         _focus={{ outline: 0, boxShadow: "none" }}
