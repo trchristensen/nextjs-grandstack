@@ -32,9 +32,9 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
-import {
-  Flavor,
-} from "../../gen/index";
+// import {
+//   Flavor,
+// } from "../../gen/index";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import { setTimeout } from "timers";
 import { RECIPES_QUERY } from "../../gql/recipes";
@@ -145,7 +145,7 @@ export function CreateRecipe() {
   const Flavors = useQuery(FLAVORS);
 
   React.useEffect(() => {
-    var result = Flavors.data?.Flavor.map((flavor: Flavor) => ({
+    var result = Flavors.data?.Flavor.map((flavor: any) => ({
       value: flavor.flavorId,
       label: flavor.name,
     }));
