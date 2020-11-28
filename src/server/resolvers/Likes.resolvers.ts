@@ -1,14 +1,14 @@
 //@ts-ignore
 import { neo4jgraphql } from "neo4j-graphql-js";
-import { MutationResolvers, QueryResolvers, Resolvers } from "../gen";
+// import { MutationResolvers, QueryResolvers, Resolvers } from "../gen";
 
 type Context = { idToken: { uid: string } | null };
 
-export const LikesQueries: QueryResolvers<Context> = {
+export const LikesQueries: any = {
 
 };
 
-export const LikesMutations: MutationResolvers<Context> = {
+export const LikesMutations: any = {
   //@ts-ignore
   async updateRecipeRating(object, params, _context, resolveInfo) {
     console.log(object, params, _context, resolveInfo);

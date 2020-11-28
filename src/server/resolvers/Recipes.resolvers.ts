@@ -1,11 +1,11 @@
 //@ts-ignore
 import { neo4jgraphql } from "neo4j-graphql-js";
-import { MutationResolvers, QueryResolvers, Resolvers } from "../gen";
+// import { MutationResolvers, QueryResolvers, Resolvers } from "../gen";
 
 type Context = { idToken: { uid: string } | null };
 
 
-export const RecipeQueries: QueryResolvers<Context> = {
+export const RecipeQueries: any = {
 
   //@ts-ignore
   recipesNotArchived(object, params, _context, resolveInfo) {
@@ -14,7 +14,7 @@ export const RecipeQueries: QueryResolvers<Context> = {
 };
 
 
-export const RecipeMutations: MutationResolvers<Context> = {
+export const RecipeMutations: any = {
   //@ts-ignore
   async createRecipeWithIngredients(object, params, _context, resolveInfo) {
     console.log(params);
@@ -27,7 +27,7 @@ export const RecipeMutations: MutationResolvers<Context> = {
       throw new Error("please make the description at least 3 characters long");
     }
 
-    params.ingredients?.map(ingredient => {
+    params.ingredients?.map((ingredient:any) => {
       if(ingredient?.measurement != 'g' && ingredient?.measurement != '%' && ingredient?.measurement != 'drops') {
         throw new Error('invalid input for ingredient')
       }
@@ -73,9 +73,8 @@ export const RecipeMutations: MutationResolvers<Context> = {
     }
     return neo4jgraphql(object, params, _context, resolveInfo);
   },
-
+//@ts-ignore
   async archiveRecipe(object, params, _context, resolveInfo) {
-    console.log(object, params, _context, resolveInfo);
     if (_context.idToken?.uid == null) {
       throw new Error("401");
     }
