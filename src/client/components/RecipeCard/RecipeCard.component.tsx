@@ -40,6 +40,7 @@ import {
   BiLike,
   BiDislike,
   BiComment,
+  BiCopy
 } from "react-icons/bi";
 
 import { formatDistanceToNow } from "date-fns";
@@ -49,7 +50,7 @@ import { LikesAndComments } from "../LikesAndComments/LikesAndComments.component
 export function RecipeCard(recipe: any) {
   const [userAuth, userAuthLoading] = useAuthState(getAuth());
   const { hasCopied, onCopy } = useClipboard(
-    `${process.env.BASE_PATH || ''}/recipes/${recipe.recipeId}`
+    `https://juicesauce.com/recipes/${recipe.recipeId}`
   );
   const [archive] = useMutation(ARCHIVE_RECIPE, {
     refetchQueries: [
@@ -175,7 +176,7 @@ export function RecipeCard(recipe: any) {
                 </>
               )}
               <MenuItem onClick={onCopy}>
-                <Icon mr={1} as={BiBookmark} />
+                <Icon mr={1} as={BiCopy} />
                 Copy URL
               </MenuItem>
               <MenuItem>
