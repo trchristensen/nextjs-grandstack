@@ -121,7 +121,7 @@ export const LikeBox = (recipe: any) => {
         py={0}
         // borderTopRightRadius={0}
         // borderBottomRightRadius={0}
-        rounded="full"
+        borderRadius="full"
       >
         <Icon
           color={`${liked && `gray.500`}`}
@@ -137,7 +137,7 @@ export const LikeBox = (recipe: any) => {
         onClick={() => handleRating({ like: true })}
         // borderTopLeftRadius={0}
         // borderBottomLeftRadius={0}
-        rounded="full"
+        borderRadius="full"
         transition="all 0.2s"
         // borderWidth="1px"
         color="gray.500"
