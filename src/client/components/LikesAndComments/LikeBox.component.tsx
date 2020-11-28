@@ -12,7 +12,7 @@ import { BiLike, BiDislike } from "react-icons/bi";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
 // import { User } from "../../../server/gen";
 
-export const LikeBox = (recipe: any) => {
+const LikeBox = (recipe: any) => {
   const toast = useToast();
   const [updateRating] = useMutation(UPDATE_RECIPE_RATING, {
     refetchQueries: [
@@ -163,3 +163,5 @@ export const LikeBox = (recipe: any) => {
     </Box>
   );
 };
+
+export default LikeBox

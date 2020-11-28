@@ -45,7 +45,7 @@ import {
 
 import { formatDistanceToNow } from "date-fns";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
-import { LikesAndComments } from "../LikesAndComments/LikesAndComments.component";
+import LikesAndComments from "../LikesAndComments/LikesAndComments.component";
 
 export function RecipeCard(recipe: any) {
   const [userAuth, userAuthLoading] = useAuthState(getAuth());
@@ -236,8 +236,7 @@ export function RecipeCard(recipe: any) {
                             mb=".25rem"
                           ></Box>
                           <Box>
-                            <Text as="span" fontSize="xs" fontStyle="italic">
-                              {ingredient.amount}({ingredient.measurement})
+                            <Text as="span" fontSize="sm">{ingredient.amount}<Text fontStyle="italic" as="span" fontSize="xs">({ingredient.measurement})</Text>
                             </Text>
                           </Box>
                         </Box>

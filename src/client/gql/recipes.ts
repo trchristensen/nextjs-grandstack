@@ -68,6 +68,16 @@ export const RECIPES_QUERY = gql`
       numLikes
       numDislikes
       numComments
+      comments {
+        commentId
+        published
+        text
+        author {
+          userId
+          name
+          avatar
+        }
+      }
     }
   }
 `;
@@ -131,6 +141,26 @@ export const USER_RECIPES = gql`
       }
       numLikes
       numDislikes
+    }
+  }
+`;
+
+export const CREATE_RECIPE_COMMENT = gql`
+  mutation createCommentForRecipe(
+    $commentId: String!
+    $recipeId: String!
+    $userId: String!
+    $text: String!
+    $published: String!
+  ) {
+    createCommentForRecipe(
+      commentId: $commentId
+      recipeId: $recipeId
+      userId: $userId
+      text: $text
+      published: $published
+    ) {
+      commentId
     }
   }
 `;

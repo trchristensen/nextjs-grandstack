@@ -8,11 +8,13 @@ import {
 import {
   BiComment,
 } from "react-icons/bi";
-// import { Recipe } from "../../gen/index";
-import { LikeBox } from './LikeBox.component';
+import LikeBox from './LikeBox.component';
+import CommentBox from "./CommentBox.component";
 
 
-export const LikesAndComments = (recipe: any) => {
+
+const LikesAndComments = (recipe: any) => {
+
   return (
     <Box className="likesAndComments">
       <Box
@@ -41,6 +43,9 @@ export const LikesAndComments = (recipe: any) => {
           <LikeBox {...recipe} />
         </Box>
       </Box>
+      <CommentBox {...recipe} />
     </Box>
   );
 };
+
+export default LikesAndComments;
