@@ -19,7 +19,7 @@ const RecipePage = () => {
 
   return (
     <Box w="500px" maxW="100%" mt={4}>
-      <BackBar />
+      <BackBar title="Recipe" />
       <GetRecipes {...filter} />
     </Box>
   );

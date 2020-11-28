@@ -1,9 +1,11 @@
 import { useRouter } from "next/router";
-import { Box, Button, Icon } from "@chakra-ui/core";
+import { Box, Button, Icon, Text } from "@chakra-ui/core";
 import { BiArrowBack } from "react-icons/bi";
 
 
-interface MyProps {}
+interface MyProps {
+  title: string | null
+}
 
 const BackBar : React.FC<MyProps> = props => {
   const router = useRouter();
@@ -20,6 +22,7 @@ const BackBar : React.FC<MyProps> = props => {
       px={2}
       rounded="lg"
       shadow="sm"
+      w="full"
     >
       <Button
         onClick={() => router.back()}
@@ -34,7 +37,10 @@ const BackBar : React.FC<MyProps> = props => {
       >
         <Icon width={5} height={5} as={BiArrowBack} />
       </Button>
-      <Box>{props.children}</Box>
+      <Box w="full" justifyContent="space-between">
+        <Box>{props.title && <Text fontWeight="semibold" ml={4}>{props.title}</Text>}</Box>
+        {props.children}
+      </Box>
     </Box>
   );
 };

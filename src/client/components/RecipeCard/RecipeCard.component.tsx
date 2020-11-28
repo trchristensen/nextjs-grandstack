@@ -31,7 +31,6 @@ import {
   BiSearch,
   BiNotification,
   BiBookmark,
-  BiHash,
   BiUser,
   BiGitRepoForked,
   BiBookBookmark,
@@ -40,7 +39,8 @@ import {
   BiLike,
   BiDislike,
   BiComment,
-  BiCopy
+  BiCopy,
+  BiHash
 } from "react-icons/bi";
 
 import { formatDistanceToNow } from "date-fns";
@@ -201,13 +201,17 @@ export function RecipeCard(recipe: any) {
           {/* <Box>[Flavor details here]</Box> */}
         </Box>
         <Box w="full">
-          <Stack spacing={1} direction="row" flexWrap="wrap" mb=".15rem">
+          <Stack spacing={1} direction="row" flexWrap="wrap" mb=".25rem">
             {recipe.ingredients &&
               recipe.ingredients?.map((ingredient: any) => {
                 return (
                   <Box
                     key={ingredient.Flavor.flavorId}
                     className="ingredientsList__ingredient"
+                    bg="gray.100"
+                    mr={1}
+                    px={1}
+                    rounded="md"
                   >
                     <Link href={`/flavors/${ingredient.Flavor.flavorId}`}>
                       <a>
@@ -216,7 +220,6 @@ export function RecipeCard(recipe: any) {
                           <Text as="span" fontSize="xs" fontStyle="italic">
                             ({ingredient.measurement})
                           </Text>
-                          ,
                         </Text>
                       </a>
                     </Link>
@@ -262,7 +265,8 @@ export function RecipeCard(recipe: any) {
           </Stack>
         </Box>
 
-        <Box className="recipe__tags" mt={1}>
+        <Box className="recipe__tags" mt={1} d="flex" flexDir="row" alignItems="center">
+          <Icon as={BiHash} mr={2} color="gray.500" mt=".15rem" />
           <Stack spacing={1} direction="row" flexWrap="wrap">
             {recipe.tags?.map((tag: any) => {
               return (
