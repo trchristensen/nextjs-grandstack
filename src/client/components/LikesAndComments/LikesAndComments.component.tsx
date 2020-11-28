@@ -8,11 +8,11 @@ import {
 import {
   BiComment,
 } from "react-icons/bi";
-import { Recipe } from "../../gen/index";
+// import { Recipe } from "../../gen/index";
 import { LikeBox } from './LikeBox.component';
 
 
-export const LikesAndComments = (recipe: Recipe) => {
+export const LikesAndComments = (recipe: any) => {
   return (
     <Box className="likesAndComments">
       <Box
