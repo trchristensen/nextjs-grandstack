@@ -3,6 +3,7 @@ import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "../../client/firebaseHelpers";
+import BackBar from "../../client/components/BackBar/BackBar.component";
 
 import {
   Avatar,
@@ -49,39 +50,38 @@ const Profile = () => {
 
 return (
   <Box w="500px" maxW="100%">
-    <Box w="100%" display="flex" flexDirection="column" mb={4}>
+    <BackBar>
       {!userAuthLoading && userAuth?.uid === user.data?.User[0].id && (
         <Box w="100%" display="flex" justifyContent="flex-end">
           <Button>Edit Profile</Button>
         </Box>
       )}
-    </Box>
+    </BackBar>
+    <Box w="100%" display="flex" flexDirection="column" mb={4}></Box>
     {!user.loading && !user.error && (
       <>
-      <Box
-        display="flex"
-        w="100%"
-        flexDir="column"
-        bg="white"
-        rounded="lg"
-        shadow="md"
-        p={4}
-      >
-        <Box display="flex" flexDir="column">
-          <Box display="flex" alignItems="center">
-            <Avatar size="xl" src={user.data.User[0].avatar} />
-            <Text ml={4} fontSize="2xl">
-              {user.data.User[0].name}
-            </Text>
-            
+        <Box
+          display="flex"
+          w="100%"
+          flexDir="column"
+          bg="white"
+          rounded="lg"
+          shadow="md"
+          p={4}
+        >
+          <Box display="flex" flexDir="column">
+            <Box display="flex" alignItems="center">
+              <Avatar size="xl" src={user.data.User[0].avatar} />
+              <Text ml={4} fontSize="2xl">
+                {user.data.User[0].name}
+              </Text>
+            </Box>
           </Box>
         </Box>
-
-      </Box>
-      <Box w="500px" maxW="100%" mt={4}>
-        {/* <UserRecipes /> */}
-        <GetRecipes {...filter} />
-      </Box>
+        <Box w="500px" maxW="100%" mt={4}>
+          {/* <UserRecipes /> */}
+          <GetRecipes {...filter} />
+        </Box>
       </>
     )}
   </Box>
