@@ -1,9 +1,9 @@
 import { GetServerSideProps } from "next";
-import { Header } from "../client/components/Header";
-import {
-  useCurrentUserQuery,
-  useDummyMutation
-} from "../client/gen/index";
+// import { Header } from "../client/components/Header";
+// import {
+//   useCurrentUserQuery,
+//   useDummyMutation
+// } from "../client/gen/index";
 // import { GraphQLBoolean } from "graphql";
 
 
@@ -28,23 +28,5 @@ const Index = () => {
 
 
 
-function GraphqlExample() {
-  const currentUserQuery = useCurrentUserQuery();
-  const [dummy, result] = useDummyMutation();
-  return (
-    <div>
-      <div>uid: {currentUserQuery.data?.currentUser?.id}</div>
-      <button
-        disabled={result.loading}
-        onClick={async () => {
-          const res = await dummy({ variables: {} });
-          alert(res.data?.dummy?.error);
-        }}
-      >
-        run command
-      </button>
-    </div>
-  );
-}
 
 export default Index;
