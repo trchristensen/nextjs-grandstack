@@ -9,9 +9,9 @@ import gql from "graphql-tag";
 
 import { Box } from "@chakra-ui/core";
 
-import { CreateRecipe } from "../client/components/CreateRecipe/CreateRecipe.component";
-import { RecipeCard } from "../client/components/RecipeCard/RecipeCard.component";
-import { RECIPES_QUERY } from "../client/gql/recipes";
+import { CreateRecipe } from "../../client/components/CreateRecipe/CreateRecipe.component";
+import { RecipeCard } from "../../client/components/RecipeCard/RecipeCard.component";
+import { RECIPES_QUERY } from "../../client/gql/recipes";
 
 type Props = {};
 

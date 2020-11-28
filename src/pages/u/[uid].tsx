@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useMutation, useQuery } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "../../client/firebaseHelpers";
@@ -10,8 +10,6 @@ import {
   Text,
   Button
 } from "@chakra-ui/core";
-import { RecipeCard } from "../../client/components/RecipeCard/RecipeCard.component"
-import { RECIPES_QUERY } from "../../client/gql/recipes";
 import { GetRecipes } from "../../client/components/GetRecipes/GetRecipes.component";
 
 const USER_QUERY = gql`

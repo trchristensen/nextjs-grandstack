@@ -111,15 +111,19 @@ export function RecipeCard(recipe: any) {
             width="100%"
             px={2}
           >
-            <Text
-              as="span"
-              fontSize="lg"
-              lineHeight="shorter"
-              fontWeight="bold"
-              px={0}
-            >
-              {recipe.name}
-            </Text>
+            <Link href={`/recipes/${recipe.recipeId}`}>
+              <a>
+                <Text
+                  as="span"
+                  fontSize="lg"
+                  lineHeight="shorter"
+                  fontWeight="bold"
+                  px={0}
+                >
+                  {recipe.name}
+                </Text>
+              </a>
+            </Link>
             {recipe.parent && <Icon as={BiGitRepoForked} />}
             <Box
               className="recipeCard__header-info-details"
