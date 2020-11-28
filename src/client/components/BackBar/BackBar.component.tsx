@@ -4,7 +4,7 @@ import { BiArrowBack } from "react-icons/bi";
 
 
 interface MyProps {
-  title: string | null
+  title?: string | null
 }
 
 const BackBar : React.FC<MyProps> = props => {
