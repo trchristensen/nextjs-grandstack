@@ -11,7 +11,7 @@ import { Box } from "@chakra-ui/core";
 
 import { CreateRecipe } from "../client/components/CreateRecipe/CreateRecipe.component";
 import { RecipeCard } from "../client/components/RecipeCard/RecipeCard.component";
-import { RECIPES_NOT_ARCHIVED } from "../client/gql/recipes";
+import { RECIPES_QUERY } from "../client/gql/recipes";
 
 type Props = {};
 
@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
 };
 
 const GetRecipes = () => {
-  const recipes = useQuery(RECIPES_NOT_ARCHIVED, {
+  const recipes = useQuery(RECIPES_QUERY, {
     variables: {
       orderBy: "published_desc",
     },

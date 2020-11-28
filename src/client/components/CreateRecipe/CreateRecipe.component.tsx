@@ -38,6 +38,7 @@ import {
 } from "../../gen/index";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import { setTimeout } from "timers";
+import { RECIPES_QUERY } from "../../gql/recipes";
 
 const FLAVORS = gql`
   query Flavors {
@@ -48,41 +49,7 @@ const FLAVORS = gql`
   }
 `;
 
-const RECIPES_NOT_ARCHIVED = gql`
-  query recipesNotArchived(
-    $first: Int
-    $offset: Int
-    $orderBy: [_RecipeOrdering]
-  ) {
-    recipesNotArchived(first: $first, offset: $offset, orderBy: $orderBy) {
-      recipeId
-      name
-      description
-      published
-      lastEdited
-      creator {
-        id
-      }
-      parent {
-        recipeId
-        name
-      }
-      ingredients {
-        amount
-        measurement
-        Flavor {
-          flavorId
-          name
-        }
-      }
-      tags {
-        name
-        tagId
-      }
-      numComments
-    }
-  }
-`;
+
 
 const CREATE_RECIPE_MUTATION = gql`
   mutation createRecipeWithIngredientsAndTags(
@@ -202,9 +169,10 @@ export function CreateRecipe() {
   const [CreateRecipeWithIngredients] = useMutation(CREATE_RECIPE_MUTATION,{
     refetchQueries: [
       {
-        query: RECIPES_NOT_ARCHIVED,
+        query: RECIPES_QUERY,
         variables: {
           orderBy: "published_desc",
+          isArchived: false
         },
       },
     ],

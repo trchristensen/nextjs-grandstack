@@ -22,9 +22,9 @@ export const LikesAndComments = (recipe: Recipe) => {
         alignItems="center"
       >
         <Box d="flex" alignItems="center" color="gray.600">
-          {recipe?.numComments > 0 && recipe?.numComments}{" "}
+          {/* {recipe?.numComments > 0 && recipe?.numComments}{" "} */}
           <Button
-            ml={recipe?.numComments > 0 && 1}
+            // ml={recipe?.numComments > 0 && 1}
             p={0}
             rounded="full"
             transition="all 0.2s"

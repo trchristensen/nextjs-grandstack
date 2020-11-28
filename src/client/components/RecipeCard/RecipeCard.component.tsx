@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "../../../client/firebaseHelpers";
-
 import { Recipe, Flavor } from "../../gen/index";
 import { RECIPES_QUERY, ARCHIVE_RECIPE } from "../../gql/recipes";
 
@@ -23,7 +22,8 @@ import {
   Icon,
   Heading,
   Tag,
-  useToast
+  useToast,
+  useClipboard,
 } from "@chakra-ui/core";
 import {
   BiChevronDown,
@@ -44,19 +44,20 @@ import {
 
 import { formatDistanceToNow } from "date-fns";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
-import { LikesAndComments }  from '../LikesAndComments/LikesAndComments.component'
-
+import { LikesAndComments } from "../LikesAndComments/LikesAndComments.component";
 
 export function RecipeCard(recipe: Recipe) {
   const [userAuth, userAuthLoading] = useAuthState(getAuth());
-
+  const { hasCopied, onCopy } = useClipboard(
+    `${process.env.BASE_PATH || ''}/recipes/${recipe.recipeId}`
+  );
   const [archive] = useMutation(ARCHIVE_RECIPE, {
     refetchQueries: [
       {
         query: RECIPES_QUERY,
         variables: {
           orderBy: "published_desc",
-          isArchived: false
+          isArchived: false,
         },
       },
     ],
@@ -173,7 +174,10 @@ export function RecipeCard(recipe: Recipe) {
                   <MenuDivider />
                 </>
               )}
-
+              <MenuItem onClick={onCopy}>
+                <Icon mr={1} as={BiBookmark} />
+                Copy URL
+              </MenuItem>
               <MenuItem>
                 <Icon mr={1} as={BiGitRepoForked} />
                 Remix

@@ -3,9 +3,6 @@ import { MutationResolvers, QueryResolvers, Resolvers } from "./gen";
 import { RecipeMutations, RecipeQueries } from './resolvers/Recipes.resolvers';
 import { UserMutations } from './resolvers/Users.resolvers';
 import { LikesQueries, LikesMutations } from "./resolvers/Likes.resolvers";
-// import { FlavorQueries } from './resolvers/Flavors.resolvers';
-import { neo4jgraphql } from "neo4j-graphql-js";
-
 type Context = { idToken: { uid: string } | null };
 
 
@@ -18,19 +15,11 @@ const CurrentUser: QueryResolvers<Context> = {
   },
 };
 
-// export const FlavorQueries: QueryResolvers<Context> = {
-//   //@ts-ignore
-//   flavorQuery(object, params, _context, resolveInfo) {
-//     return neo4jgraphql(object, params, _context, resolveInfo);
-//   },
-// };
-
 
 const Query = {
   ...CurrentUser,
   ...RecipeQueries,
   ...LikesQueries,
-  // ...FlavorQueries,
 };
 
 const Mutation = {
