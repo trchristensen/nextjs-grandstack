@@ -1,18 +1,18 @@
 //@ts-ignore
 import { neo4jgraphql } from "neo4j-graphql-js";
-import { MutationResolvers, QueryResolvers, Resolvers } from "../gen";
+// import { MutationResolvers, QueryResolvers, Resolvers } from "../gen";
 
 type Context = { idToken: { uid: string } | null };
 
 
-export const UserQueries: QueryResolvers<Context> = {
+export const UserQueries: any = {
   //@ts-ignore
   // CheckUser(object, params, _context, resolveInfo) {
   //   return neo4jgraphql(object, params, _context, resolveInfo);
   // },
 };
 
-export const UserMutations: MutationResolvers<Context> = {
+export const UserMutations: any = {
 
   //@ts-ignore
   async CreateUser(object, params, _context, resolveInfo) {
