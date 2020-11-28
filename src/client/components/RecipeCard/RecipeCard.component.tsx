@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "../../../client/firebaseHelpers";
-import { Recipe, Flavor } from "../../gen/index";
+// import { Recipe, Flavor } from "../../gen/index";
 import { RECIPES_QUERY, ARCHIVE_RECIPE } from "../../gql/recipes";
 
 import {
@@ -46,7 +46,7 @@ import { formatDistanceToNow } from "date-fns";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
 import { LikesAndComments } from "../LikesAndComments/LikesAndComments.component";
 
-export function RecipeCard(recipe: Recipe) {
+export function RecipeCard(recipe: any) {
   const [userAuth, userAuthLoading] = useAuthState(getAuth());
   const { hasCopied, onCopy } = useClipboard(
     `${process.env.BASE_PATH || ''}/recipes/${recipe.recipeId}`
