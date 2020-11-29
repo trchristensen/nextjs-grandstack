@@ -116,11 +116,11 @@ export const CommentBox = (recipe: any) => {
       <Box mt={4}>
         {recipe?.comments.map((comment: any) => {
           return (
-            <Box w="full" d="flex" flexDir="column">
-              <Box d="flex" alignItems="center" justifyContent="flex-start">
-                <Avatar size="xs" src={comment.author.avatar} mr={2} />
+            <Box w="full" d="flex" flexDir="column" mb={2}>
+              <Box d="flex" alignItems="flex-start" justifyContent="flex-start">
+                <Avatar w="28px" h="28px" src={comment.author.avatar} name={comment.author.name} mr={2} />
                 <Box d="flex" flexDir="column" flexWrap="wrap">
-                  <Box bg="gray.200" borderRadius="lg" px={2} py={1}>
+                  <Box bg="gray.200" borderRadius="lg" px={2} py=".05rem">
                     <Text fontSize="sm" lineHeight="tight">
                       {comment.author.name}
                     </Text>
@@ -128,13 +128,18 @@ export const CommentBox = (recipe: any) => {
                       {comment.text}
                     </Text>
                   </Box>
-
-                  <Text fontSize="sm">
-                    {formatDistanceToNow(
-                      //@ts-ignore
-                      new Date(comment.published)
-                    )}
-                  </Text>
+                  <Box d="flex" flexDir="row" alignItems="center">
+                    <Text fontSize="sm">
+                      Like
+                    </Text>
+                    <Text mx={1} as="span">{"·"}</Text>
+                    <Text fontSize="sm">
+                      {formatDistanceToNow(
+                        //@ts-ignore
+                        new Date(comment.published)
+                      )}
+                    </Text>
+                  </Box>
                 </Box>
               </Box>
             </Box>

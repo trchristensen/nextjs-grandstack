@@ -68,7 +68,7 @@ export const RECIPES_QUERY = gql`
       numLikes
       numDislikes
       numComments
-      comments {
+      comments(orderBy: published_asc) {
         commentId
         published
         text

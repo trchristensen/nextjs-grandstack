@@ -192,8 +192,8 @@ const MainLayout = ({ children }: any) => {
                           <Avatar
                             marginRight={2}
                             size="sm"
-                            name={`${user.displayName}`}
                             src={`${user.photoURL}`}
+                            name={`${user.displayName}`}
                           />
                           <Text as="span" textAlign="left">{user.displayName}</Text>
                           <Icon as={BiChevronDown} />

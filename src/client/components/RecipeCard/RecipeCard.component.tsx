@@ -24,7 +24,9 @@ import {
   Tag,
   useToast,
   useClipboard,
+  Grid,
 } from "@chakra-ui/core";
+import { GridItem } from "@chakra-ui/react";
 import {
   BiChevronDown,
   BiHome,
@@ -40,7 +42,7 @@ import {
   BiDislike,
   BiComment,
   BiCopy,
-  BiHash
+  BiHash,
 } from "react-icons/bi";
 
 import { formatDistanceToNow } from "date-fns";
@@ -200,52 +202,63 @@ export function RecipeCard(recipe: any) {
           <Text>{recipe.description}</Text>
           {/* <Box>[Flavor details here]</Box> */}
         </Box>
-        <Box w="full" p={2} mb={2} rounded="md">
-          <Stack spacing={1} direction="column">
-            {recipe.ingredients &&
-              recipe.ingredients?.map((ingredient: any) => {
-                return (
-                  <Box
-                    key={ingredient.Flavor.flavorId}
-                    className="ingredientsList__ingredient"
-                    marginBottom=".05rem"
-                    w="full"
-                  >
+        <Box className="ingredients-table" mb={3}>
+          <Grid borderBottomWidth={1} templateColumns="repeat(7, 1fr)" gap={1}>
+            <GridItem colSpan={3} w="100%" h="auto">
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+                Ingredients
+              </Text>
+            </GridItem>
+            <GridItem w="100%" h="auto">
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">g</Text>
+            </GridItem>
+            <GridItem w="100%" h="auto">
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">ml</Text>
+            </GridItem>
+            <GridItem w="100%" h="auto">
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">drops</Text>
+            </GridItem>
+            <GridItem w="100%" h="auto">
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">%</Text>
+            </GridItem>
+          </Grid>
+
+          {recipe.ingredients &&
+            recipe.ingredients?.map((ingredient: any) => {
+              return (
+                <Grid templateColumns="repeat(7, 1fr)" gap={1} mt={1}>
+                  <GridItem colSpan={3} w="100%" h="auto">
                     <Link href={`/flavors/${ingredient.Flavor.flavorId}`}>
                       <a>
-                        <Box
-                          display="flex"
-                          justifyContent="space-between"
-                          alignItems="flex-end"
-                          flexDirection="row"
-                          flexWrap="nowrap"
-                          w="full"
-                          minW="100%"
-                        >
-                          <Box d="flex" flexGrow={1} flexShrink={0}>
-                            <Text as="span" fontSize="sm">
-                              {ingredient.Flavor.name}
-                            </Text>
-                          </Box>
-                          <Box
-                            borderBottomWidth={1}
-                            borderBottomStyle="dotted"
-                            borderColor="gray.400"
-                            w="full"
-                            mx={1}
-                            mb=".25rem"
-                          ></Box>
-                          <Box>
-                            <Text as="span" fontSize="sm">{ingredient.amount}<Text fontStyle="italic" as="span" fontSize="xs">({ingredient.measurement})</Text>
-                            </Text>
-                          </Box>
-                        </Box>
+                        <Text as="span" fontSize="sm">
+                          {ingredient.Flavor.name}
+                        </Text>
                       </a>
                     </Link>
-                  </Box>
-                );
-              })}
-          </Stack>
+                  </GridItem>
+                  <GridItem w="100%" h="auto">
+                    <Text fontSize="sm" as="span">
+                      {ingredient.amount}
+                    </Text>
+                  </GridItem>
+                  <GridItem w="100%" h="auto">
+                    <Text fontSize="sm" as="span">
+                      {ingredient.amount}
+                    </Text>
+                  </GridItem>
+                  <GridItem w="100%" h="auto">
+                    <Text fontSize="sm" as="span">
+                      {ingredient.amount}
+                    </Text>
+                  </GridItem>
+                  <GridItem w="100%" h="auto">
+                    <Text fontSize="sm" as="span">
+                      {ingredient.amount}
+                    </Text>
+                  </GridItem>
+                </Grid>
+              );
+            })}
         </Box>
         <Box>
           <Stack
