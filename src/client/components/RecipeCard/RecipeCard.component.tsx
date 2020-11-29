@@ -268,8 +268,21 @@ export function RecipeCard(recipe: any) {
               );
             })}
         </Box>
-          <Box><Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">Suggested Mix: {recipe.mixingPercentage}%</Text></Box>
-        <Box bg={"gray.200"} overflow="hidden" borderRadius="lg" border={1} w="full">
+        <Box w="full" d="flex" justifyContent="space-between" px=".025rem">
+          <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+            Suggested Mix: {recipe.mixingPercentage}%
+          </Text>
+          <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+            Steep Time: 2 days
+          </Text>
+        </Box>
+        <Box
+          bg={"gray.200"}
+          overflow="hidden"
+          borderRadius="lg"
+          border={1}
+          w="full"
+        >
           <Stack
             className="ingredientsBar"
             w={`${recipe.mixingPercentage}%`}

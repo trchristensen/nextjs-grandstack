@@ -101,6 +101,13 @@ export const AddComment = (recipe: any) => {
 };
 
 export const CommentBox = (recipe: any) => {
+
+  React.useEffect(() => {
+    return () => {
+      console.log('recipe object inside comment box function', recipe)
+    }
+  }, [recipe])
+  
   return (
     <Box
       borderTopWidth={1}
@@ -114,7 +121,7 @@ export const CommentBox = (recipe: any) => {
     >
       <AddComment {...recipe} />
       <Box mt={4}>
-        {recipe?.comments.map((comment: any) => {
+        {recipe.comments?.map((comment: any) => {
           return (
             <Box w="full" d="flex" flexDir="column" mb={2}>
               <Box d="flex" alignItems="flex-start" justifyContent="flex-start">

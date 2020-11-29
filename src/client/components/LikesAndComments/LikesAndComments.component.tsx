@@ -1,19 +1,19 @@
-import {
-  Avatar,
-  Box,
-  Text,
-  Icon,
-  Button
-} from "@chakra-ui/core";
-import {
-  BiComment,
-} from "react-icons/bi";
-import LikeBox from './LikeBox.component';
+import React from "react";
+import { Avatar, Box, Text, Icon, Button } from "@chakra-ui/core";
+import { BiComment } from "react-icons/bi";
+import LikeBox from "./LikeBox.component";
 import CommentBox from "./CommentBox.component";
-
-
+import { useLazyQuery } from "@apollo/react-hooks";
+import { RECIPE_COMMENTS } from "../../gql/recipes";
 
 const LikesAndComments = (recipe: any) => {
+  const [showComments, setShowComments] = React.useState(false);
+
+
+  const handleShowComments = () => {
+    setShowComments(!showComments)
+    
+  }
 
   return (
     <Box className="likesAndComments">
@@ -24,9 +24,10 @@ const LikesAndComments = (recipe: any) => {
         alignItems="center"
       >
         <Box d="flex" alignItems="center" color="gray.600">
-          {/* {recipe?.numComments > 0 && recipe?.numComments}{" "} */}
+          {recipe?.numComments > 0 && recipe?.numComments}{" "}
           <Button
-            // ml={recipe?.numComments > 0 && 1}
+            onClick={handleShowComments}
+            ml={`${recipe?.numComments > 0 && 1}`}
             p={0}
             rounded="full"
             transition="all 0.2s"
@@ -43,7 +44,8 @@ const LikesAndComments = (recipe: any) => {
           <LikeBox {...recipe} />
         </Box>
       </Box>
-      <CommentBox {...recipe} />
+      {showComments && <CommentBox {...recipe} 
+      />}
     </Box>
   );
 };

@@ -83,6 +83,37 @@ export const RECIPES_QUERY = gql`
   }
 `;
 
+export const RECIPE_COMMENTS = gql`
+  query Recipe(
+    $recipeId: ID!
+    $first: Int
+    $offset: Int
+    $orderBy: [_RecipeOrdering]
+    $isArchived: Boolean
+    $filter: _RecipeFilter
+  ) {
+    Recipe(
+      recipeId: $recipeId
+      first: $first
+      offset: $offset
+      orderBy: $orderBy
+      isArchived: $isArchived
+      filter: $filter
+    ) {
+      comments(orderBy: published_asc) {
+        commentId
+        published
+        text
+        author {
+          userId
+          name
+          avatar
+        }
+      }
+    }
+  }
+`;
+
 export const UPDATE_RECIPE_RATING = gql`
   mutation updateRecipeRating(
     $userId: String!

@@ -128,16 +128,23 @@ export function CreateRecipe() {
   };
 
   const handleupdateTotal = () => {
+
+    
+
+  
      const qty = [...document.getElementsByClassName('flavorQty__input') as HTMLCollectionOf<HTMLInputElement>];
     
 
      let total = 0;
      const flavorTotalArray:any = qty.map((element:any) => {
        if (parseInt(element.value) === NaN) return;
-      return total = total + parseInt(element.value);
+       let value = Math.round(element.value * 100) / 100;
+       total = total + value;
+      return total;
      })
 
      console.log(total)
+     if (total !== 100) setSubmittable(false);
     //  console.log(CheckTotalFlavorAmount(flavorTotalArray, "g"))
     // if flavorTotalArray.reduce() == 100
   }
