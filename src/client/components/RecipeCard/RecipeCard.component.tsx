@@ -210,16 +210,24 @@ export function RecipeCard(recipe: any) {
               </Text>
             </GridItem>
             <GridItem w="100%" h="auto">
-              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">g</Text>
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+                g
+              </Text>
             </GridItem>
             <GridItem w="100%" h="auto">
-              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">ml</Text>
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+                ml
+              </Text>
             </GridItem>
             <GridItem w="100%" h="auto">
-              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">drops</Text>
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+                drops
+              </Text>
             </GridItem>
             <GridItem w="100%" h="auto">
-              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">%</Text>
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+                %
+              </Text>
             </GridItem>
           </Grid>
 
@@ -260,14 +268,11 @@ export function RecipeCard(recipe: any) {
               );
             })}
         </Box>
-        <Box>
+          <Box><Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">Suggested Mix: {recipe.mixingPercentage}%</Text></Box>
+        <Box bg={"gray.200"} overflow="hidden" borderRadius="lg" border={1} w="full">
           <Stack
-            className="w-full border rounded-lg overflow-hidden ingredientsBar"
-            bg={"gray.200"}
-            overflow="hidden"
-            borderRadius="lg"
-            border={1}
-            w="full"
+            className="ingredientsBar"
+            w={`${recipe.mixingPercentage}%`}
             spacing={0}
             isInline
           >
@@ -282,8 +287,7 @@ export function RecipeCard(recipe: any) {
                   >
                     <Tooltip
                       aria-label="tooltip"
-                      label={`${ingredient.Flavor.name} - ${ingredient.amount}
-                      ${ingredient.measurement}`}
+                      label={`${ingredient.Flavor.name}`}
                       placement="bottom"
                     >
                       <div
