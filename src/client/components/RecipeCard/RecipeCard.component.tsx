@@ -1,6 +1,7 @@
 import React from "react";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "../../../client/firebaseHelpers";
@@ -54,13 +55,35 @@ export function RecipeCard(recipe: any) {
   const { hasCopied, onCopy } = useClipboard(
     `https://juicesauce.com/recipes/${recipe.recipeId}`
   );
+
+      let filter = {};
+      const router = useRouter();
+      const tag = router.query.tag;
+      const q = router.query.q;
+
+      if (tag) {
+        filter = {
+          ...filter,
+          tags_single: { name_contains: tag },
+        };
+      }
+      if (q) {
+        filter = {
+          ...filter,
+          name_contains: q,
+        };
+      }
+
   const [archive] = useMutation(ARCHIVE_RECIPE, {
     refetchQueries: [
       {
         query: RECIPES_QUERY,
         variables: {
-          orderBy: "published_desc",
           isArchived: false,
+          orderBy: "published_desc",
+          first: 20,
+          offset: 0,
+          filter: filter,
         },
       },
     ],
