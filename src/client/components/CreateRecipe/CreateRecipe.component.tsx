@@ -22,7 +22,7 @@ import {
   SliderFilledTrack,
   SliderThumb,
   Flex,
-  Text
+  Text,
 } from "@chakra-ui/core";
 // import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
@@ -31,7 +31,7 @@ import { getAuth } from "../../../client/firebaseHelpers";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
-
+import { useRouter } from "next/router";
 // import {
 //   Flavor,
 // } from "../../gen/index";
@@ -47,8 +47,6 @@ const FLAVORS = gql`
     }
   }
 `;
-
-
 
 const CREATE_RECIPE_MUTATION = gql`
   mutation createRecipeWithIngredientsAndTags(
@@ -92,7 +90,7 @@ export function CreateRecipe() {
   const [submittable, setSubmittable] = React.useState(false);
   const [mixingPercentage, setMixingPercentage] = React.useState<number>(12);
   const [notes, setNotes] = React.useState<string>("");
-  const [tags, setTags] = React.useState<any[]>()
+  const [tags, setTags] = React.useState<any[]>();
 
   const [flavorTotal, setFlavorTotal] = React.useState<number>(0);
 
@@ -105,12 +103,12 @@ export function CreateRecipe() {
   ];
 
   const handleTags = (newValue: any, actionMeta: any) => {
-    setTags(newValue)
+    setTags(newValue);
   };
 
   React.useEffect(() => {
-    console.log('woo',tags)
-  }, [tags])
+    console.log("woo", tags);
+  }, [tags]);
 
   const handleTagsInputChange = (inputValue: any, actionMeta: any) => {
     // console.group("Input Changed");
@@ -128,26 +126,25 @@ export function CreateRecipe() {
   };
 
   const handleupdateTotal = () => {
+    const qty = [
+      ...(document.getElementsByClassName(
+        "flavorQty__input"
+      ) as HTMLCollectionOf<HTMLInputElement>),
+    ];
 
-    
-
-  
-     const qty = [...document.getElementsByClassName('flavorQty__input') as HTMLCollectionOf<HTMLInputElement>];
-    
-
-     let total = 0;
-     const flavorTotalArray:any = qty.map((element:any) => {
-       if (parseInt(element.value) === NaN) return;
-       let value = Math.round(element.value * 100) / 100;
-       total = total + value;
+    let total = 0;
+    const flavorTotalArray: any = qty.map((element: any) => {
+      if (parseInt(element.value) === NaN) return;
+      let value = Math.round(element.value * 100) / 100;
+      total = total + value;
       return total;
-     })
+    });
 
-     console.log(total)
-     if (total !== 100) setSubmittable(false);
+    console.log(total);
+    if (total !== 100) setSubmittable(false);
     //  console.log(CheckTotalFlavorAmount(flavorTotalArray, "g"))
     // if flavorTotalArray.reduce() == 100
-  }
+  };
 
   const Flavors = useQuery(FLAVORS);
 
@@ -172,13 +169,34 @@ export function CreateRecipe() {
     }
   }, [name, description, selectedOption]);
 
-  const [CreateRecipeWithIngredients] = useMutation(CREATE_RECIPE_MUTATION,{
+    let filter = {};
+    const router = useRouter();
+    const tag = router.query.tag;
+    const q = router.query.q;
+
+    if (tag) {
+      filter = {
+        ...filter,
+        tags_single: { name_contains: tag },
+      };
+    }
+    if (q) {
+      filter = {
+        ...filter,
+        name_contains: q,
+      };
+    }
+
+  const [CreateRecipeWithIngredients] = useMutation(CREATE_RECIPE_MUTATION, {
     refetchQueries: [
       {
         query: RECIPES_QUERY,
         variables: {
+          isArchived: false,
           orderBy: "published_desc",
-          isArchived: false
+          first: 20,
+          offset: 0,
+          filter: filter,
         },
       },
     ],
@@ -237,9 +255,9 @@ export function CreateRecipe() {
       return rObj;
     });
     //@ts-ignore
-    const tagsFormatted = tags?.map((t:any) => {
-      return ({tagId: t.value, name: t.label})
-    })
+    const tagsFormatted = tags?.map((t: any) => {
+      return { tagId: t.value, name: t.label };
+    });
 
     const RecipePayload = {
       variables: {

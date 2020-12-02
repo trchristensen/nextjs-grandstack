@@ -32,10 +32,10 @@ export const GetRecipes = ({
 
   const recipes = useQuery(RECIPES_QUERY, {
     variables: {
-      first: first,
-      offset: offset,
       isArchived: isArchived,
       orderBy: orderBy,
+      first: first,
+      offset: offset,
       filter: filter,
     },
   });
