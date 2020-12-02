@@ -37,7 +37,7 @@ const BackBar : React.FC<MyProps> = props => {
       >
         <Icon width={5} height={5} as={BiArrowBack} />
       </Button>
-      <Box w="full" justifyContent="space-between">
+      <Box w="full" justifyContent="space-between" d="flex" alignItems="center">
         <Box>{props.title && <Text fontWeight="semibold" ml={4}>{props.title}</Text>}</Box>
         {props.children}
       </Box>

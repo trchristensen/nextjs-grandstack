@@ -50,7 +50,7 @@ const Profile = () => {
 
 return (
   <Box w="500px" maxW="100%">
-    <BackBar>
+    <BackBar title="User">
       {!userAuthLoading && userAuth?.uid === user.data?.User[0].id && (
         <Box w="100%" display="flex" justifyContent="flex-end">
           <Button>Edit Profile</Button>

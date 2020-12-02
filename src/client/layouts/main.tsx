@@ -29,6 +29,7 @@ import {
   BiGitRepoForked,
   BiLogOut,
   BiLogIn,
+  BiPlus,
 } from "react-icons/bi";
 
 const MainLayout = ({ children }: any) => {
@@ -44,15 +45,16 @@ const MainLayout = ({ children }: any) => {
           flexShrink={1}
           alignItems="flex-end"
           flexDir="column"
-          minW="200px"
+          // minW="200px"
         >
           <Box
-            w="200px"
+            // w="200px"
             maxW="100%"
             height="100vh"
             position="fixed"
             overflowY="auto"
-            pl={1} pr={1}
+            pl={1}
+            pr={1}
           >
             <Box
               position="relative"
@@ -63,87 +65,19 @@ const MainLayout = ({ children }: any) => {
               justifyContent="space-between"
             >
               <Box id="sidebar-left__top">
-                <Heading as="h1" size="lg" letterSpacing={"-.1rem"} mt="22px" mb="56px">
-                  JuiceSauce
+                <Heading
+                  as="h1"
+                  size="lg"
+                  letterSpacing={"-.1rem"}
+                  mt="22px"
+                  mb="56px"
+                >
+                  JS
                 </Heading>
-              <Box id="sidebar-left__main">
-                <Stack direction={"column"} spacing={6} align="stretch">
-                  <Box>
-                    <Link href="/">
-                      <a>
-                        <Box
-                          display="flex"
-                          flexDir="row"
-                          alignItems="center"
-                          justifyContent="flex-start"
-                        >
-                          <Icon w={8} h={8} color="gray.600" as={BiHome} />
-                          <Text ml={2} fontWeight="bold">
-                            Home
-                          </Text>
-                        </Box>
-                      </a>
-                    </Link>
-                  </Box>
-                  <Box>
-                    <Link href="/explore">
-                      <a>
-                        <Box
-                          display="flex"
-                          flexDir="row"
-                          alignItems="center"
-                          justifyContent="flex-start"
-                        >
-                          <Icon w={8} h={8} color="gray.600" as={BiHash} />
-                          <Text ml={2} fontWeight="bold">
-                            Explore
-                          </Text>
-                        </Box>
-                      </a>
-                    </Link>
-                  </Box>
-                  <Box>
-                    <Link href="/notifications">
-                      <a>
-                        <Box
-                          display="flex"
-                          flexDir="row"
-                          alignItems="center"
-                          justifyContent="flex-start"
-                        >
-                          <Icon
-                            w={8}
-                            h={8}
-                            color="gray.600"
-                            as={BiNotification}
-                          />
-                          <Text ml={2} fontWeight="bold">
-                            Notifications
-                          </Text>
-                        </Box>
-                      </a>
-                    </Link>
-                  </Box>
-                  <Box>
-                    <Link href="/bookmarks">
-                      <a>
-                        <Box
-                          display="flex"
-                          flexDir="row"
-                          alignItems="center"
-                          justifyContent="flex-start"
-                        >
-                          <Icon w={8} h={8} color="gray.600" as={BiBookmark} />
-                          <Text ml={2} fontWeight="bold">
-                            Bookmarks
-                          </Text>
-                        </Box>
-                      </a>
-                    </Link>
-                  </Box>
-                  {!loading && user && (
+                <Box id="sidebar-left__main">
+                  <Stack direction={"column"} spacing={6} align="stretch">
                     <Box>
-                      <Link href={`/u/${user.uid}`}>
+                      <Link href="/">
                         <a>
                           <Box
                             display="flex"
@@ -151,26 +85,91 @@ const MainLayout = ({ children }: any) => {
                             alignItems="center"
                             justifyContent="flex-start"
                           >
-                            <Icon w={8} h={8} color="gray.600" as={BiUser} />
-                            <Text ml={2} fontWeight="bold">
-                              Profile
-                            </Text>
+                            <Icon w={8} h={8} color="gray.600" as={BiHome} />
                           </Box>
                         </a>
                       </Link>
-                      <Button
-                        mt={10}
-                        rounded="full"
-                        variantColor="gray"
-                        borderColor="gray.500"
-                        variant="outline"
-                      >
-                        Create Recipe
-                      </Button>
                     </Box>
-                  )}
-                </Stack>
-              </Box>
+                    <Box>
+                      <Link href="/explore">
+                        <a>
+                          <Box
+                            display="flex"
+                            flexDir="row"
+                            alignItems="center"
+                            justifyContent="flex-start"
+                          >
+                            <Icon w={8} h={8} color="gray.600" as={BiHash} />
+                          </Box>
+                        </a>
+                      </Link>
+                    </Box>
+                    <Box>
+                      <Link href="/notifications">
+                        <a>
+                          <Box
+                            display="flex"
+                            flexDir="row"
+                            alignItems="center"
+                            justifyContent="flex-start"
+                          >
+                            <Icon
+                              w={8}
+                              h={8}
+                              color="gray.600"
+                              as={BiNotification}
+                            />
+                          </Box>
+                        </a>
+                      </Link>
+                    </Box>
+                    <Box>
+                      <Link href="/bookmarks">
+                        <a>
+                          <Box
+                            display="flex"
+                            flexDir="row"
+                            alignItems="center"
+                            justifyContent="flex-start"
+                          >
+                            <Icon
+                              w={8}
+                              h={8}
+                              color="gray.600"
+                              as={BiBookmark}
+                            />
+                          </Box>
+                        </a>
+                      </Link>
+                    </Box>
+                    {!loading && user && (
+                      <Box>
+                        <Link href={`/u/${user.uid}`}>
+                          <a>
+                            <Box
+                              display="flex"
+                              flexDir="row"
+                              alignItems="center"
+                              justifyContent="flex-start"
+                            >
+                              <Icon w={8} h={8} color="gray.600" as={BiUser} />
+                            </Box>
+                          </a>
+                        </Link>
+                        <Button
+                          mt={10}
+                          rounded="full"
+                          variantColor="gray"
+                          borderColor="gray.500"
+                          variant="outline"
+                          p={0}
+                        >
+                          <Icon as={BiPlus} />
+                        </Button>
+                      </Box>
+                    )}
+                  </Stack>
+                </Box>
               </Box>
               <Box id="sidebar-left__bottom" mb="40px">
                 {!loading && user ? (
@@ -195,14 +194,14 @@ const MainLayout = ({ children }: any) => {
                             src={`${user.photoURL}`}
                             name={`${user.displayName}`}
                           />
-                          <Text as="span" textAlign="left">{user.displayName}</Text>
+
                           <Icon as={BiChevronDown} />
                         </MenuButton>
                         <MenuList color="gray.500">
                           <MenuItem onClick={() => logout()}>
                             <Icon as={BiLogOut} mr={1} />
                             Logout
-                          </MenuItem> 
+                          </MenuItem>
                         </MenuList>
                       </Menu>
                     </Box>
