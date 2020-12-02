@@ -2,9 +2,10 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useQuery, useLazyQuery } from "@apollo/react-hooks";
-import { Box, Button } from "@chakra-ui/core";
+import { Box, Button, Spinner } from "@chakra-ui/core";
 import { RecipeCard } from "../RecipeCard/RecipeCard.component";
 import { RECIPES_QUERY } from "../../gql/recipes";
+//@ts-ignore
 import InfiniteScroll from "react-infinite-scroller";
 
 export const GetRecipes = ({
@@ -60,7 +61,11 @@ export const GetRecipes = ({
 
   return (
     <Box>
-      {recipes.loading && !recipes.error && <p>Loading...</p>}
+      {recipes.loading && !recipes.error && (
+        <Box w="full" textAlign="center" className="loader" key={0}>
+          <Spinner />
+        </Box>
+      )}
       {recipes.error && !recipes.loading && (
         <p>Error: {JSON.stringify(recipes.error)}</p>
       )}
@@ -71,9 +76,9 @@ export const GetRecipes = ({
           loadMore={handleFetchMore}
           hasMore={true}
           loader={
-            <div className="loader" key={0}>
-              Loading ...
-            </div>
+            <Box w="full" textAlign="center" className="loader" key={0}>
+              <Spinner />
+            </Box>
           }
         >
           {recipes.data.Recipe.map((recipe: any) => (
