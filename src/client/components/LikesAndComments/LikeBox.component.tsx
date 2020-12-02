@@ -11,14 +11,40 @@ import { Box, useToast, Button, Icon } from "@chakra-ui/core";
 import { BiLike, BiDislike } from "react-icons/bi";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
 // import { User } from "../../../server/gen";
+import { useRouter } from "next/router";
 
 const LikeBox = (recipe: any) => {
   const toast = useToast();
+
+      let filter = {};
+      const router = useRouter();
+      const tag = router.query.tag;
+      const q = router.query.q;
+
+      if (tag) {
+        filter = {
+          ...filter,
+          tags_single: { name_contains: tag },
+        };
+      }
+      if (q) {
+        filter = {
+          ...filter,
+          name_contains: q,
+        };
+      }
+
   const [updateRating] = useMutation(UPDATE_RECIPE_RATING, {
     refetchQueries: [
       {
         query: RECIPES_QUERY,
-        variables: { orderBy: "published_desc", isArchived: false },
+        variables: {
+          isArchived: false,
+          orderBy: "published_desc",
+          first: 20,
+          offset: 0,
+          filter: filter,
+        },
       },
     ],
 

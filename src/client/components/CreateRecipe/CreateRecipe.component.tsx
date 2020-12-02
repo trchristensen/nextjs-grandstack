@@ -110,13 +110,6 @@ export function CreateRecipe() {
     console.log("woo", tags);
   }, [tags]);
 
-  const handleTagsInputChange = (inputValue: any, actionMeta: any) => {
-    // console.group("Input Changed");
-    // console.log(inputValue);
-    // console.log(`action: ${actionMeta.action}`);
-    // console.groupEnd();
-  };
-
   const handleChange = (selectedOption: any) => {
     setSelectedOption([...selectedOption]);
   };
