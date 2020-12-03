@@ -269,22 +269,22 @@ export function RecipeCard(recipe: any) {
                   </GridItem>
                   <GridItem w="100%" h="auto">
                     <Text fontSize="sm" as="span">
-                      {ingredient.amount}
+                      {ingredient.grams}
                     </Text>
                   </GridItem>
                   <GridItem w="100%" h="auto">
                     <Text fontSize="sm" as="span">
-                      {ingredient.amount}
+                      {ingredient.ml}
                     </Text>
                   </GridItem>
                   <GridItem w="100%" h="auto">
                     <Text fontSize="sm" as="span">
-                      {ingredient.amount}
+                      {ingredient.drops}
                     </Text>
                   </GridItem>
                   <GridItem w="100%" h="auto">
                     <Text fontSize="sm" as="span">
-                      {ingredient.amount}
+                      {ingredient.percentage}
                     </Text>
                   </GridItem>
                 </Grid>

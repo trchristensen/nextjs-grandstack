@@ -15,6 +15,9 @@ export const GetRecipes = ({
   offset = 0,
   ...filter
 }) => {
+
+  const [hasMore, setHasMore] = React.useState(true);
+
   const router = useRouter();
   const tag = router.query.tag;
   const q = router.query.q;
@@ -50,7 +53,10 @@ export const GetRecipes = ({
       updateQuery: (prev, { fetchMoreResult }) => {
         if (!fetchMoreResult) return prev;
         //@ts-ignore
-        console.log(recipes.data.Recipe.length);
+        if (fetchMoreResult.length < first) return setHasMore(false)
+        setHasMore(false)
+        //@ts-ignore
+        
         return Object.assign({}, prev, {
           //@ts-ignore
           Recipe: [...prev.Recipe, ...fetchMoreResult.Recipe],
@@ -70,11 +76,17 @@ export const GetRecipes = ({
         <p>Error: {JSON.stringify(recipes.error)}</p>
       )}
 
+      {
+        recipes.data && recipes.data.Recipe.length == 0 && !recipes.loading && !recipes.error && (
+          <Box>No Recipes!</Box>
+        )
+      }
+
       {recipes.data && !recipes.loading && !recipes.error && (
         <InfiniteScroll
           pageStart={0}
           loadMore={handleFetchMore}
-          hasMore={true}
+          hasMore={hasMore}
           loader={
             <Box w="full" textAlign="center" className="loader" key={0}>
               <Spinner />

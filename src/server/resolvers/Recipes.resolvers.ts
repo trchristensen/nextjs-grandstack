@@ -57,12 +57,12 @@ export const RecipeMutations: any = {
     }
 
     params.ingredients?.map((ingredient:any) => {
-      if(ingredient?.measurement != 'g' && ingredient?.measurement != '%' && ingredient?.measurement != 'drops') {
-        throw new Error('invalid input for ingredient')
-      }
-      if(ingredient?.amount == null || isNaN(ingredient?.amount)) {
-        throw new Error('invalid ingredient amount');
-      }
+      // if(ingredient?.measurement != 'g' && ingredient?.measurement != '%' && ingredient?.measurement != 'drops') {
+      //   throw new Error('invalid input for ingredient')
+      // }
+      // if(ingredient?.amount == null || isNaN(ingredient?.amount)) {
+      //   throw new Error('invalid ingredient amount');
+      // }
     })
 
     if (_context.idToken?.uid == null) {

@@ -45,8 +45,10 @@ export const RECIPES_QUERY = gql`
       }
       mixingPercentage
       ingredients {
-        amount
-        measurement
+        drops
+        percentage
+        ml
+        grams
         Flavor {
           flavorId
           name
