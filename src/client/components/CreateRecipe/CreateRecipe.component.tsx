@@ -43,13 +43,13 @@ export function CreateRecipe() {
   const [steepTime, setSteepTime] = React.useState<number>(0);
   const [notes, setNotes] = React.useState<string>("");
   const [tags, setTags] = React.useState<any[]>();
-  const [flavorTotalPercentage, setFlavorTotalPercentage] = React.useState<number>(0);
+  const [
+    flavorTotalPercentage,
+    setFlavorTotalPercentage,
+  ] = React.useState<number>(0);
   const [createForm, setCreateForm] = React.useState(false);
 
   type Iingredient = {
-    ml?: Number;
-    grams?: Number;
-    drops?: Number;
     percentage?: Number;
     flavorId: String;
   };
@@ -66,7 +66,7 @@ export function CreateRecipe() {
   };
 
   const handleTagsInputChange = (inputValue: any, actionMeta: any) => {};
-  
+
   const handleMixingPercentageChange = (mixingPercentage: any) => {
     setMixingPercentage(mixingPercentage);
   };
@@ -80,38 +80,31 @@ export function CreateRecipe() {
     setIngredients(s);
   };
 
-
   const handleupdateTotal = (ingredientObject) => {
     const isIngredientInTheSelectedOptionState = selectedOption.filter(
       (flavor) => flavor.value == ingredientObject.flavorId
     );
 
-    
     const ingredientListWithoutUpdatedIngredient = ingredients.filter(
       (ingredient) => {
         return ingredient.flavorId !== ingredientObject.flavorId;
       }
-      );
-      
-      const totalGrams = ingredientListWithoutUpdatedIngredient.reduce(function (prev, cur) {
-        return prev + cur.grams;
-      }, 0);
-  
-      console.log('totalGrams', totalGrams + ingredientObject.grams)
+    );
 
+    const totalPercent = ingredientListWithoutUpdatedIngredient.reduce(
+      function (prev, cur) {
+        return prev + cur.percentage;
+      },
+      0
+    );
+
+    // console.log('totalPercent', totalPercent + ingredientObject.percentage)
 
     setIngredients([
       ...ingredientListWithoutUpdatedIngredient,
-      { ...ingredientObject, percentage: (ingredientObject.grams / (totalGrams + ingredientObject.grams) * 100 )},
+      ingredientObject,
     ]);
-
-    return (
-      (ingredientObject.grams / (totalGrams + ingredientObject.grams)) * 100
-    );
-
-   
-  };;
-  
+  };
 
   const Flavors = useQuery(FLAVORS);
 
@@ -202,8 +195,6 @@ export function CreateRecipe() {
 
     const currentDateTime = new Date().toISOString();
     if (ingredients === null) return;
-
-
 
     const tagsFormatted = tags?.map((t: any) => {
       return { tagId: t.value, name: t.label };

@@ -226,28 +226,13 @@ export function RecipeCard(recipe: any) {
           {/* <Box>[Flavor details here]</Box> */}
         </Box>
         <Box className="ingredients-table" mb={3}>
-          <Grid borderBottomWidth={1} templateColumns="repeat(7, 1fr)" gap={1}>
+          <Grid borderBottomWidth={1} templateColumns="repeat(4, 1fr)" gap={1}>
             <GridItem colSpan={3} w="100%" h="auto">
               <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
                 Ingredients
               </Text>
             </GridItem>
-            <GridItem w="100%" h="auto">
-              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
-                g
-              </Text>
-            </GridItem>
-            <GridItem w="100%" h="auto">
-              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
-                ml
-              </Text>
-            </GridItem>
-            <GridItem w="100%" h="auto">
-              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
-                drops
-              </Text>
-            </GridItem>
-            <GridItem w="100%" h="auto">
+            <GridItem w="100%" h="auto" textAlign="right">
               <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
                 %
               </Text>
@@ -257,37 +242,24 @@ export function RecipeCard(recipe: any) {
           {recipe.ingredients &&
             recipe.ingredients?.map((ingredient: any) => {
               return (
-                <Grid templateColumns="repeat(7, 1fr)" gap={1} mt={1}>
-                  <GridItem colSpan={3} w="100%" h="auto">
-                    <Link href={`/flavors/${ingredient.Flavor.flavorId}`}>
-                      <a>
-                        <Text as="span" fontSize="sm">
-                          {ingredient.Flavor.name}
-                        </Text>
-                      </a>
-                    </Link>
-                  </GridItem>
-                  <GridItem w="100%" h="auto">
-                    <Text fontSize="sm" as="span">
-                      {ingredient.grams}
-                    </Text>
-                  </GridItem>
-                  <GridItem w="100%" h="auto">
-                    <Text fontSize="sm" as="span">
-                      {ingredient.ml}
-                    </Text>
-                  </GridItem>
-                  <GridItem w="100%" h="auto">
-                    <Text fontSize="sm" as="span">
-                      {ingredient.drops}
-                    </Text>
-                  </GridItem>
-                  <GridItem w="100%" h="auto">
-                    <Text fontSize="sm" as="span">
-                      {ingredient.percentage}
-                    </Text>
-                  </GridItem>
-                </Grid>
+                <Box d="flex">
+                    <Box d="flex">
+                      <Link href={`/flavors/${ingredient.Flavor.flavorId}`}>
+                        <a>
+                          <Text as="span" fontSize="sm">
+                            {ingredient.Flavor.name}
+                          </Text>
+                        </a>
+                      </Link>
+                    </Box>
+                    <Box className="ingredient-trail" borderBottomWidth={1} borderBottomStyle="dotted"  d="flex" flexGrow={1} flexShrink={1} />
+                    <Box textAlign="right">
+                      <Text fontSize="sm" as="span">
+                        {ingredient.percentage}
+                      </Text>
+                    </Box>
+                  
+                </Box>
               );
             })}
         </Box>
@@ -319,7 +291,7 @@ export function RecipeCard(recipe: any) {
               recipe.ingredients?.map((ingredient: any) => {
                 return (
                   <Box
-                    style={{ width: `${ingredient.amount}%` }}
+                    style={{ width: `${ingredient.percentage}%` }}
                     backgroundColor="gray.500"
                     key={ingredient.Flavor.flavorId}
                     className="ingredientsBar__ingredient text-gray-700 font-semibold text-xs flex justify-center items-center flex-row border-r border-gray-200"

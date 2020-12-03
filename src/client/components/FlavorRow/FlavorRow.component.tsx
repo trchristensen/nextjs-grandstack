@@ -16,47 +16,16 @@ const FlavorRow = ({ flavorTotalPercentage, handleupdateTotal, ...row }: any) =>
   const [drops, setDrops] = React.useState(0);
   const [percentage, setPercentage] = React.useState(0);
 
-  const handleGramsOrMlInputChange = (e: any) => {
-    setGrams(e);
-    setMl(e);
-    setDrops(e * 20);
-    const flavorPercentage = handleupdateTotal({
+  const handleChange = (e: any) => {
+
+    handleupdateTotal({
       flavorId: row.value,
-      grams: e,
-      ml: e,
-      drops: e * 20,
-      percentage: 100,
+      percentage: e,
     });
 
-    setPercentage(flavorPercentage);
+    setPercentage(e);
   };
 
-   const handleDropsInputChange = (e: any) => {
-    setGrams(e / 20);
-    setMl(e / 20);
-    setDrops(e)
-
-     handleupdateTotal({
-      flavorId: row.value,
-      grams: e / 20,
-      ml: e / 20,
-      drops: e,
-      percentage: 100
-    });
-  }
-
-  const handlePercentageInputChange = (e: any) => {
-    // setGrams(e / 20);
-    // setMl(e / 20);
-    // setDrops(e)
-
-    //  handleupdateTotal({
-    //   flavorId: row.value,
-    //   grams: e / 20,
-    //   ml: e / 20,
-    //   drops: e
-    // });
-  }
 
   
 
@@ -75,11 +44,9 @@ const FlavorRow = ({ flavorTotalPercentage, handleupdateTotal, ...row }: any) =>
       key={row.value}
     >
       <Box
-        mb={2}
         display="flex"
         alignItems="center"
-        w="full"
-        marginBottom={2}
+        marginBottom={0}
         fontWeight="medium"
 
       >
@@ -93,88 +60,31 @@ const FlavorRow = ({ flavorTotalPercentage, handleupdateTotal, ...row }: any) =>
             min={0}
             step={0.01}
             precision={2}
+            max={100}
             keepWithinRange={true}
-            id={`${row.value}-ml`}
-            value={ml}
+            value={percentage}
             //@ts-ignore
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               //@ts-ignore
-              handleGramsOrMlInputChange(e)
+              handleChange(e)
             }
           >
             <NumberInputField
               isRequired
               className="flavorQty__input"
               //@ts-ignore
-              id={`${row.value}-ml`}
-              value={ml}
+              id={`${row.value}-percentage`}
+              value={percentage}
             />
             <NumberInputStepper>
               <NumberIncrementStepper />
               <NumberDecrementStepper />
             </NumberInputStepper>
           </NumberInput>
-          <FormLabel fontSize="sm" marginLeft={1}>ml</FormLabel>
-        </Box>
-        <Box display="flex" alignItems="center">
-          <NumberInput
-            size="sm"
-            maxW="80px"
-            min={0}
-            step={0.01}
-            precision={2}
-            keepWithinRange={true}
-            value={grams}
-            //@ts-ignore
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              //@ts-ignore
-              handleGramsOrMlInputChange(e)
-            }
-          >
-            <NumberInputField
-              isRequired
-              className="flavorQty__input"
-              //@ts-ignore
-              id={`${row.value}-grams`}
-              value={grams}
-            />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-          <FormLabel fontSize="sm" marginLeft={1}>g</FormLabel>
+          <FormLabel fontSize="sm" marginLeft={1}>%</FormLabel>
         </Box>
 
-        <Box display="flex" alignItems="center">
-          <NumberInput
-            size="sm"
-            maxW="80px"
-            min={0}
-            step={0.01}
-            precision={2}
-            keepWithinRange={true}
-            value={drops}
-            //@ts-ignore
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              //@ts-ignore
-              handleDropsInputChange(e)
-            }
-          >
-            <NumberInputField
-              isRequired
-              className="flavorQty__input"
-              //@ts-ignore
-              id={`${row.value}-drops`}
-              value={drops}
-            />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-          <FormLabel fontSize="sm" marginLeft={1}>drops</FormLabel>
-        </Box>
+
 
           <Text>{percentage}%</Text>
       </Box>

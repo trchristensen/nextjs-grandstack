@@ -46,10 +46,7 @@ export const RECIPES_QUERY = gql`
       mixingPercentage
       steepTime
       ingredients {
-        drops
         percentage
-        ml
-        grams
         Flavor {
           flavorId
           name
@@ -139,46 +136,6 @@ export const UPDATE_RECIPE_RATING = gql`
   }
 `;
 
-export const USER_RECIPES = gql`
-  query userRecipes($userId: ID!) {
-    userRecipes(userId: $userId) {
-      recipeId
-      name
-      description
-      published
-      lastEdited
-      creator {
-        id
-        name
-        avatar
-      }
-      parent {
-        recipeId
-        name
-      }
-      ingredients {
-        amount
-        measurement
-        Flavor {
-          flavorId
-          name
-        }
-      }
-      tags {
-        name
-        tagId
-      }
-      likes {
-        userId
-      }
-      dislikes {
-        userId
-      }
-      numLikes
-      numDislikes
-    }
-  }
-`;
 
 export const CREATE_RECIPE_COMMENT = gql`
   mutation createCommentForRecipe(

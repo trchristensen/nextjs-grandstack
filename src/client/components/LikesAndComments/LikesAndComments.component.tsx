@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "next/router";
 import { Avatar, Box, Text, Icon, Button } from "@chakra-ui/core";
 import { BiComment } from "react-icons/bi";
 import LikeBox from "./LikeBox.component";
@@ -7,8 +8,12 @@ import { useLazyQuery } from "@apollo/react-hooks";
 import { RECIPE_COMMENTS } from "../../gql/recipes";
 
 const LikesAndComments = (recipe: any) => {
+  const router = useRouter();
   const [showComments, setShowComments] = React.useState(false);
 
+  React.useEffect(() => {
+    if (router.pathname == "/recipes/[recipeId]") setShowComments(true) 
+  }, [router])
 
   const handleShowComments = () => {
     setShowComments(!showComments)

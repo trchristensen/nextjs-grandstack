@@ -61,14 +61,10 @@ type Recipe {
     )
 }
 
-
 type Ingredient @relation(name: "USED_IN") {
   from: Flavor
   to: Recipe
-  grams: Int
-  ml: Int
   percentage: Int
-  drops: Int
 }
 
 type Flavor {
@@ -81,11 +77,11 @@ type Flavor {
 }
 
 type Rating {
-    userId: String!
-    recipeId: String!
-    ratingId: ID!
-    timestamp: String!
-    like: Boolean!
+  userId: String!
+  recipeId: String!
+  ratingId: ID!
+  timestamp: String!
+  like: Boolean!
 }
 
 type Tag {
@@ -99,16 +95,7 @@ type Comment {
   text: String!
   author: User @relation(name: "WROTE", direction: "IN")
   recipe: Recipe @relation(name: "COMMENT_ON", direction: "OUT")
-  replies: Reply @relation(name: "REPLY_TO", direction: "IN")
-  # likes: [Like]
-}
-
-type Reply {
-  replyId: ID!
-  published: String!
-  text: String!
-  author: User @relation(name: "WROTE", direction: "IN")
-  # replies: Reply @relation(name: "REPLIED_TO", direction: "IN")
+  # replies: Reply @relation(name: "REPLY_TO", direction: "IN")
   # likes: [Like]
 }
 
@@ -130,30 +117,8 @@ type Company {
   categories: [Category] @relation(name: "IN_CATEGORY", direction: "OUT")
 }
 
-type Review {
-  reviewId: ID!
-  stars: Float
-  text: String
-  date: String
-  company: Company @relation(name: "REVIEWS", direction: "OUT")
-  user: User @relation(name: "WROTE", direction: "IN")
-}
-
-type Category {
-  name: ID!
-  companies: [Company] @relation(name: "IN_CATEGORY", direction: "IN")
-}
-
-type RatingCount {
-  stars: Float!
-  count: Int!
-}
-
 input CustomIngredientsInput {
-  grams: Int
-  ml: Int
   percentage: Int
-  drops: Int
   flavorId: String
 }
 
@@ -162,17 +127,30 @@ input CustomTagsInput {
   name: String!
 }
 
-type Mutation {
-  # createUserWithRoles(
-  #   id: ID!
-  #   isadmin: Boolean!
-  #   isPremium: Boolean!
-  #   displayName: String
-  # ): User
-  # @cypher(
-  #   statement: ""
-  # )
+type Query {
+  currentUser: User
 
+  recipesNotArchived: [Recipe]
+    @cypher(
+      statement: "MATCH (r:Recipe) WHERE NOT r.isArchived = TRUE RETURN r"
+    )
+  recipesNotArchivedFiltered(filter: String): [Recipe]
+    @cypher(
+      statement: "MATCH (r:Recipe) WHERE NOT r.isArchived = TRUE WHERE r.  RETURN r"
+    )
+  userRecipes(userId: ID!): [Recipe]
+    @cypher(
+      statement: "MATCH (r:Recipe)-[c:CREATED_BY]->(u:User) WHERE NOT r.isArchived = TRUE WITH r, u WHERE u.userId = $userId RETURN r"
+    )
+
+  userCount: Int! @cypher(statement: "MATCH (u:User) RETURN COUNT(u)")
+  ratingsCount: [RatingCount]
+    @cypher(
+      statement: "MATCH (r:Review) WITH r.stars AS stars, COUNT(*) AS count ORDER BY stars RETURN {stars: stars, count: count}"
+    )
+}
+
+type Mutation {
   updateRecipeRating(
     userId: String!
     recipeId: String!
@@ -191,7 +169,6 @@ type Mutation {
       statement: "MATCH (b:Company {companyId: $companyId}) UNWIND $categories AS cat MERGE (c:Category {name: cat}) MERGE (b)-[:IN_CATEGORY]->(c) RETURN b"
     )
 
-
   createRecipeWithIngredientsAndTags(
     recipeId: ID!
     name: String!
@@ -206,7 +183,7 @@ type Mutation {
     steepTime: Int
   ): Recipe
     @cypher(
-      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage, steepTime: $steepTime}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {ml: ingredient.ml, grams: ingredient.grams, percentage: ingredient.percentage, drops: ingredient.drops}]-(f) WITH r, u UNWIND $tags as tag MERGE (t:Tag {tagId: tag.tagId, name: tag.name}) MERGE (r)-[:HAS_TAG]->(t) RETURN r"
+      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage, steepTime: $steepTime}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {percentage: ingredient.percentage}]-(f) WITH r, u UNWIND $tags as tag MERGE (t:Tag {tagId: tag.tagId, name: tag.name}) MERGE (r)-[:HAS_TAG]->(t) RETURN r"
     )
 
   archiveRecipe(recipeId: ID!, userId: ID!): Recipe
@@ -235,29 +212,45 @@ type Mutation {
     @cypher(
       statement: "MATCH (c:Comment) WHERE c.commentId = $commentId MATCH (u:User) WHERE u.userId = $userId WITH u, c MERGE (c)<-[rel:REPLIED_TO]-(reply:Reply{replyId: $replyId, text: $text, published: $published})<-[:WROTE]-(u) RETURN c"
     )
+
+  
+
+  # createUserWithRoles(
+  #   id: ID!
+  #   isadmin: Boolean!
+  #   isPremium: Boolean!
+  #   displayName: String
+  # ): User
+  # @cypher(
+  #   statement: ""
+  # )
 }
 
-type Query {
-  currentUser: User
 
-  recipesNotArchived: [Recipe]
-    @cypher(
-      statement: "MATCH (r:Recipe) WHERE NOT r.isArchived = TRUE RETURN r"
-    )
-  recipesNotArchivedFiltered(
-    filter: String
-  ): [Recipe]
-    @cypher(
-      statement: "MATCH (r:Recipe) WHERE NOT r.isArchived = TRUE WHERE r.  RETURN r"
-    )
-  userRecipes(userId: ID!): [Recipe]
-    @cypher(
-      statement: "MATCH (r:Recipe)-[c:CREATED_BY]->(u:User) WHERE NOT r.isArchived = TRUE WITH r, u WHERE u.userId = $userId RETURN r"
-    )
-
-  userCount: Int! @cypher(statement: "MATCH (u:User) RETURN COUNT(u)")
-  ratingsCount: [RatingCount]
-    @cypher(
-      statement: "MATCH (r:Review) WITH r.stars AS stars, COUNT(*) AS count ORDER BY stars RETURN {stars: stars, count: count}"
-    )
+type Review {
+  reviewId: ID!
+  stars: Float
+  text: String
+  date: String
+  company: Company @relation(name: "REVIEWS", direction: "OUT")
+  user: User @relation(name: "WROTE", direction: "IN")
 }
+
+type Category {
+  name: ID!
+  companies: [Company] @relation(name: "IN_CATEGORY", direction: "IN")
+}
+
+type RatingCount {
+  stars: Float!
+  count: Int!
+}
+
+# type Reply {
+#   replyId: ID!
+#   published: String!
+#   text: String!
+#   author: User @relation(name: "WROTE", direction: "IN")
+#   # replies: Reply @relation(name: "REPLIED_TO", direction: "IN")
+#   # likes: [Like]
+# }
