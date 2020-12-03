@@ -3,15 +3,19 @@ import { useMutation, useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "../../client/firebaseHelpers";
+import Link from "next/link";
 
-import { Avatar, Box, Text, Button } from "@chakra-ui/core";
+import { Avatar, Box, Text, Button, Stack, Icon, Tag } from "@chakra-ui/core";
 import { RecipeCard } from "../../client/components/RecipeCard/RecipeCard.component";
 import {GetRecipes} from "../../client/components/GetRecipes/GetRecipes.component";
 import { USER_RECIPES } from "../../client/gql/recipes";
 import { FLAVOR_QUERY } from "../../client/gql/flavors";
 import BackBar from "../../client/components/BackBar/BackBar.component";
 
-
+import {
+  BiHash,
+} from "react-icons/bi";
+import { CreateRandomID } from "../../helpers/CreateRandomId";
 
 const FlavorData = () => {
   const router = useRouter();
@@ -46,7 +50,31 @@ const FlavorData = () => {
               Company:[name, avatar, description, website, address, etc]
             </Text>
           </Box>
-          {JSON.stringify(flavor.data)}
+          <Box
+            className="flavor__tags"
+            mt={1}
+            d="flex"
+            flexDir="row"
+            alignItems="center"
+          >
+            <Icon as={BiHash} mr={2} color="gray.500" mt=".15rem" />
+            <Stack spacing={1} direction="row" flexWrap="wrap">
+              {flavor.data.Flavor[0].tags?.map((tag: any) => {
+                return (
+                  <Tag
+                    _hover={{ shadow: "sm" }}
+                    key={tag.tagId + CreateRandomID(6)}
+                    mt={1}
+                    size="sm"
+                  >
+                    <Link href={`/explore?tag=${tag?.name}`}>
+                      <a>{tag?.name}</a>
+                    </Link>
+                  </Tag>
+                );
+              })}
+            </Stack>
+          </Box>
         </Box>
       )}
     </Box>
