@@ -32,7 +32,6 @@ import CreatableSelect from "react-select/creatable";
 import { useRouter } from "next/router";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import { RECIPES_QUERY } from "../../gql/recipes";
-import useDynamicRefs from "use-dynamic-refs";
 
 import FlavorRow from '../FlavorRow/FlavorRow.component'
 import { parse } from 'path';
@@ -82,7 +81,6 @@ const CREATE_RECIPE_MUTATION = gql`
 
 export function CreateRecipe() {
   const toast = useToast();
-  const [getRef, setRef] = useDynamicRefs();
   const [user] = useAuthState(getAuth());
   const [name, setName] = React.useState<string>("");
   const [description, setDescription] = React.useState<string>("");
@@ -97,13 +95,13 @@ export function CreateRecipe() {
   const [createForm, setCreateForm] = React.useState(false);
 
   type Iingredient = {
-    ml: Number;
-    grams: Number;
-    drops: Number;
-    percentage: Number;
+    ml?: Number;
+    grams?: Number;
+    drops?: Number;
+    percentage?: Number;
     flavorId: String;
   }
-  const [ingredients, setIngredients] = React.useState<Iingredient[]>()
+  const [ingredients, setIngredients] = React.useState<Iingredient[]>([])
 
   const TagOptions = [
     { value: "chocolate", label: "Chocolate" },
@@ -115,44 +113,59 @@ export function CreateRecipe() {
     setTags(newValue);
   };
 
-  React.useEffect(() => {
-    console.log("woo", tags);
-  }, [tags]);
+  // React.useEffect(() => {
+  //   console.log("tags", tags);
+  // }, [tags]);
 
   const handleTagsInputChange = (inputValue: any, actionMeta: any) => {};
 
   const handleChange = (selectedOption: any) => {
     setSelectedOption([...selectedOption]);
+    // set ingredients to remove anything thats not in selected option.
+
+    const s = ingredients.filter(
+      (ingredient) => selectedOption.find(({ value }) => ingredient.flavorId === value)
+    );
+    setIngredients(s)
+    
   };
 
   const handleMixingPercentageChange = (mixingPercentage: any) => {
     setMixingPercentage(mixingPercentage);
   };
 
-  const handleupdateTotal = () => {
+  const handleupdateTotal = (e) => {
+      console.log('flavorObject', e)
+      console.log('ingredientsObject', ingredients)
+      console.log('selectedOption', selectedOption)
 
-    console.log('handle update total function triggered')
+      // check if ingredient is in selectedOptions.
+      var filterOptionArray = selectedOption.filter((flavor) => (flavor.value == e.flavorId));
+      console.log("filterOptionArray", filterOptionArray)
 
+      // if not, then remove. and return.
+      if ( !filterOptionArray) {
+        setIngredients(selectedOption.filter((flavor) => (flavor.value != e.flavorId)))
+        console.log('ingredient is not in selected option')
+      }
+      else {
+        console.log('ingredient is in selected option')
+        // if the ingredients array does not cont`ain the flavor with updated measurement values,
+        var filterArray = ingredients.filter((flavor) => (flavor.flavorId == e.flavorId));
 
-
-
-    // const qty = [
-    //   ...(document.getElementsByClassName(
-    //     "flavorQty__input"
-    //   ) as HTMLCollectionOf<HTMLInputElement>),
-    // ];
-
-    // let total = 0;
-    // const flavorTotalArray: any = qty.map((element: any) => {
-    //   if (parseInt(element.value) === NaN) return;
-    //   let value = Math.round(element.value * 100) / 100;
-    //   total = total + value;
-    //   return total;
-    // });
-
-    // console.log(total);
-    // if (total !== 100) setSubmittable(false);
+        if (!filterArray) {
+          console.log('ingredient is NOT in ingredients already')
+          setIngredients(selectedOption.filter((flavor) => (flavor.value != e.flavorId)))
+        }
+        
+        console.log('setting ingredients')
+        setIngredients([
+            ...ingredients,
+            e
+          ])
+      }
   };
+
 
   const Flavors = useQuery(FLAVORS);
 
@@ -163,7 +176,7 @@ export function CreateRecipe() {
     }));
 
     setFlavorList(result);
-    console.log(result);
+    // console.log(result);
   }, [Flavors.data]);
 
   // form validation
@@ -466,6 +479,7 @@ export function CreateRecipe() {
           Create Recipe
         </Button>
       </form>
+      {JSON.stringify(ingredients)}
     </Box>
   ) : (
     <Flex justifyContent="center" alignItems="center">

@@ -11,15 +11,19 @@ import {
 
 const FlavorRow = ({ handleupdateTotal, ...row }: any) => {
 
-const [grams, setGrams] = React.useState()
-const [ml, setMl] = React.useState();
+const [grams, setGrams] = React.useState(0)
+const [ml, setMl] = React.useState(0);
 
 const handleInputChange = (e:any) => {
   setGrams(e)
   setMl(e)
   // setDrops(e * 20)
   // setPercentage()
-  handleupdateTotal();
+  handleupdateTotal({
+    flavorId: row.value,
+    grams: e,
+    ml: e
+  });
 }
 
   return (
