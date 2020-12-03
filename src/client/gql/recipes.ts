@@ -199,3 +199,36 @@ export const CREATE_RECIPE_COMMENT = gql`
     }
   }
 `;
+
+export const CREATE_RECIPE_MUTATION = gql`
+  mutation createRecipeWithIngredientsAndTags(
+    $userId: String!
+    $recipeId: ID!
+    $name: String!
+    $description: String!
+    $published: String!
+    $isArchived: Boolean!
+    $ingredients: [CustomIngredientsInput]
+    $notes: String
+    $mixingPercentage: Int
+    $steepTime: Int
+    $tags: [CustomTagsInput]
+  ) {
+    createRecipeWithIngredientsAndTags(
+      userId: $userId
+      recipeId: $recipeId
+      name: $name
+      description: $description
+      published: $published
+      isArchived: $isArchived
+      ingredients: $ingredients
+      notes: $notes
+      mixingPercentage: $mixingPercentage
+      steepTime: $steepTime
+      tags: $tags
+    ) {
+      name
+      recipeId
+    }
+  }
+`;

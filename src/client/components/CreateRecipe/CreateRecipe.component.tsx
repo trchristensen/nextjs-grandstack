@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Avatar,
   Box,
@@ -17,13 +17,8 @@ import {
   SliderThumb,
   Flex,
   Text,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
   NumberInput,
-  NumberInputField,
-  NumberInputStepper,
 } from "@chakra-ui/core";
-import gql from "graphql-tag";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
 import { getAuth } from "../../../client/firebaseHelpers";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -32,52 +27,9 @@ import CreatableSelect from "react-select/creatable";
 import { useRouter } from "next/router";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import { RECIPES_QUERY } from "../../gql/recipes";
-
-import FlavorRow from '../FlavorRow/FlavorRow.component'
-import { parse } from 'path';
-
-const FLAVORS = gql`
-  query Flavors {
-    Flavor {
-      name
-      flavorId
-    }
-  }
-`;
-
-const CREATE_RECIPE_MUTATION = gql`
-  mutation createRecipeWithIngredientsAndTags(
-    $userId: String!
-    $recipeId: ID!
-    $name: String!
-    $description: String!
-    $published: String!
-    $isArchived: Boolean!
-    $ingredients: [CustomIngredientsInput]
-    $notes: String
-    $mixingPercentage: Int
-    $steepTime: Int
-    $tags: [CustomTagsInput]
-  ) {
-    createRecipeWithIngredientsAndTags(
-      userId: $userId
-      recipeId: $recipeId
-      name: $name
-      description: $description
-      published: $published
-      isArchived: $isArchived
-      ingredients: $ingredients
-      notes: $notes
-      mixingPercentage: $mixingPercentage
-      steepTime: $steepTime
-      tags: $tags
-    ) {
-      name
-      recipeId
-    }
-  }
-`;
-
+import { CREATE_RECIPE_MUTATION } from "../../gql/recipes";
+import { FLAVORS } from "../../gql/flavors";
+import FlavorRow from "../FlavorRow/FlavorRow.component";
 
 export function CreateRecipe() {
   const toast = useToast();
@@ -91,7 +43,7 @@ export function CreateRecipe() {
   const [steepTime, setSteepTime] = React.useState<number>(0);
   const [notes, setNotes] = React.useState<string>("");
   const [tags, setTags] = React.useState<any[]>();
-  const [flavorTotal, setFlavorTotal] = React.useState<number>(0);
+  const [flavorTotalPercentage, setFlavorTotalPercentage] = React.useState<number>(0);
   const [createForm, setCreateForm] = React.useState(false);
 
   type Iingredient = {
@@ -100,8 +52,8 @@ export function CreateRecipe() {
     drops?: Number;
     percentage?: Number;
     flavorId: String;
-  }
-  const [ingredients, setIngredients] = React.useState<Iingredient[]>([])
+  };
+  const [ingredients, setIngredients] = React.useState<Iingredient[]>([]);
 
   const TagOptions = [
     { value: "chocolate", label: "Chocolate" },
@@ -113,59 +65,53 @@ export function CreateRecipe() {
     setTags(newValue);
   };
 
-  // React.useEffect(() => {
-  //   console.log("tags", tags);
-  // }, [tags]);
-
   const handleTagsInputChange = (inputValue: any, actionMeta: any) => {};
-
-  const handleChange = (selectedOption: any) => {
-    setSelectedOption([...selectedOption]);
-    // set ingredients to remove anything thats not in selected option.
-
-    const s = ingredients.filter(
-      (ingredient) => selectedOption.find(({ value }) => ingredient.flavorId === value)
-    );
-    setIngredients(s)
-    
-  };
-
+  
   const handleMixingPercentageChange = (mixingPercentage: any) => {
     setMixingPercentage(mixingPercentage);
   };
 
-  const handleupdateTotal = (e) => {
-      console.log('flavorObject', e)
-      console.log('ingredientsObject', ingredients)
-      console.log('selectedOption', selectedOption)
+  const handleChange = (selectedOption: any) => {
+    setSelectedOption([...selectedOption]);
 
-      // check if ingredient is in selectedOptions.
-      var filterOptionArray = selectedOption.filter((flavor) => (flavor.value == e.flavorId));
-      console.log("filterOptionArray", filterOptionArray)
-
-      // if not, then remove. and return.
-      if ( !filterOptionArray) {
-        setIngredients(selectedOption.filter((flavor) => (flavor.value != e.flavorId)))
-        console.log('ingredient is not in selected option')
-      }
-      else {
-        console.log('ingredient is in selected option')
-        // if the ingredients array does not cont`ain the flavor with updated measurement values,
-        var filterArray = ingredients.filter((flavor) => (flavor.flavorId == e.flavorId));
-
-        if (!filterArray) {
-          console.log('ingredient is NOT in ingredients already')
-          setIngredients(selectedOption.filter((flavor) => (flavor.value != e.flavorId)))
-        }
-        
-        console.log('setting ingredients')
-        setIngredients([
-            ...ingredients,
-            e
-          ])
-      }
+    const s = ingredients.filter((ingredient) =>
+      selectedOption.find(({ value }) => ingredient.flavorId === value)
+    );
+    setIngredients(s);
   };
 
+
+  const handleupdateTotal = (ingredientObject) => {
+    const isIngredientInTheSelectedOptionState = selectedOption.filter(
+      (flavor) => flavor.value == ingredientObject.flavorId
+    );
+
+    
+    const ingredientListWithoutUpdatedIngredient = ingredients.filter(
+      (ingredient) => {
+        return ingredient.flavorId !== ingredientObject.flavorId;
+      }
+      );
+      
+      const totalGrams = ingredientListWithoutUpdatedIngredient.reduce(function (prev, cur) {
+        return prev + cur.grams;
+      }, 0);
+  
+      console.log('totalGrams', totalGrams + ingredientObject.grams)
+
+
+    setIngredients([
+      ...ingredientListWithoutUpdatedIngredient,
+      { ...ingredientObject, percentage: (ingredientObject.grams / (totalGrams + ingredientObject.grams) * 100 )},
+    ]);
+
+    return (
+      (ingredientObject.grams / (totalGrams + ingredientObject.grams)) * 100
+    );
+
+   
+  };;
+  
 
   const Flavors = useQuery(FLAVORS);
 
@@ -174,9 +120,7 @@ export function CreateRecipe() {
       value: flavor.flavorId,
       label: flavor.name,
     }));
-
     setFlavorList(result);
-    // console.log(result);
   }, [Flavors.data]);
 
   // form validation
@@ -190,6 +134,7 @@ export function CreateRecipe() {
     }
   }, [name, description, selectedOption]);
 
+  //  url filter params
   let filter = {};
   const router = useRouter();
   const tag = router.query.tag;
@@ -258,26 +203,8 @@ export function CreateRecipe() {
     const currentDateTime = new Date().toISOString();
     if (ingredients === null) return;
 
-        let ingredientsPayload = [];
 
-        selectedOption.map((option: any) => {
-          let grams = (document.getElementById(
-            `${option.value}-grams`
-          ) as HTMLInputElement).value;
-          let drops = 20 * parseInt(grams);
-          let percentage = 0;
-          let flavorId = option.value;
 
-          ingredientsPayload.push({
-            grams: parseInt(grams),
-            ml: parseInt(grams),
-            drops: parseInt(drops),
-            percentage: parseInt(percentage),
-            flavorId: flavorId,
-          });
-        });
-
-    //@ts-ignore
     const tagsFormatted = tags?.map((t: any) => {
       return { tagId: t.value, name: t.label };
     });
@@ -290,7 +217,7 @@ export function CreateRecipe() {
         description: `${description}`,
         published: currentDateTime,
         isArchived: false,
-        ingredients: ingredientsPayload,
+        ingredients: ingredients,
         notes: `${notes}`,
         mixingPercentage: mixingPercentage,
         steepTime: steepTime,
@@ -454,9 +381,9 @@ export function CreateRecipe() {
               <FlavorRow
                 key={row.value}
                 {...row}
+                flavorTotalPercentage={flavorTotalPercentage}
                 handleupdateTotal={handleupdateTotal}
               />
-
             ))}
         </FormControl>
         <FormControl mb={3}>

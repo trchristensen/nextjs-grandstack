@@ -7,24 +7,58 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  Text
 } from "@chakra-ui/core";
 
-const FlavorRow = ({ handleupdateTotal, ...row }: any) => {
+const FlavorRow = ({ flavorTotalPercentage, handleupdateTotal, ...row }: any) => {
+  const [grams, setGrams] = React.useState(0);
+  const [ml, setMl] = React.useState(0);
+  const [drops, setDrops] = React.useState(0);
+  const [percentage, setPercentage] = React.useState(0);
 
-const [grams, setGrams] = React.useState(0)
-const [ml, setMl] = React.useState(0);
+  const handleGramsOrMlInputChange = (e: any) => {
+    setGrams(e);
+    setMl(e);
+    setDrops(e * 20);
+    const flavorPercentage = handleupdateTotal({
+      flavorId: row.value,
+      grams: e,
+      ml: e,
+      drops: e * 20,
+      percentage: 100,
+    });
 
-const handleInputChange = (e:any) => {
-  setGrams(e)
-  setMl(e)
-  // setDrops(e * 20)
-  // setPercentage()
-  handleupdateTotal({
-    flavorId: row.value,
-    grams: e,
-    ml: e
-  });
-}
+    setPercentage(flavorPercentage);
+  };
+
+   const handleDropsInputChange = (e: any) => {
+    setGrams(e / 20);
+    setMl(e / 20);
+    setDrops(e)
+
+     handleupdateTotal({
+      flavorId: row.value,
+      grams: e / 20,
+      ml: e / 20,
+      drops: e,
+      percentage: 100
+    });
+  }
+
+  const handlePercentageInputChange = (e: any) => {
+    // setGrams(e / 20);
+    // setMl(e / 20);
+    // setDrops(e)
+
+    //  handleupdateTotal({
+    //   flavorId: row.value,
+    //   grams: e / 20,
+    //   ml: e / 20,
+    //   drops: e
+    // });
+  }
+
+  
 
   return (
     <Box
@@ -44,16 +78,16 @@ const handleInputChange = (e:any) => {
         mb={2}
         display="flex"
         alignItems="center"
-        mr={2}
-        marginBottom={0}
+        w="full"
+        marginBottom={2}
         fontWeight="medium"
+
       >
         {row.label}
       </Box>
       <Box d="flex" justifyContent="flex-end">
         <Box display="flex" alignItems="center">
           <NumberInput
-            // onChange={handleupdateTotal}
             size="sm"
             maxW="80px"
             min={0}
@@ -65,7 +99,7 @@ const handleInputChange = (e:any) => {
             //@ts-ignore
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               //@ts-ignore
-              handleInputChange(e)
+              handleGramsOrMlInputChange(e)
             }
           >
             <NumberInputField
@@ -80,7 +114,7 @@ const handleInputChange = (e:any) => {
               <NumberDecrementStepper />
             </NumberInputStepper>
           </NumberInput>
-          <FormLabel marginLeft={2}>ml</FormLabel>
+          <FormLabel fontSize="sm" marginLeft={1}>ml</FormLabel>
         </Box>
         <Box display="flex" alignItems="center">
           <NumberInput
@@ -94,7 +128,7 @@ const handleInputChange = (e:any) => {
             //@ts-ignore
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               //@ts-ignore
-              handleInputChange(e)
+              handleGramsOrMlInputChange(e)
             }
           >
             <NumberInputField
@@ -109,8 +143,40 @@ const handleInputChange = (e:any) => {
               <NumberDecrementStepper />
             </NumberInputStepper>
           </NumberInput>
-          <FormLabel marginLeft={2}>g</FormLabel>
+          <FormLabel fontSize="sm" marginLeft={1}>g</FormLabel>
         </Box>
+
+        <Box display="flex" alignItems="center">
+          <NumberInput
+            size="sm"
+            maxW="80px"
+            min={0}
+            step={0.01}
+            precision={2}
+            keepWithinRange={true}
+            value={drops}
+            //@ts-ignore
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              //@ts-ignore
+              handleDropsInputChange(e)
+            }
+          >
+            <NumberInputField
+              isRequired
+              className="flavorQty__input"
+              //@ts-ignore
+              id={`${row.value}-drops`}
+              value={drops}
+            />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
+          <FormLabel fontSize="sm" marginLeft={1}>drops</FormLabel>
+        </Box>
+
+          <Text>{percentage}%</Text>
       </Box>
     </Box>
   );

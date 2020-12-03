@@ -18,3 +18,12 @@ query flavorQuery($flavorId: ID, $first: Int, $offset: Int ) {
   }
 }
 `
+
+export const FLAVORS = gql`
+  query Flavors {
+    Flavor {
+      name
+      flavorId
+    }
+  }
+`;
