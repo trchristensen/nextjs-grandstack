@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Avatar, Box, Text, Button, Stack, Icon, Tag } from "@chakra-ui/core";
 import { RecipeCard } from "../../client/components/RecipeCard/RecipeCard.component";
 import {GetRecipes} from "../../client/components/GetRecipes/GetRecipes.component";
-import { USER_RECIPES } from "../../client/gql/recipes";
+// import { USER_RECIPES } from "../../client/gql/recipes";
 import { FLAVOR_QUERY } from "../../client/gql/flavors";
 import BackBar from "../../client/components/BackBar/BackBar.component";
 

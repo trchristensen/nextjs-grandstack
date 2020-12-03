@@ -75,14 +75,14 @@ export function CreateRecipe() {
     setSelectedOption([...selectedOption]);
 
     const s = ingredients.filter((ingredient) =>
-      selectedOption.find(({ value }) => ingredient.flavorId === value)
+      selectedOption.find(({ value }:any) => ingredient.flavorId === value)
     );
     setIngredients(s);
   };
 
-  const handleupdateTotal = (ingredientObject) => {
+  const handleupdateTotal = (ingredientObject:any) => {
     const isIngredientInTheSelectedOptionState = selectedOption.filter(
-      (flavor) => flavor.value == ingredientObject.flavorId
+      (flavor:any) => flavor.value == ingredientObject.flavorId
     );
 
     const ingredientListWithoutUpdatedIngredient = ingredients.filter(
@@ -93,6 +93,7 @@ export function CreateRecipe() {
 
     const totalPercent = ingredientListWithoutUpdatedIngredient.reduce(
       function (prev, cur) {
+        //@ts-ignore
         return prev + cur.percentage;
       },
       0
@@ -331,12 +332,12 @@ export function CreateRecipe() {
               maxW="100px"
               mr="2rem"
               value={steepTime}
-              onChange={(e) => setSteepTime(e)}
+              onChange={(e:any) => setSteepTime(e)}
             />
             <Slider
               flex="1"
               value={steepTime}
-              onChange={(e) => setSteepTime(e)}
+              onChange={(e:any) => setSteepTime(e)}
               defaultValue={12}
               min={1}
               max={30}
