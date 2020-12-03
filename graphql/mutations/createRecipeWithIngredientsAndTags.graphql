@@ -8,6 +8,7 @@ mutation createRecipeWithIngredientsAndTags(
   $ingredients: [CustomIngredientsInput]
   $notes: String
   $mixingPercentage: Int
+  $steepTime: Int
   $tags: [CustomTagsInput]
 ) {
   createRecipeWithIngredientsAndTags(
@@ -20,6 +21,7 @@ mutation createRecipeWithIngredientsAndTags(
     ingredients: $ingredients
     notes: $notes
     mixingPercentage: $mixingPercentage
+    steepTime: $steepTime
     tags: $tags
   ) {
     name

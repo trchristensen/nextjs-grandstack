@@ -57,6 +57,7 @@ const CREATE_RECIPE_MUTATION = gql`
     $ingredients: [CustomIngredientsInput]
     $notes: String
     $mixingPercentage: Int
+    $steepTime: Int
     $tags: [CustomTagsInput]
   ) {
     createRecipeWithIngredientsAndTags(
@@ -69,6 +70,7 @@ const CREATE_RECIPE_MUTATION = gql`
       ingredients: $ingredients
       notes: $notes
       mixingPercentage: $mixingPercentage
+      steepTime: $steepTime
       tags: $tags
     ) {
       name
@@ -88,6 +90,7 @@ export function CreateRecipe() {
   const [selectedOption, setSelectedOption] = React.useState<any>();
   const [submittable, setSubmittable] = React.useState(false);
   const [mixingPercentage, setMixingPercentage] = React.useState<number>(12);
+  const [steepTime, setSteepTime] = React.useState<number>(0);
   const [notes, setNotes] = React.useState<string>("");
   const [tags, setTags] = React.useState<any[]>();
   const [flavorTotal, setFlavorTotal] = React.useState<number>(0);
@@ -277,6 +280,7 @@ export function CreateRecipe() {
         ingredients: ingredientsPayload,
         notes: `${notes}`,
         mixingPercentage: mixingPercentage,
+        steepTime: steepTime,
         tags: tagsFormatted,
       },
     };
@@ -382,6 +386,38 @@ export function CreateRecipe() {
                 width="32px"
                 height="20px"
                 children={mixingPercentage}
+              />
+            </Slider>
+          </Flex>
+        </FormControl>
+        <FormControl mb={3} as="fieldset">
+          <FormLabel as="legend">Suggested Steep Time (Days)</FormLabel>
+          <Flex>
+            <NumberInput
+              defaultValue={0}
+              min={0}
+              max={30}
+              maxW="100px"
+              mr="2rem"
+              value={steepTime}
+              onChange={(e) => setSteepTime(e)}
+            />
+            <Slider
+              flex="1"
+              value={steepTime}
+              onChange={(e) => setSteepTime(e)}
+              defaultValue={12}
+              min={1}
+              max={30}
+              mr={4}
+            >
+              <SliderTrack />
+              <SliderFilledTrack />
+              <SliderThumb
+                fontSize="sm"
+                width="32px"
+                height="20px"
+                children={steepTime}
               />
             </Slider>
           </Flex>

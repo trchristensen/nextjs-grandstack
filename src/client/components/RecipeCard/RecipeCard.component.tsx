@@ -295,9 +295,12 @@ export function RecipeCard(recipe: any) {
           <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
             Suggested Mix: {recipe.mixingPercentage}%
           </Text>
-          <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
-            Steep Time: 2 days
+          {recipe.steepTime &&
+            <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+            Steep Time: {recipe.steepTime} days
           </Text>
+          }
+          
         </Box>
         <Box
           bg={"gray.200"}

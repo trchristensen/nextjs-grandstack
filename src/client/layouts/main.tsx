@@ -41,8 +41,8 @@ const MainLayout = ({ children }: any) => {
         <Box
           id="sidebar-left"
           display="flex"
-          flexGrow={1}
-          flexShrink={1}
+          // flexGrow={1}
+          // flexShrink={1}
           alignItems="flex-end"
           flexDir="column"
           // minW="200px"
@@ -225,8 +225,8 @@ const MainLayout = ({ children }: any) => {
         <Box
           id="feed"
           display="flex"
-          flexGrow={1}
-          flexShrink={1}
+          // flexGrow={1}
+          // flexShrink={1}
           alignItems="flex-start"
           flexDir="column"
           px={6}

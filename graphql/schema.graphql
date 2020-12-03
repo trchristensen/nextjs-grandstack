@@ -30,6 +30,7 @@ type Recipe {
   description: String!
   notes: String
   mixingPercentage: Int
+  steepTime: Int
   published: String
   lastEdited: String
   creator: User @relation(name: "CREATED_BY", direction: "OUT")
@@ -190,20 +191,6 @@ type Mutation {
       statement: "MATCH (b:Company {companyId: $companyId}) UNWIND $categories AS cat MERGE (c:Category {name: cat}) MERGE (b)-[:IN_CATEGORY]->(c) RETURN b"
     )
 
-  createRecipeWithIngredients(
-    recipeId: ID!
-    name: String!
-    description: String!
-    published: String!
-    userId: String!
-    ingredients: [CustomIngredientsInput]
-    isArchived: Boolean
-    notes: String
-    mixingPercentage: Int
-  ): Recipe
-    @cypher(
-      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[relationship:USED_IN {measurement: ingredient.measurement, amount: ingredient.amount}]-(f) RETURN r"
-    )
 
   createRecipeWithIngredientsAndTags(
     recipeId: ID!
@@ -216,9 +203,10 @@ type Mutation {
     notes: String
     mixingPercentage: Int
     tags: [CustomTagsInput]
+    steepTime: Int
   ): Recipe
     @cypher(
-      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {ml: ingredient.ml, grams: ingredient.grams, percentage: ingredient.percentage, drops: ingredient.drops}]-(f) WITH r, u UNWIND $tags as tag MERGE (t:Tag {tagId: tag.tagId, name: tag.name}) MERGE (r)-[:HAS_TAG]->(t) RETURN r"
+      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage, steepTime: $steepTime}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {ml: ingredient.ml, grams: ingredient.grams, percentage: ingredient.percentage, drops: ingredient.drops}]-(f) WITH r, u UNWIND $tags as tag MERGE (t:Tag {tagId: tag.tagId, name: tag.name}) MERGE (r)-[:HAS_TAG]->(t) RETURN r"
     )
 
   archiveRecipe(recipeId: ID!, userId: ID!): Recipe

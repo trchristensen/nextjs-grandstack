@@ -44,6 +44,7 @@ export const RECIPES_QUERY = gql`
         name
       }
       mixingPercentage
+      steepTime
       ingredients {
         drops
         percentage
