@@ -45,13 +45,13 @@ export const RecipeMutations: any = {
     return neo4jgraphql(object, params, _context, resolveInfo);
   },
 //@ts-ignore
-  async archiveRecipe(object, params, _context, resolveInfo) {
-    if (_context.idToken?.uid == null) {
-      throw new Error("401");
-    }
-    if (_context.idToken?.uid != params.userId) {
-      throw new Error("wrong user!");
-    }
+  async DeleteRecipe(object, params, _context, resolveInfo) {
+    // if (_context.idToken?.uid == null) {
+    //   throw new Error("401");
+    // }
+    // if (_context.idToken?.uid != params.userId) {
+    //   throw new Error("wrong user!");
+    // }
     return neo4jgraphql(object, params, _context, resolveInfo);
   },
 };

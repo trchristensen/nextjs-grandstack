@@ -132,13 +132,13 @@ const LikeBox = (recipe: any) => {
     >
       <Button
         onClick={() => handleRating({ like: false })}
-        bg={liked == false ? `gray.100` : null}
+        bg={liked == false ? `red.100` : null}
         rounded="full"
         transition="all 0.2s"
         // borderWidth="1px"
         color="gray.500"
         _hover={{ bg: "gray.100" }}
-        _expanded={{ bg: "red.200" }}
+        _expanded={{ bg: "gray.400" }}
         _focus={{ outline: 0, boxShadow: "none" }}
         alignItems="center"
         d="flex"
@@ -167,10 +167,10 @@ const LikeBox = (recipe: any) => {
         transition="all 0.2s"
         // borderWidth="1px"
         color="gray.500"
-        bg={liked == true ? `gray.100` : null}
+        bg={liked == true ? `blue.100` : null}
         rounded="full"
         _hover={{ bg: "gray.100" }}
-        _expanded={{ bg: "red.200" }}
+        _expanded={{ bg: "gray.400" }}
         _focus={{ outline: 0, boxShadow: "none" }}
         alignItems="center"
         d="flex"

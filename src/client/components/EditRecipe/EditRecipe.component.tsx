@@ -31,7 +31,15 @@ import { CREATE_RECIPE_MUTATION } from "../../gql/recipes";
 import { FLAVORS } from "../../gql/flavors";
 import FlavorRow from "../FlavorRow/FlavorRow.component";
 
-export function CreateRecipe() {
+const EditRecipe = () => {
+  //  url filter params
+  const router = useRouter();
+  const recipeId = router.query.recipeId;
+
+  let filter = {
+    recipeId: recipeId,
+  };
+
   const toast = useToast();
   const [user] = useAuthState(getAuth());
   const [name, setName] = React.useState<string>("");
@@ -55,6 +63,7 @@ export function CreateRecipe() {
   };
   const [ingredients, setIngredients] = React.useState<Iingredient[]>([]);
 
+
   const TagOptions = [
     { value: "chocolate", label: "Chocolate" },
     { value: "strawberry", label: "Strawberry" },
@@ -75,14 +84,14 @@ export function CreateRecipe() {
     setSelectedOption([...selectedOption]);
 
     const s = ingredients.filter((ingredient) =>
-      selectedOption.find(({ value }:any) => ingredient.flavorId === value)
+      selectedOption.find(({ value }: any) => ingredient.flavorId === value)
     );
     setIngredients(s);
   };
 
-  const handleupdateTotal = (ingredientObject:any) => {
+  const handleupdateTotal = (ingredientObject: any) => {
     const isIngredientInTheSelectedOptionState = selectedOption.filter(
-      (flavor:any) => flavor.value == ingredientObject.flavorId
+      (flavor: any) => flavor.value == ingredientObject.flavorId
     );
 
     const ingredientListWithoutUpdatedIngredient = ingredients.filter(
@@ -95,11 +104,11 @@ export function CreateRecipe() {
       ingredientListWithoutUpdatedIngredient.reduce(function (prev, cur) {
         //@ts-ignore
         return prev + cur.percentage;
-      }, 0) + ingredientObject.percentage
+      }, 0) + ingredientObject.percentage;
 
-      setFlavorTotalPercentage(totalPercent)
+    setFlavorTotalPercentage(totalPercent);
 
-    console.log('total percent', totalPercent);
+    console.log("total percent", totalPercent);
 
     setIngredients([
       ...ingredientListWithoutUpdatedIngredient,
@@ -128,31 +137,11 @@ export function CreateRecipe() {
     }
   }, [name, description, selectedOption]);
 
-  //  url filter params
-  let filter = {};
-  const router = useRouter();
-  const tag = router.query.tag;
-  const q = router.query.q;
-
-  if (tag) {
-    filter = {
-      ...filter,
-      tags_single: { name_contains: tag },
-    };
-  }
-  if (q) {
-    filter = {
-      ...filter,
-      name_contains: q,
-    };
-  }
-
   const [CreateRecipeWithIngredients] = useMutation(CREATE_RECIPE_MUTATION, {
     refetchQueries: [
       {
         query: RECIPES_QUERY,
         variables: {
-          isArchived: false,
           orderBy: "published_desc",
           first: 20,
           offset: 0,
@@ -190,6 +179,42 @@ export function CreateRecipe() {
     },
   });
 
+  const recipe = useQuery(RECIPES_QUERY, {
+    variables: {
+      filter: filter,
+    },
+  });
+
+  React.useEffect(() => {
+
+    if( recipe.data ) {
+      console.log(recipe.data.Recipe[0]);
+      setName(recipe.data.Recipe[0].name);
+      setDescription(recipe.data.Recipe[0].description);
+      setNotes(recipe.data.Recipe[0].notes);
+      setMixingPercentage(recipe.data.Recipe[0].mixingPercentage);
+      setSteepTime(recipe.data.Recipe[0].steepTime);
+      setSelectedOption(
+        recipe.data.Recipe[0].ingredients.map((ingredient: any) => {
+          return {
+            label: ingredient.Flavor.name,
+            value: ingredient.Flavor.flavorId,
+            percent: ingredient.percentage,
+          };
+        })
+      );
+      setIngredients(recipe.data.Recipe[0].ingredients);
+      setTags(recipe.data.Recipe[0].tags.map((tag:any) => {
+        return {
+          label: tag.name,
+          value: tag.tagId
+        }
+      }))
+    }
+  
+  }, [recipe.data]);
+
+
   const handleCreateRecipe = (e: any) => {
     e.preventDefault();
     setSubmittable(false);
@@ -221,7 +246,7 @@ export function CreateRecipe() {
     CreateRecipeWithIngredients(RecipePayload);
   };
 
-  return createForm ? (
+  return (
     <Box
       marginY="1em"
       bg="white"
@@ -241,18 +266,8 @@ export function CreateRecipe() {
       >
         <Box>
           <Text as="h3" fontSize="lg" fontWeight="bold" mb={0}>
-            Create Recipe
+            Edit Recipe
           </Text>
-        </Box>
-        <Box>
-          <Button
-            color="gray.500"
-            rounded="full"
-            p={0}
-            onClick={() => setCreateForm(!createForm)}
-          >
-            X
-          </Button>
         </Box>
       </Box>
       <form onSubmit={(e: React.FormEvent) => handleCreateRecipe(e)}>
@@ -332,12 +347,12 @@ export function CreateRecipe() {
               maxW="100px"
               mr="2rem"
               value={steepTime}
-              onChange={(e:any) => setSteepTime(e)}
+              onChange={(e: any) => setSteepTime(e)}
             />
             <Slider
               flex="1"
               value={steepTime}
-              onChange={(e:any) => setSteepTime(e)}
+              onChange={(e: any) => setSteepTime(e)}
               defaultValue={12}
               min={1}
               max={30}
@@ -373,6 +388,7 @@ export function CreateRecipe() {
               <FlavorRow
                 key={row.value}
                 {...row}
+                percent={row.percent}
                 flavorTotalPercentage={flavorTotalPercentage}
                 handleupdateTotal={handleupdateTotal}
               />
@@ -387,6 +403,7 @@ export function CreateRecipe() {
             onChange={handleTags}
             onInputChange={handleTagsInputChange}
             options={TagOptions}
+            value={tags}
           />
         </FormControl>
         <Button
@@ -398,35 +415,8 @@ export function CreateRecipe() {
           Create Recipe
         </Button>
       </form>
-      {JSON.stringify(ingredients)}
     </Box>
-  ) : (
-    <Flex justifyContent="center" alignItems="center">
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        p={4}
-        bg="white"
-        rounded="lg"
-        shadow="md"
-        w="500px"
-        maxW="100%"
-      >
-        <Avatar
-          mr={4}
-          size="sm"
-          name={`${user?.displayName}`}
-          src={`${user?.photoURL}`}
-        />
-        <Button
-          rounded="full"
-          w="100%"
-          onClick={() => setCreateForm(!createForm)}
-        >
-          Create Recipe
-        </Button>
-      </Box>
-    </Flex>
   );
-}
+};
+
+export default EditRecipe;

@@ -10,11 +10,11 @@ import {
   Text
 } from "@chakra-ui/core";
 
-const FlavorRow = ({ flavorTotalPercentage, handleupdateTotal, ...row }: any) => {
+const FlavorRow = ({ flavorTotalPercentage, handleupdateTotal, percent=0, ...row }: any) => {
   const [grams, setGrams] = React.useState(0);
   const [ml, setMl] = React.useState(0);
   const [drops, setDrops] = React.useState(0);
-  const [percentage, setPercentage] = React.useState(0);
+  const [percentage, setPercentage] = React.useState(percent);
 
   const handleChange = (e: any) => {
 
@@ -48,7 +48,6 @@ const FlavorRow = ({ flavorTotalPercentage, handleupdateTotal, ...row }: any) =>
         alignItems="center"
         marginBottom={0}
         fontWeight="medium"
-
       >
         {row.label}
       </Box>
@@ -81,12 +80,12 @@ const FlavorRow = ({ flavorTotalPercentage, handleupdateTotal, ...row }: any) =>
               <NumberDecrementStepper />
             </NumberInputStepper>
           </NumberInput>
-          <FormLabel fontSize="sm" marginLeft={1}>%</FormLabel>
+          <FormLabel fontSize="sm" marginLeft={1}>
+            %
+          </FormLabel>
         </Box>
 
-
-
-          <Text>{percentage}%</Text>
+        <Text>{percentage}%</Text>
       </Box>
     </Box>
   );

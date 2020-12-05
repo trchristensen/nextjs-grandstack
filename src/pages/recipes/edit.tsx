@@ -1,12 +1,11 @@
+import React from 'react';
 import { useRouter } from "next/router";
-import { useQuery } from "@apollo/react-hooks";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "../../client/firebaseHelpers";
 
 import { Avatar, Box, Text, Button, Icon } from "@chakra-ui/core";
-import { GetRecipes } from "../../client/components/GetRecipes/GetRecipes.component";
-import BackBar from '../../client/components/BackBar/BackBar.component'
-
+import BackBar from "../../client/components/BackBar/BackBar.component";
+import EditRecipe from '../../client/components/EditRecipe/EditRecipe.component'
 
 const RecipePage = () => {
   const router = useRouter();
@@ -20,7 +19,7 @@ const RecipePage = () => {
   return (
     <Box w="500px" maxW="100%" mt={4}>
       <BackBar title="Recipe" />
-      <GetRecipes {...filter}  />
+      <EditRecipe />
     </Box>
   );
 };

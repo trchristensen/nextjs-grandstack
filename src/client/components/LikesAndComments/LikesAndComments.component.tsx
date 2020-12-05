@@ -39,7 +39,7 @@ const LikesAndComments = (recipe: any) => {
             bg="none"
             color="gray.500"
             _hover={{ bg: "gray.100", shadow: "sm" }}
-            _expanded={{ bg: "red.200" }}
+            _expanded={{ bg: "gray.400" }}
             _focus={{ outline: 0, boxShadow: "none" }}
           >
             <Icon width={5} height={5} as={BiComment} />

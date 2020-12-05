@@ -6,7 +6,7 @@ import { useMutation, useQuery } from "@apollo/react-hooks";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getAuth } from "../../../client/firebaseHelpers";
 // import { Recipe, Flavor } from "../../gen/index";
-import { RECIPES_QUERY, ARCHIVE_RECIPE } from "../../gql/recipes";
+import { RECIPES_QUERY, DELETE_RECIPE } from "../../gql/recipes";
 
 import {
   Avatar,
@@ -74,12 +74,11 @@ export function RecipeCard(recipe: any) {
         };
       }
 
-  const [archive] = useMutation(ARCHIVE_RECIPE, {
+  const [deleteRecipe] = useMutation(DELETE_RECIPE, {
     refetchQueries: [
       {
         query: RECIPES_QUERY,
         variables: {
-          isArchived: false,
           orderBy: "published_desc",
           first: 20,
           offset: 0,
@@ -88,7 +87,6 @@ export function RecipeCard(recipe: any) {
       },
     ],
     variables: {
-      userId: recipe.creator?.id,
       recipeId: recipe.recipeId,
     },
     onCompleted: (res) => {
@@ -172,7 +170,6 @@ export function RecipeCard(recipe: any) {
                   //@ts-ignore
                   new Date(recipe.published)
                 )}{" "}
-                {recipe.isArchived && ` - Archived`}
               </Text>
             </Box>
           </Box>
@@ -194,10 +191,14 @@ export function RecipeCard(recipe: any) {
               {!userAuthLoading && userAuth?.uid === recipe.creator?.id && (
                 <>
                   <MenuItem>
-                    <Icon as={BiEdit} mr={1} />
-                    Edit
+                    <Link href={`/recipes/edit/?recipeId=${recipe.recipeId}`}>
+                      <a style={{width:'100%'}}>
+                        <Icon as={BiEdit} mr={1} />
+                        Edit
+                      </a>
+                    </Link>
                   </MenuItem>
-                  <MenuItem onClick={() => archive()}>
+                  <MenuItem onClick={() => deleteRecipe()}>
                     <Icon as={BiTrash} mr={1} />
                     Delete
                   </MenuItem>
@@ -243,22 +244,28 @@ export function RecipeCard(recipe: any) {
             recipe.ingredients?.map((ingredient: any) => {
               return (
                 <Box d="flex">
-                    <Box d="flex">
-                      <Link href={`/flavors/${ingredient.Flavor.flavorId}`}>
-                        <a>
-                          <Text as="span" fontSize="sm">
-                            {ingredient.Flavor.name}
-                          </Text>
-                        </a>
-                      </Link>
-                    </Box>
-                    <Box className="ingredient-trail" borderBottomWidth={1} borderBottomStyle="dotted"  d="flex" flexGrow={1} flexShrink={1} />
-                    <Box textAlign="right">
-                      <Text fontSize="sm" as="span">
-                        {ingredient.percentage}
-                      </Text>
-                    </Box>
-                  
+                  <Box d="flex">
+                    <Link href={`/flavors/${ingredient.Flavor.flavorId}`}>
+                      <a>
+                        <Text as="span" fontSize="sm">
+                          {ingredient.Flavor.name}
+                        </Text>
+                      </a>
+                    </Link>
+                  </Box>
+                  <Box
+                    className="ingredient-trail"
+                    borderBottomWidth={1}
+                    borderBottomStyle="dotted"
+                    d="flex"
+                    flexGrow={1}
+                    flexShrink={1}
+                  />
+                  <Box textAlign="right">
+                    <Text fontSize="sm" as="span">
+                      {ingredient.percentage}
+                    </Text>
+                  </Box>
                 </Box>
               );
             })}
@@ -267,15 +274,14 @@ export function RecipeCard(recipe: any) {
           <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
             Suggested Mix: {recipe.mixingPercentage}%
           </Text>
-          {recipe.steepTime &&
+          {recipe.steepTime && (
             <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
-            Steep Time: {recipe.steepTime} days
-          </Text>
-          }
-          
+              Steep Time: {recipe.steepTime} days
+            </Text>
+          )}
         </Box>
         <Box
-          bg={"gray.200"}
+          bg={"gray.100"}
           overflow="hidden"
           borderRadius="lg"
           border={1}
@@ -292,7 +298,7 @@ export function RecipeCard(recipe: any) {
                 return (
                   <Box
                     style={{ width: `${ingredient.percentage}%` }}
-                    backgroundColor="gray.500"
+                    backgroundColor="gray.400"
                     key={ingredient.Flavor.flavorId}
                     className="ingredientsBar__ingredient text-gray-700 font-semibold text-xs flex justify-center items-center flex-row border-r border-gray-200"
                   >

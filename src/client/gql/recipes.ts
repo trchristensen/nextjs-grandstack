@@ -1,11 +1,10 @@
 import gql from "graphql-tag";
 
-export const ARCHIVE_RECIPE = gql`
-  mutation archiveRecipe($recipeId: ID!, $userId: ID!) {
-    archiveRecipe(recipeId: $recipeId, userId: $userId) {
+export const DELETE_RECIPE = gql`
+  mutation DeleteRecipe($recipeId: ID!) {
+    DeleteRecipe(recipeId: $recipeId) {
       recipeId
       name
-      isArchived
       creator {
         id
         name
