@@ -186,6 +186,23 @@ type Mutation {
       statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage, steepTime: $steepTime}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {percentage: ingredient.percentage}]-(f) WITH r, u UNWIND $tags as tag MERGE (t:Tag {tagId: tag.tagId, name: tag.name}) MERGE (r)-[:HAS_TAG]->(t) RETURN r"
     )
 
+    updateRecipeWithIngredientsAndTags(
+    recipeId: ID!
+    name: String!
+    description: String!
+    published: String!
+    userId: String!
+    ingredients: [CustomIngredientsInput]
+    isArchived: Boolean
+    notes: String
+    mixingPercentage: Int
+    tags: [CustomTagsInput]
+    steepTime: Int
+  ): Recipe
+    @cypher(
+      statement: "MATCH (r:Recipe) WHERE r.recipeId = $recipeId WITH r DETACH DELETE r WITH count(*) as dummy MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage, steepTime: $steepTime}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {percentage: ingredient.percentage}]-(f) WITH r, u UNWIND $tags as tag MERGE (t:Tag {tagId: tag.tagId, name: tag.name}) MERGE (r)-[:HAS_TAG]->(t) RETURN r"
+    )
+
   archiveRecipe(recipeId: ID!, userId: ID!): Recipe
     @cypher(
       statement: "MATCH (r:Recipe) WHERE r.recipeId = $recipeId SET r.isArchived = true RETURN r"

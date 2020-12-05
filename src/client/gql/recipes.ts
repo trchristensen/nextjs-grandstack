@@ -188,3 +188,36 @@ export const CREATE_RECIPE_MUTATION = gql`
     }
   }
 `;
+
+export const UPDATE_RECIPE = gql`
+  mutation UpdateRecipeWithIngredientsAndTags(
+    $userId: String!
+    $recipeId: ID!
+    $name: String!
+    $description: String!
+    $published: String!
+    $isArchived: Boolean!
+    $ingredients: [CustomIngredientsInput]
+    $notes: String
+    $mixingPercentage: Int
+    $steepTime: Int
+    $tags: [CustomTagsInput]
+  ) {
+    updateRecipeWithIngredientsAndTags(
+      userId: $userId
+      recipeId: $recipeId
+      name: $name
+      description: $description
+      published: $published
+      isArchived: $isArchived
+      ingredients: $ingredients
+      notes: $notes
+      mixingPercentage: $mixingPercentage
+      steepTime: $steepTime
+      tags: $tags
+    ) {
+      name
+      recipeId
+    }
+  }
+`;

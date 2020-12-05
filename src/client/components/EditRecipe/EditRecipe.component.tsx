@@ -26,8 +26,7 @@ import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 import { useRouter } from "next/router";
 import { useMutation, useQuery } from "@apollo/react-hooks";
-import { RECIPES_QUERY } from "../../gql/recipes";
-import { CREATE_RECIPE_MUTATION } from "../../gql/recipes";
+import { RECIPES_QUERY, UPDATE_RECIPE } from "../../gql/recipes";
 import { FLAVORS } from "../../gql/flavors";
 import FlavorRow from "../FlavorRow/FlavorRow.component";
 
@@ -62,7 +61,6 @@ const EditRecipe = () => {
     flavorId: String;
   };
   const [ingredients, setIngredients] = React.useState<Iingredient[]>([]);
-
 
   const TagOptions = [
     { value: "chocolate", label: "Chocolate" },
@@ -137,7 +135,7 @@ const EditRecipe = () => {
     }
   }, [name, description, selectedOption]);
 
-  const [CreateRecipeWithIngredients] = useMutation(CREATE_RECIPE_MUTATION, {
+  const [UpdateRecipeWithIngredients] = useMutation(UPDATE_RECIPE, {
     refetchQueries: [
       {
         query: RECIPES_QUERY,
@@ -159,7 +157,7 @@ const EditRecipe = () => {
       setCreateForm(false);
       toast({
         title: "Success",
-        description: "Recipe has been created!",
+        description: "Recipe has been updated!",
         status: "success",
         position: "bottom-right",
         duration: 8000,
@@ -186,8 +184,7 @@ const EditRecipe = () => {
   });
 
   React.useEffect(() => {
-
-    if( recipe.data ) {
+    if (recipe.data) {
       console.log(recipe.data.Recipe[0]);
       setName(recipe.data.Recipe[0].name);
       setDescription(recipe.data.Recipe[0].description);
@@ -203,17 +200,24 @@ const EditRecipe = () => {
           };
         })
       );
-      setIngredients(recipe.data.Recipe[0].ingredients);
-      setTags(recipe.data.Recipe[0].tags.map((tag:any) => {
-        return {
-          label: tag.name,
-          value: tag.tagId
-        }
-      }))
+      setIngredients(
+        recipe.data.Recipe[0].ingredients.map((ingredient: any) => {
+          return {
+            flavorId: ingredient.Flavor.flavorId,
+            percentage: ingredient.percentage,
+          };
+        })
+      );
+      setTags(
+        recipe.data.Recipe[0].tags.map((tag: any) => {
+          return {
+            label: tag.name,
+            value: tag.tagId,
+          };
+        })
+      );
     }
-  
   }, [recipe.data]);
-
 
   const handleCreateRecipe = (e: any) => {
     e.preventDefault();
@@ -229,7 +233,7 @@ const EditRecipe = () => {
     const RecipePayload = {
       variables: {
         userId: `${user?.uid}`,
-        recipeId: CreateRandomID(32),
+        recipeId: recipeId,
         name: `${name}`,
         description: `${description}`,
         published: currentDateTime,
@@ -242,8 +246,7 @@ const EditRecipe = () => {
       },
     };
 
-    console.log(console.log("Recipe Payload", RecipePayload));
-    CreateRecipeWithIngredients(RecipePayload);
+    UpdateRecipeWithIngredients(RecipePayload);
   };
 
   return (
@@ -415,6 +418,7 @@ const EditRecipe = () => {
           Create Recipe
         </Button>
       </form>
+      {JSON.stringify(ingredients)}
     </Box>
   );
 };
