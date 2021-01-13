@@ -16,12 +16,7 @@ export const RecipeQueries: any = {
 
 export const RecipeMutations: any = {
   //@ts-ignore
-  async createRecipeWithIngredientsAndTags(
-    object,
-    params,
-    _context,
-    resolveInfo
-  ) {
+  async createRecipeWithIngredientsAndTags(object, params, _context, resolveInfo) {
     console.log(params);
 
     // validation
