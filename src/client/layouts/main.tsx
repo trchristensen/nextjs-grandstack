@@ -52,7 +52,7 @@ const MainLayout = ({ children }: any) => {
             maxW="100%"
             height="100vh"
             position="fixed"
-            overflowY="auto"
+            // overflowY="auto"
             pl={1}
             pr={1}
           >

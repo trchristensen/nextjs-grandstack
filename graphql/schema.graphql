@@ -25,6 +25,7 @@ type User {
 }
 
 type Recipe {
+  id: ID!
   recipeId: ID!
   name: String!
   description: String!
@@ -170,6 +171,7 @@ type Mutation {
     )
 
   createRecipeWithIngredientsAndTags(
+    id: ID!
     recipeId: ID!
     name: String!
     description: String!
@@ -181,12 +183,14 @@ type Mutation {
     mixingPercentage: Int
     tags: [CustomTagsInput]
     steepTime: Int
+    parent: String
   ): Recipe
     @cypher(
-      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage, steepTime: $steepTime}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {percentage: ingredient.percentage}]-(f) WITH r, u UNWIND $tags as tag MERGE (t:Tag {tagId: tag.tagId, name: tag.name}) MERGE (r)-[:HAS_TAG]->(t) RETURN r"
+      statement: "MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, id: $id, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage, steepTime: $steepTime}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {percentage: ingredient.percentage}]-(f) WITH r, u UNWIND $tags as tag MERGE (t:Tag {tagId: tag.tagId, name: tag.name}) MERGE (r)-[:HAS_TAG]->(t) WITH r MATCH (parent:Recipe) WHERE parent.recipeId = $parent WITH parent, r WHERE NOT parent IS NULL MERGE (r)-[:ADAPTED_FROM]->(parent) RETURN r"
     )
 
     updateRecipeWithIngredientsAndTags(
+    id: ID!
     recipeId: ID!
     name: String!
     description: String!
@@ -198,9 +202,10 @@ type Mutation {
     mixingPercentage: Int
     tags: [CustomTagsInput]
     steepTime: Int
+    parent: String
   ): Recipe
     @cypher(
-      statement: "MATCH (r:Recipe) WHERE r.recipeId = $recipeId WITH r DETACH DELETE r WITH count(*) as dummy MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage, steepTime: $steepTime}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {percentage: ingredient.percentage}]-(f) WITH r, u UNWIND $tags as tag MERGE (t:Tag {tagId: tag.tagId, name: tag.name}) MERGE (r)-[:HAS_TAG]->(t) RETURN r"
+      statement: "MATCH (r:Recipe) WHERE r.recipeId = $recipeId WITH r DETACH DELETE r WITH count(*) as dummy MATCH (u:User) WHERE u.userId = $userId WITH u MERGE (u)<-[:CREATED_BY]-(r:Recipe {recipeId: $recipeId, id: $id, name: $name, description: $description, published: $published, isArchived: $isArchived, notes: $notes, mixingPercentage: $mixingPercentage, steepTime: $steepTime}) WITH r, u UNWIND $ingredients as ingredient MATCH (f:Flavor) WHERE f.flavorId = ingredient.flavorId MERGE (r)<-[:USED_IN {percentage: ingredient.percentage}]-(f) WITH r, u UNWIND $tags as tag MERGE (t:Tag {tagId: tag.tagId, name: tag.name}) MERGE (r)-[:HAS_TAG]->(t) WITH r MATCH (parent:Recipe) WHERE parent.recipeId = $parent WITH parent, r WHERE NOT parent IS NULL MERGE (r)-[:ADAPTED_FROM]->(parent) RETURN r"
     )
 
   archiveRecipe(recipeId: ID!, userId: ID!): Recipe

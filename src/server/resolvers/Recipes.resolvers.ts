@@ -41,12 +41,12 @@ export const RecipeMutations: any = {
       // }
     });
 
-    if (_context.idToken?.uid == null) {
-      throw new Error("401");
-    }
-    if (_context.idToken?.uid != params.userId) {
-      throw new Error("wrong user!");
-    }
+    // if (_context.idToken?.uid == null) {
+    //   throw new Error("401");
+    // }
+    // if (_context.idToken?.uid != params.userId) {
+    //   throw new Error("wrong user!");
+    // }
     return neo4jgraphql(object, params, _context, resolveInfo);
   },
 

@@ -56,23 +56,27 @@ export function RecipeCard(recipe: any) {
     `https://juicesauce.com/recipes/${recipe.recipeId}`
   );
 
-      let filter = {};
-      const router = useRouter();
-      const tag = router.query.tag;
-      const q = router.query.q;
+  // this should be taken from a cookie.
+  // const preferredVolume = React.useState<number>(10);
+  const preferredVolume = 10
 
-      if (tag) {
-        filter = {
-          ...filter,
-          tags_single: { name_contains: tag },
-        };
-      }
-      if (q) {
-        filter = {
-          ...filter,
-          name_contains: q,
-        };
-      }
+  let filter = {};
+  const router = useRouter();
+  const tag = router.query.tag;
+  const q = router.query.q;
+
+  if (tag) {
+    filter = {
+      ...filter,
+      tags_single: { name_contains: tag },
+    };
+  }
+  if (q) {
+    filter = {
+      ...filter,
+      name_contains: q,
+    };
+  }
 
   const [deleteRecipe] = useMutation(DELETE_RECIPE, {
     refetchQueries: [
@@ -134,20 +138,28 @@ export function RecipeCard(recipe: any) {
             width="100%"
             px={2}
           >
-            <Link href={`/recipes/${recipe.recipeId}`}>
-              <a>
-                <Text
-                  as="span"
-                  fontSize="lg"
-                  lineHeight="shorter"
-                  fontWeight="bold"
-                  px={0}
-                >
-                  {recipe.name}
-                </Text>
-              </a>
-            </Link>
-            {recipe.parent && <Icon as={BiGitRepoForked} />}
+            <Box d="flex" flexDir="row" alignItems="center">
+              <Link href={`/recipes/${recipe.recipeId}`}>
+                <a>
+                  <Text
+                    as="span"
+                    fontSize="lg"
+                    lineHeight="shorter"
+                    fontWeight="bold"
+                    px={0}
+                  >
+                    {recipe.name}
+                  </Text>
+                </a>
+              </Link>
+              {recipe.parent && (
+                <Link href={`/recipes/${recipe.parent.recipeId}`}>
+                  <a>
+                    <Icon ml="2" mb="4px" color="gray.600" as={BiGitRepoForked} />
+                  </a>
+                </Link>
+              )}
+            </Box>
             <Box
               className="recipeCard__header-info-details"
               display="flex"
@@ -192,7 +204,7 @@ export function RecipeCard(recipe: any) {
                 <>
                   <MenuItem>
                     <Link href={`/recipes/edit/?recipeId=${recipe.recipeId}`}>
-                      <a style={{width:'100%'}}>
+                      <a style={{ width: "100%" }}>
                         <Icon as={BiEdit} mr={1} />
                         Edit
                       </a>
@@ -227,15 +239,48 @@ export function RecipeCard(recipe: any) {
           {/* <Box>[Flavor details here]</Box> */}
         </Box>
         <Box className="ingredients-table" mb={3}>
-          <Grid borderBottomWidth={1} templateColumns="repeat(4, 1fr)" gap={1}>
-            <GridItem colSpan={3} w="100%" h="auto">
+          <Grid borderBottomWidth={2} templateColumns="repeat(5, 1fr)" gap={1}>
+            <GridItem colSpan={2} h="auto">
               <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
                 Ingredients
               </Text>
             </GridItem>
-            <GridItem w="100%" h="auto" textAlign="right">
+            <GridItem h="auto" textAlign="right">
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+                g
+              </Text>
+            </GridItem>
+            <GridItem h="auto" textAlign="right">
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+                ml
+              </Text>
+            </GridItem>
+            <GridItem h="auto" textAlign="right">
               <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
                 %
+              </Text>
+            </GridItem>
+          </Grid>
+
+          <Grid borderBottomWidth={1} templateColumns="repeat(5, 1fr)" gap={1}>
+            <GridItem colSpan={2} h="auto">
+              <Text as="span" fontSize="sm">
+                Base
+              </Text>
+            </GridItem>
+            <GridItem h="auto" textAlign="right">
+              <Text as="span" fontSize="sm">
+                {recipe.mixingPercentage / preferredVolume}
+              </Text>
+            </GridItem>
+            <GridItem h="auto" textAlign="right">
+              <Text as="span" fontSize="sm">
+                {recipe.mixingPercentage / preferredVolume}
+              </Text>
+            </GridItem>
+            <GridItem h="auto" textAlign="right">
+              <Text as="span" fontSize="sm">
+                {recipe.mixingPercentage}
               </Text>
             </GridItem>
           </Grid>
@@ -243,38 +288,77 @@ export function RecipeCard(recipe: any) {
           {recipe.ingredients &&
             recipe.ingredients?.map((ingredient: any) => {
               return (
-                <Box d="flex">
-                  <Box d="flex">
-                    <Link href={`/flavors/${ingredient.Flavor.flavorId}`}>
-                      <a>
-                        <Text as="span" fontSize="sm">
-                          {ingredient.Flavor.name}
-                        </Text>
-                      </a>
-                    </Link>
-                  </Box>
-                  <Box
-                    className="ingredient-trail"
-                    borderBottomWidth={1}
-                    borderBottomStyle="dotted"
-                    d="flex"
-                    flexGrow={1}
-                    flexShrink={1}
-                  />
-                  <Box textAlign="right">
+                <Grid
+                  borderBottomWidth={1}
+                  templateColumns="repeat(5, 1fr)"
+                  gap={1}
+                >
+                  <GridItem colSpan={2} h="auto">
+                    <Text as="span" fontSize="sm">
+                      <Link href={`/flavors/${ingredient.Flavor.flavorId}`}>
+                        <a>
+                          <Text as="span" fontSize="sm">
+                            {ingredient.Flavor.name}
+                          </Text>
+                        </a>
+                      </Link>
+                    </Text>
+                  </GridItem>
+                  <GridItem h="auto" textAlign="right">
+                    <Text fontSize="sm" as="span">
+                      {Math.round(
+                        ((ingredient.percentage / 100) * preferredVolume +
+                          Number.EPSILON) *
+                          100
+                      ) / 100}
+                    </Text>
+                  </GridItem>
+                  <GridItem h="auto" textAlign="right">
+                    <Text fontSize="sm" as="span">
+                      {Math.round(
+                        ((ingredient.percentage / 100) * preferredVolume +
+                          Number.EPSILON) *
+                          100
+                      ) / 100}
+                    </Text>
+                  </GridItem>
+                  <GridItem h="auto" textAlign="right">
                     <Text fontSize="sm" as="span">
                       {ingredient.percentage}
                     </Text>
-                  </Box>
-                </Box>
+                  </GridItem>
+                </Grid>
               );
             })}
+
+          <Grid borderTopWidth={1} templateColumns="repeat(5, 1fr)" gap={1}>
+            <GridItem colSpan={2} h="auto">
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+                Total
+              </Text>
+            </GridItem>
+            <GridItem h="auto" textAlign="right">
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+                {preferredVolume} g
+              </Text>
+            </GridItem>
+            <GridItem h="auto" textAlign="right">
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+                {preferredVolume} ml
+              </Text>
+            </GridItem>
+            <GridItem h="auto" textAlign="right">
+              <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+                100%
+              </Text>
+            </GridItem>
+          </Grid>
         </Box>
         <Box w="full" d="flex" justifyContent="space-between" px=".025rem">
-          <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
+          {/* <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
             Suggested Mix: {recipe.mixingPercentage}%
-          </Text>
-          {recipe.steepTime && (
+          </Text> */}
+          {recipe.steepTime > 0 && (
             <Text as="span" fontSize="sm" fontStyle="italic" color="gray.600">
               Steep Time: {recipe.steepTime} days
             </Text>

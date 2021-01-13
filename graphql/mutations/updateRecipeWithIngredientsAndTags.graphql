@@ -1,4 +1,5 @@
 mutation updateRecipeWithIngredientsAndTags(
+  $id: ID!
   $userId: String!
   $recipeId: ID!
   $name: String!
@@ -10,9 +11,11 @@ mutation updateRecipeWithIngredientsAndTags(
   $mixingPercentage: Int
   $steepTime: Int
   $tags: [CustomTagsInput]
+  $parent: String
 
 ) {
   updateRecipeWithIngredientsAndTags(
+    id: $id
     userId: $userId
     recipeId: $recipeId
     name: $name
@@ -24,9 +27,11 @@ mutation updateRecipeWithIngredientsAndTags(
     mixingPercentage: $mixingPercentage
     steepTime: $steepTime
     tags: $tags
+    parent: $parent
   
   ) {
     name
     recipeId
+    id
   }
 }

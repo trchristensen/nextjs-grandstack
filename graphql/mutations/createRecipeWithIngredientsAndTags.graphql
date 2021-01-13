@@ -1,5 +1,6 @@
 mutation createRecipeWithIngredientsAndTags(
   $userId: String!
+  $id: ID!
   $recipeId: ID!
   $name: String!
   $description: String!
@@ -9,9 +10,11 @@ mutation createRecipeWithIngredientsAndTags(
   $notes: String
   $mixingPercentage: Int
   $steepTime: Int
+  $parent: String
   $tags: [CustomTagsInput]
 ) {
   createRecipeWithIngredientsAndTags(
+    id: $id
     userId: $userId
     recipeId: $recipeId
     name: $name
@@ -23,8 +26,10 @@ mutation createRecipeWithIngredientsAndTags(
     mixingPercentage: $mixingPercentage
     steepTime: $steepTime
     tags: $tags
+    parent: $parent
   ) {
     name
+    id
     recipeId
   }
 }

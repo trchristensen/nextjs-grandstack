@@ -28,6 +28,7 @@ export const RECIPES_QUERY = gql`
       isArchived: $isArchived
       filter: $filter
     ) {
+      id
       recipeId
       name
       description
@@ -158,6 +159,7 @@ export const CREATE_RECIPE_COMMENT = gql`
 
 export const CREATE_RECIPE_MUTATION = gql`
   mutation createRecipeWithIngredientsAndTags(
+    $id: ID!
     $userId: String!
     $recipeId: ID!
     $name: String!
@@ -169,8 +171,10 @@ export const CREATE_RECIPE_MUTATION = gql`
     $mixingPercentage: Int
     $steepTime: Int
     $tags: [CustomTagsInput]
+    $parent: String
   ) {
     createRecipeWithIngredientsAndTags(
+      id: $id
       userId: $userId
       recipeId: $recipeId
       name: $name
@@ -181,9 +185,11 @@ export const CREATE_RECIPE_MUTATION = gql`
       notes: $notes
       mixingPercentage: $mixingPercentage
       steepTime: $steepTime
+      parent: $parent
       tags: $tags
     ) {
       name
+      id
       recipeId
     }
   }
@@ -191,6 +197,7 @@ export const CREATE_RECIPE_MUTATION = gql`
 
 export const UPDATE_RECIPE = gql`
   mutation UpdateRecipeWithIngredientsAndTags(
+    $id: ID!
     $userId: String!
     $recipeId: ID!
     $name: String!
@@ -217,6 +224,7 @@ export const UPDATE_RECIPE = gql`
       tags: $tags
     ) {
       name
+      id
       recipeId
     }
   }

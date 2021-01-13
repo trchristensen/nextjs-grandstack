@@ -18,6 +18,8 @@ import {
   Flex,
   Text,
   NumberInput,
+  Tooltip,
+  Stack,
 } from "@chakra-ui/core";
 import { CreateRandomID } from "../../../helpers/CreateRandomId";
 import { getAuth } from "../../../client/firebaseHelpers";
@@ -98,6 +100,7 @@ export function CreateRecipe() {
       }, 0) + ingredientObject.percentage
 
       setFlavorTotalPercentage(totalPercent)
+      setMixingPercentage(100 - totalPercent);
 
     console.log('total percent', totalPercent);
 
@@ -154,7 +157,7 @@ export function CreateRecipe() {
         variables: {
           isArchived: false,
           orderBy: "published_desc",
-          first: 20,
+          first: 5,
           offset: 0,
           filter: filter,
         },
@@ -201,10 +204,13 @@ export function CreateRecipe() {
       return { tagId: t.value, name: t.label };
     });
 
+    const randomID = CreateRandomID(32);
+
     const RecipePayload = {
       variables: {
         userId: `${user?.uid}`,
-        recipeId: CreateRandomID(32),
+        recipeId: randomID,
+        id: randomID,
         name: `${name}`,
         description: `${description}`,
         published: currentDateTime,
@@ -214,6 +220,7 @@ export function CreateRecipe() {
         mixingPercentage: mixingPercentage,
         steepTime: steepTime,
         tags: tagsFormatted,
+        parent: null
       },
     };
 
@@ -291,38 +298,6 @@ export function CreateRecipe() {
           ></Textarea>
         </FormControl>
         <FormControl mb={3} as="fieldset">
-          <FormLabel as="legend">Suggested Mixing %</FormLabel>
-          <Flex>
-            <NumberInput
-              defaultValue={12}
-              min={1}
-              max={100}
-              maxW="100px"
-              mr="2rem"
-              value={mixingPercentage}
-              onChange={handleMixingPercentageChange}
-            />
-            <Slider
-              flex="1"
-              value={mixingPercentage}
-              onChange={handleMixingPercentageChange}
-              defaultValue={12}
-              min={1}
-              max={100}
-              mr={4}
-            >
-              <SliderTrack />
-              <SliderFilledTrack />
-              <SliderThumb
-                fontSize="sm"
-                width="32px"
-                height="20px"
-                children={mixingPercentage}
-              />
-            </Slider>
-          </Flex>
-        </FormControl>
-        <FormControl mb={3} as="fieldset">
           <FormLabel as="legend">Suggested Steep Time (Days)</FormLabel>
           <Flex>
             <NumberInput
@@ -332,12 +307,12 @@ export function CreateRecipe() {
               maxW="100px"
               mr="2rem"
               value={steepTime}
-              onChange={(e:any) => setSteepTime(e)}
+              onChange={(e: any) => setSteepTime(e)}
             />
             <Slider
               flex="1"
               value={steepTime}
-              onChange={(e:any) => setSteepTime(e)}
+              onChange={(e: any) => setSteepTime(e)}
               defaultValue={12}
               min={1}
               max={30}
@@ -378,7 +353,37 @@ export function CreateRecipe() {
               />
             ))}
         </FormControl>
-        <FormControl mb={3}>
+
+        <Flex justifyContent="center" flexDir="column">
+          <Text fontWeight="500" mb={1}>Mixing Percentage: {flavorTotalPercentage}</Text>
+          <Box
+            bg={"gray.100"}
+            overflow="hidden"
+            borderRadius="lg"
+            border={1}
+            w="full"
+          >
+            <Stack
+              className="ingredientsBar"
+              w={`${mixingPercentage}%`}
+              spacing={0}
+              isInline
+            >
+              <Box
+                style={{ width: `${flavorTotalPercentage}%` }}
+                backgroundColor="gray.400"
+                className="ingredientsBar__ingredient text-gray-700 font-semibold text-xs flex justify-center items-center flex-row border-r border-gray-200"
+              >
+                <div
+                  className="w-full text-center relative block"
+                  style={{ height: "10px" }}
+                ></div>
+              </Box>
+            </Stack>
+          </Box>
+        </Flex>
+
+        <FormControl mt={3} mb={3}>
           <FormLabel>Add Tags</FormLabel>
           <CreatableSelect
             isMulti

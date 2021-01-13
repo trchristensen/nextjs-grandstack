@@ -232,6 +232,7 @@ const EditRecipe = () => {
 
     const RecipePayload = {
       variables: {
+        id: recipeId,
         userId: `${user?.uid}`,
         recipeId: recipeId,
         name: `${name}`,
@@ -243,6 +244,7 @@ const EditRecipe = () => {
         mixingPercentage: mixingPercentage,
         steepTime: steepTime,
         tags: tagsFormatted,
+        parent: null
       },
     };
 
