@@ -88,6 +88,10 @@ type Rating {
 type Tag {
   tagId: ID!
   name: String!
+  numRecipes: Int
+  @cypher(
+    statement: "MATCH (this)-[rel:HAS_TAG]-(r:Recipe) RETURN COUNT(*)"
+  )
 }
 
 type Comment {
@@ -128,7 +132,17 @@ input CustomTagsInput {
   name: String!
 }
 
+
 type Query {
+  
+  fuzzyRecipeByName(searchString: String): [Recipe] @cypher(
+    statement: """
+      CALL db.index.fulltext.queryNodes(
+        'RecipeNameIndex', $searchString+'~') 
+      YIELD node RETURN node
+    """
+  )
+
   currentUser: User
 
   recipesNotArchived: [Recipe]
@@ -149,6 +163,7 @@ type Query {
     @cypher(
       statement: "MATCH (r:Review) WITH r.stars AS stars, COUNT(*) AS count ORDER BY stars RETURN {stars: stars, count: count}"
     )
+
 }
 
 type Mutation {

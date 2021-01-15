@@ -403,7 +403,6 @@ export function CreateRecipe() {
           Create Recipe
         </Button>
       </form>
-      {JSON.stringify(ingredients)}
     </Box>
   ) : (
     <Flex justifyContent="center" alignItems="center">

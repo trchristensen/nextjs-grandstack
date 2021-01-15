@@ -209,8 +209,10 @@ export const UPDATE_RECIPE = gql`
     $mixingPercentage: Int
     $steepTime: Int
     $tags: [CustomTagsInput]
+    $parent: String
   ) {
     updateRecipeWithIngredientsAndTags(
+      id: $id
       userId: $userId
       recipeId: $recipeId
       name: $name
@@ -222,6 +224,7 @@ export const UPDATE_RECIPE = gql`
       mixingPercentage: $mixingPercentage
       steepTime: $steepTime
       tags: $tags
+      parent: $parent
     ) {
       name
       id

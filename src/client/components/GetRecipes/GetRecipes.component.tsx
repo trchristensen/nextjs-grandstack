@@ -35,6 +35,7 @@ export const GetRecipes = ({
     };
   }
 
+
   const recipes = useQuery(RECIPES_QUERY, {
     variables: {
       isArchived: isArchived,

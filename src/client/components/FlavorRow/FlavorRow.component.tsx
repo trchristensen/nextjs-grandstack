@@ -85,7 +85,7 @@ const FlavorRow = ({ flavorTotalPercentage, handleupdateTotal, percent=0, ...row
           </FormLabel>
         </Box>
 
-        <Text>{percentage}%</Text>
+        
       </Box>
     </Box>
   );
